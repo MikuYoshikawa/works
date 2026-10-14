@@ -290,6 +290,16 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
 }
 @media (min-width: 900px) { .contact { grid-template-columns: 1fr 1fr; } }
 .contact .k { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--sub); margin: 0 0 6px; }
+.inq { margin: 18px 0 0; max-width: 30em; color: #333; }
+.sns { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.sns a {
+  font-family: var(--display); font-variation-settings: "wdth" 115; font-weight: 300;
+  font-size: clamp(22px, 3.4vw, 40px); letter-spacing: -.01em; line-height: 1.25;
+  text-decoration: none; display: inline-flex; gap: .3em; align-items: baseline;
+}
+.sns a span { font-size: .5em; color: var(--sub); }
+.sns a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.sns a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .mail {
   font-family: var(--display); font-variation-settings: "wdth" 115; font-weight: 300;
   font-size: clamp(22px, 3.4vw, 40px); letter-spacing: -.01em; line-height: 1.2;
@@ -332,12 +342,15 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   <div class="contact">
     <div>
       <p class="k">Contact</p>
-      <p class="mail" id="mail"></p>
-      <button class="copy" id="copyMail" type="button">Copy address</button>
+      <div id="mailBox">
+        <p class="mail" id="mail"></p>
+        <button class="copy" id="copyMail" type="button">Copy address</button>
+      </div>
+      <p class="inq" id="inquiry"></p>
     </div>
-    <div>
-      <p class="k">For inquiries</p>
-      <p style="margin:0;max-width:30em">楽曲制作・編曲・CM / 映像音楽のご依頼は、上記アドレスまでお気軽にご連絡ください。</p>
+    <div id="linksBox">
+      <p class="k">Links</p>
+      <ul class="sns" id="links"></ul>
     </div>
   </div>
   <div class="fine"><span id="copyright"></span><span>Works list</span></div>
@@ -406,10 +419,35 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   document.getElementById("siteName").textContent = SITE.name || "";
   document.getElementById("siteRole").textContent = SITE.role || "";
   document.getElementById("siteBio").textContent = SITE.bio || "";
-  document.getElementById("mail").textContent = SITE.email || "";
+  // contact: email (if it is really an address) + SNS links
+  function snsLabel(url) {
+    var h = ""; try { h = new URL(url).hostname.replace(/^www\./, ""); } catch (e) { return ""; }
+    if (/^(x|twitter)\.com$/.test(h)) return "X";
+    if (/instagram\.com$/.test(h)) return "Instagram";
+    if (/(youtube\.com|youtu\.be)$/.test(h)) return "YouTube";
+    if (/soundcloud\.com$/.test(h)) return "SoundCloud";
+    if (/tiktok\.com$/.test(h)) return "TikTok";
+    if (/threads\.(net|com)$/.test(h)) return "Threads";
+    if (/bsky\.app$/.test(h)) return "Bluesky";
+    if (/note\.com$/.test(h)) return "note";
+    return "Website";
+  }
+  var email = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(SITE.email || "").trim()) ? SITE.email.trim() : "";
+  var links = (Array.isArray(SITE.links) ? SITE.links : []).filter(Boolean);
+  if (!email && /^https?:\/\//.test(String(SITE.email || "").trim())) links.unshift(SITE.email.trim()); // older data: URL typed in the email field
+  document.getElementById("mail").textContent = email;
+  document.getElementById("mailBox").hidden = !email;
+  document.getElementById("inquiry").textContent = email
+    ? "楽曲制作・編曲・CM / 映像音楽のご依頼は、上記アドレスまでお気軽にご連絡ください。"
+    : "楽曲制作・編曲・CM / 映像音楽のご依頼は、各SNSのメッセージからお気軽にご連絡ください。";
+  document.getElementById("links").innerHTML = links.map(function (u) {
+    var label = snsLabel(u); if (!label) return "";
+    return '<li><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(label) + ' <span aria-hidden="true">↗</span></a></li>';
+  }).join("");
+  document.getElementById("linksBox").hidden = !links.length;
   document.getElementById("copyright").textContent = "© " + new Date().getFullYear() + " " + (SITE.name || "");
   if (SITE.name) document.title = "WORKS — " + SITE.name;
-  if (!SITE.email) document.querySelector(".contact").hidden = true;
+  if (!email && !links.length) document.querySelector(".contact").hidden = true;
 
   document.getElementById("copyMail").addEventListener("click", function (e) {
     var btn = e.currentTarget, mail = SITE.email || "";
