@@ -198,6 +198,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     <div class="panel grid2">
       <div><label for="s-name">名前（表示名）</label><input type="text" id="s-name"></div>
       <div><label for="s-role">肩書き</label><input type="text" id="s-role"></div>
+      <div class="span2"><label for="s-photo">プロフィール写真<span class="hint">写真のURL、またはGitHubに置いたファイル名（例：profile.jpg）。空欄なら写真なし</span></label><input type="text" id="s-photo" placeholder="profile.jpg"></div>
       <div class="span2"><label for="s-bio">紹介文</label><textarea id="s-bio"></textarea></div>
       <div class="span2"><label for="s-email">連絡先メールアドレス<span class="hint">使わない場合は空欄</span></label><input type="email" id="s-email"></div>
       <div class="span2"><label for="s-links">SNS・Webサイトのリンク<span class="hint">1行に1つずつURLを入力（X、Instagram、YouTube など。名前は自動で表示されます）</span></label><textarea id="s-links" placeholder="https://x.com/ユーザー名&#10;https://www.instagram.com/ユーザー名"></textarea></div>
@@ -432,14 +433,14 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   }
   function loadSite() {
     migrateSite();
-    ["name", "role", "bio", "email", "creditNames"].forEach(function (k) { $("s-" + k).value = state.site[k] || ""; });
+    ["name", "role", "bio", "email", "creditNames", "photo"].forEach(function (k) { $("s-" + k).value = state.site[k] || ""; });
     $("s-links").value = state.site.links.join("\n");
   }
   $("s-links").addEventListener("input", function () {
     state.site.links = $("s-links").value.split(/\n/).map(function (s) { return s.trim(); }).filter(Boolean);
     persist();
   });
-  ["name", "role", "bio", "email", "creditNames"].forEach(function (k) {
+  ["name", "role", "bio", "email", "creditNames", "photo"].forEach(function (k) {
     $("s-" + k).addEventListener("input", function () { state.site[k] = $("s-" + k).value; persist(); });
   });
 

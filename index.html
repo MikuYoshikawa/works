@@ -47,14 +47,14 @@ a { color: inherit; }
   display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;
   font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
 }
-.topline .name { font-weight: 500; }
+.topline .name { font-family: var(--body); font-size: clamp(17px, 1.7vw, 22px); font-weight: 700; letter-spacing: .05em; text-transform: none; }
 .topline .role { color: var(--sub); }
 h1 {
-  margin: clamp(56px, 11vw, 140px) 0 0;
+  margin: clamp(40px, 7vw, 88px) 0 0;
   font-family: var(--display);
   font-variation-settings: "wdth" 125;
   font-weight: 300;
-  font-size: clamp(64px, 15vw, 220px);
+  font-size: clamp(44px, 8vw, 112px);
   line-height: .82;
   letter-spacing: -.035em;
   display: flex; align-items: flex-start; gap: .12em;
@@ -64,8 +64,18 @@ h1 sup {
   line-height: 1; margin-top: .6em; color: var(--sub);
   font-variant-numeric: tabular-nums;
 }
+.intro {
+  margin-top: clamp(32px, 4.5vw, 52px);
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(18px, 3vw, 40px); align-items: start;
+}
+.intro.no-photo { grid-template-columns: minmax(0, 1fr); }
+.portrait {
+  width: clamp(104px, 17vw, 220px); max-width: 100%; aspect-ratio: 1 / 1;
+  margin: 0; overflow: hidden; background: var(--tile);
+}
+.portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .bio {
-  margin: clamp(28px, 4vw, 44px) 0 0;
+  margin: 0;
   max-width: 34em;
   color: #333;
   text-wrap: pretty;
@@ -327,7 +337,10 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     <span class="role" id="siteRole"></span>
   </div>
   <h1>WORKS<sup id="count"></sup></h1>
-  <p class="bio" id="siteBio"></p>
+  <div class="intro" id="intro">
+    <figure class="portrait" id="portrait"><img id="photo" alt=""></figure>
+    <p class="bio" id="siteBio"></p>
+  </div>
 </header>
 
 <main class="wrap">
@@ -419,6 +432,14 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   document.getElementById("siteName").textContent = SITE.name || "";
   document.getElementById("siteRole").textContent = SITE.role || "";
   document.getElementById("siteBio").textContent = SITE.bio || "";
+  (function () {
+    var photo = String(SITE.photo === undefined ? "profile.jpg" : (SITE.photo || "")).trim(), fig = document.getElementById("portrait"), img = document.getElementById("photo");
+    function off() { fig.hidden = true; document.getElementById("intro").classList.add("no-photo"); }
+    if (!photo) { off(); return; }
+    img.alt = (SITE.name || "") + " のプロフィール写真";
+    img.onerror = off;
+    img.src = photo;
+  })();
   // contact: email (if it is really an address) + SNS links
   function snsLabel(url) {
     var h = ""; try { h = new URL(url).hostname.replace(/^www\./, ""); } catch (e) { return ""; }
