@@ -1,5 +1,5 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 2:30:39）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 2:33:58）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / link: リンク / audio: 試聴音源 / note: 解説
@@ -122,18 +122,6 @@ window.WORKS = [
     "note": ""
   },
   {
-    "album": "アニメ「ウマ娘 プリティーダービー ROAD TO THE TOP」アルバム",
-    "format": "",
-    "title": "陽だまりの中で風薫る",
-    "artist": "𠮷川 美矩",
-    "credit": "作曲・編曲",
-    "date": "2023.05.10",
-    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/79/04/9e/79049ecd-92f4-8cf5-c8b3-0b123bbe560d/4540774909834.png/1000x1000bb.jpg",
-    "link": "https://music.apple.com/jp/album/%E9%99%BD%E3%81%A0%E3%81%BE%E3%82%8A%E3%81%AE%E4%B8%AD%E3%81%A7%E9%A2%A8%E8%96%AB%E3%82%8B/1813856178?i=1813856451",
-    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/dd/28/ab/dd28abd6-a9b2-cb03-14be-6dcbccd1b414/mzaf_1999722614060116034.plus.aac.p.m4a",
-    "note": ""
-  },
-  {
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
     "title": "ARRIVE TO STAR(Day 第2幕「BRILLIANT STAGE」より)-Live",
@@ -209,7 +197,7 @@ window.WORKS = [
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
     "title": "バイアリーターク",
-    "artist": "𠮷川 美矩",
+    "artist": "",
     "credit": "作曲・編曲",
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
@@ -221,7 +209,7 @@ window.WORKS = [
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
     "title": "WBC開幕",
-    "artist": "𠮷川 美矩",
+    "artist": "",
     "credit": "作曲・編曲",
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
@@ -233,7 +221,7 @@ window.WORKS = [
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
     "title": "SUPER WBC開幕",
-    "artist": "𠮷川 美矩",
+    "artist": "",
     "credit": "作曲・編曲",
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
@@ -245,7 +233,7 @@ window.WORKS = [
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
     "title": "猪突猛進×ひたむき×アイズ",
-    "artist": "𠮷川 美矩",
+    "artist": "",
     "credit": "作曲・編曲",
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
@@ -257,12 +245,24 @@ window.WORKS = [
     "album": "アニメ「ウマ娘 プリティーダービー ROAD TO THE TOP」アルバム",
     "format": "",
     "title": "健気な憧れの先輩",
-    "artist": "𠮷川 美矩",
+    "artist": "",
     "credit": "作曲・編曲",
     "date": "2023.05.10",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/79/04/9e/79049ecd-92f4-8cf5-c8b3-0b123bbe560d/4540774909834.png/1000x1000bb.jpg",
     "link": "https://music.apple.com/jp/album/%E5%81%A5%E6%B0%97%E3%81%AA%E6%86%A7%E3%82%8C%E3%81%AE%E5%85%88%E8%BC%A9/1813856178?i=1813856443",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/95/b1/fb/95b1fbd5-ac31-2b9c-db88-a631ef9b50c3/mzaf_5615738520049713899.plus.aac.p.m4a",
+    "note": ""
+  },
+  {
+    "album": "アニメ「ウマ娘 プリティーダービー ROAD TO THE TOP」アルバム",
+    "format": "",
+    "title": "陽だまりの中で風薫る",
+    "artist": "",
+    "credit": "作曲・編曲",
+    "date": "2023.05.10",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/79/04/9e/79049ecd-92f4-8cf5-c8b3-0b123bbe560d/4540774909834.png/1000x1000bb.jpg",
+    "link": "https://music.apple.com/jp/album/%E9%99%BD%E3%81%A0%E3%81%BE%E3%82%8A%E3%81%AE%E4%B8%AD%E3%81%A7%E9%A2%A8%E8%96%AB%E3%82%8B/1813856178?i=1813856451",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/dd/28/ab/dd28abd6-a9b2-cb03-14be-6dcbccd1b414/mzaf_1999722614060116034.plus.aac.p.m4a",
     "note": ""
   }
 ];
