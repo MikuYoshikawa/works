@@ -124,7 +124,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       </div>
       <div class="grid2">
         <div class="span2">
-          <label for="f-album">収録アルバム名<span class="hint">同じアルバム名・同じアーティストの曲は、サイトで1つのページにまとまります（シングルなら空欄）</span></label>
+          <label for="f-album">収録アルバム名<span class="hint">同じアルバム名の曲は、サイトで1つのページにまとまります（シングルなら空欄）</span></label>
           <input type="text" id="f-album" list="albumList" autocomplete="off">
           <datalist id="albumList"></datalist>
         </div>
@@ -150,8 +150,12 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <input type="text" id="f-credit" placeholder="例：作曲・編曲">
         </div>
         <div class="span2">
-          <label for="f-image">ジャケット画像<span class="hint">画像のURL、または images/ファイル名.jpg</span></label>
-          <input type="text" id="f-image">
+          <label for="f-image">ジャケット画像<span class="hint">画像のURL、または画像が載っているページのURL（配信ページ・レーベルのページなど）</span></label>
+          <div class="row">
+            <input type="text" id="f-image" placeholder="https://…">
+            <button type="button" id="imgFetchBtn">URLから取得</button>
+          </div>
+          <p class="status" id="imgStatus"></p>
         </div>
         <div>
           <label for="f-link">リンク<span class="hint">配信ページなど</span></label>
@@ -626,6 +630,38 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     var msg = showCredits(credits);
     setStatus("fetchStatus", credits.length ? msg : "クレジット表記（作曲：〇〇 など）が見つかりませんでした。", credits.length ? "ok" : "err");
   });
+
+  // ---- jacket image from a URL ----
+  function looksLikeImage(u) {
+    return /\.(jpe?g|png|webp|gif|avif)(\?|#|$)/i.test(u.pathname + u.search) ||
+      /(mzstatic\.com|ytimg\.com|scdn\.co|sndcdn\.com|googleusercontent\.com)$/i.test(u.hostname);
+  }
+  function testImage(src) {
+    return new Promise(function (ok, ng) { var im = new Image(); im.onload = function () { ok(src); }; im.onerror = ng; im.src = src; });
+  }
+  function findJacket(raw) {
+    var u = new URL(raw), h = u.hostname;
+    if (looksLikeImage(u)) return Promise.resolve(raw);
+    if (/(music|itunes)\.apple\.com$/.test(h)) return fromApple(u).then(function (w) { return w.image; });
+    if (/(youtube\.com|youtu\.be)$/.test(h)) { var id = ytId(u); if (id) return Promise.resolve("https://i.ytimg.com/vi/" + id + "/hqdefault.jpg"); }
+    if (/(spotify|soundcloud)\.com$/.test(h)) return oembed(raw).then(function (d) { return d.thumbnail_url || ""; });
+    return scanPage(raw, 2).then(function (p) { return p.image; });
+  }
+  $("imgFetchBtn").addEventListener("click", function () {
+    var raw = $("f-image").value.trim(), btn = $("imgFetchBtn");
+    if (!/^https?:\/\//i.test(raw)) { setStatus("imgStatus", "https:// から始まるURLを貼り付けてください。", "err"); return; }
+    btn.disabled = true; setStatus("imgStatus", "画像を探しています…");
+    findJacket(raw).then(function (src) {
+      if (!src) throw new Error("none");
+      return testImage(src);
+    }).then(function (src) {
+      $("f-image").value = src; updateThumb();
+      setStatus("imgStatus", "ジャケット画像を入れました。左のプレビューで確認してください。", "ok");
+    }).catch(function () {
+      setStatus("imgStatus", "このURLからは画像が見つかりませんでした。画像を長押しして「画像アドレスをコピー」したURLを貼ると確実です。", "err");
+    }).then(function () { btn.disabled = false; });
+  });
+  $("f-image").addEventListener("keydown", function (e) { if (e.key === "Enter") $("imgFetchBtn").click(); });
 
   // ---- export ----
   function buildFile() {
