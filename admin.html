@@ -194,7 +194,9 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
 
   <!-- 3. list -->
   <section>
-    <h2><span class="n">03</span>作品リスト（上から順に表示）<span class="n" id="listCount"></span></h2>
+    <h2><span class="n">03</span>作品リスト<span class="n" id="listCount"></span></h2>
+    <p class="hint" style="margin:-6px 0 12px">サイトでは自動でリリース日の新しい順に並びます。同じ日付の作品やアルバム内の曲は、このリストの順番どおりです。</p>
+    <div class="actions" style="margin-bottom:12px"><button type="button" id="sortDateBtn">このリストも日付順に並べる</button></div>
     <ul class="list" id="list"></ul>
   </section>
 
@@ -280,8 +282,8 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-credit").addEventListener("input", renderChips);
 
   // ---- media chips ----
-  var MEDIA_CHOICES = ["CD", "デジタル配信", "Blu-ray", "DVD", "アナログ盤"];
-  function mediaParts() { return $("f-media").value.split(/[・、,，\/／]+/).map(function (s) { return s.trim(); }).filter(Boolean); }
+  var MEDIA_CHOICES = ["CD", "Digital", "Blu-ray", "DVD", "アナログ盤"];
+  function mediaParts() { return $("f-media").value.split(/[・、,，\/／]+/).map(function (s) { s = s.trim(); return /^(デジタル配信|デジタル|digital)$/i.test(s) ? "Digital" : s; }).filter(Boolean); }
   function renderMediaChips() {
     var parts = mediaParts();
     $("mchips").innerHTML = MEDIA_CHOICES.map(function (r) {
@@ -412,6 +414,14 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
         '<div class="ops">' + del + "</div></li>";
     }).join("");
   }
+  $("sortDateBtn").addEventListener("click", function () {
+    function key(d) { var m = String(d || "").match(/(\d{4})(?:\D+(\d{1,2}))?(?:\D+(\d{1,2}))?/); return m ? +m[1] * 10000 + (m[2] ? +m[2] : 0) * 100 + (m[3] ? +m[3] : 0) : -1; }
+    var order = state.works.map(function (w, i) { return { i: i, k: key(w.date || w.year) }; })
+      .sort(function (x, y) { return y.k - x.k || x.i - y.i; }).map(function (x) { return x.i; });
+    applyOrder(order);
+    setStatus("exportStatus", "リストを日付の新しい順に並べ替えました。", "ok");
+  });
+
   // ---- drag to reorder (mouse, touch, pen) ----
   var drag = null;
   function applyOrder(order) {
