@@ -75,6 +75,22 @@ h1 sup {
   margin: 0; overflow: hidden; background: var(--tile);
 }
 .portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pf-btn {
+  all: unset; box-sizing: border-box; position: relative; display: block; width: 100%; height: 100%;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.pf-cap {
+  position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 10px;
+  background: rgba(17, 17, 17, .58); color: #fff;
+  font: 500 11px/1.5 var(--mono); letter-spacing: .06em;
+  opacity: 0; transition: opacity .2s ease;
+}
+@media (hover: hover) { .pf-btn:hover .pf-cap { opacity: 1; } }
+.pf-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.pf-btn:focus-visible .pf-cap, .pf-btn.armed .pf-cap { opacity: 1; }
+.bio.reveal { animation: bioIn .35s ease-out; }
+@keyframes bioIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .bio.reveal { animation: none; } .pf-cap { transition: none; } }
 .bio {
   margin: 0;
   max-width: 34em;
@@ -253,7 +269,9 @@ dialog.detail[open] { animation: dIn .28s ease-out; }
   padding-block: 28px 48px;
 }
 @media (min-width: 900px) {
-  .d-body { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); align-items: center; padding-block: 48px; }
+  .d-body { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); align-items: start; padding-block: 48px; }
+  .d-body .d-art { position: sticky; top: 32px; }
+  .d-info { padding-top: 8px; }
 }
 .d-art {
   position: relative; aspect-ratio: 1 / 1; width: 100%; max-width: min(100%, 680px);
@@ -383,7 +401,12 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   </div>
   <h1>WORKS<sup id="count"></sup></h1>
   <div class="intro" id="intro">
-    <figure class="portrait" id="portrait"><img id="photo" alt=""></figure>
+    <figure class="portrait" id="portrait">
+      <button type="button" class="pf-btn" id="pfBtn" aria-expanded="false" aria-controls="siteBio">
+        <img id="photo" alt="">
+        <span class="pf-cap" id="pfCap" aria-hidden="true">プロフィールを表示</span>
+      </button>
+    </figure>
     <p class="bio" id="siteBio"></p>
   </div>
 </header>
@@ -495,11 +518,35 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   document.getElementById("siteBio").textContent = SITE.bio || "";
   (function () {
     var photo = String(SITE.photo === undefined ? "profile.jpg" : (SITE.photo || "")).trim(), fig = document.getElementById("portrait"), img = document.getElementById("photo");
-    function off() { fig.hidden = true; document.getElementById("intro").classList.add("no-photo"); }
+    var bio = document.getElementById("siteBio"), btn = document.getElementById("pfBtn"), cap = document.getElementById("pfCap");
+    function off() { fig.hidden = true; document.getElementById("intro").classList.add("no-photo"); bio.hidden = false; }
     if (!photo) { off(); return; }
     img.alt = (SITE.name || "") + " のプロフィール写真";
     img.onerror = off;
     img.src = photo;
+    if (!bio.textContent) { btn.disabled = true; cap.hidden = true; return; }
+    // the introduction opens from the photo: hover (or first tap on a touch screen) shows the label, click/second tap opens
+    bio.hidden = true;
+    btn.setAttribute("aria-label", "プロフィールを表示");
+    var pointer = "mouse", armed = false;
+    function setOpen(open) {
+      bio.hidden = !open;
+      btn.setAttribute("aria-expanded", String(open));
+      cap.textContent = open ? "プロフィールを閉じる" : "プロフィールを表示";
+      btn.setAttribute("aria-label", cap.textContent);
+      if (open) { bio.classList.remove("reveal"); void bio.offsetWidth; bio.classList.add("reveal"); }
+      armed = false; btn.classList.remove("armed");
+    }
+    btn.addEventListener("pointerdown", function (e) { pointer = e.pointerType || "mouse"; });
+    btn.addEventListener("click", function () {
+      var open = btn.getAttribute("aria-expanded") === "true";
+      if (pointer !== "mouse" && !open && !armed) { armed = true; btn.classList.add("armed"); pointer = "mouse"; return; }
+      pointer = "mouse";
+      setOpen(!open);
+    });
+    document.addEventListener("pointerdown", function (e) {
+      if (armed && !btn.contains(e.target)) { armed = false; btn.classList.remove("armed"); }
+    });
   })();
   // contact: email (if it is really an address) + SNS links
   function snsLabel(url) {
@@ -625,6 +672,29 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     out.sort(function (a, b) { var ia = order.indexOf(a), ib = order.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
     return out.join("・");
   }
+  // Apple Music song links on one album differ only by the song (?i=…): treat them as the album page
+  function appleAlbum(url) {
+    try {
+      var u = new URL(url);
+      if (!/(music|itunes)\.apple\.com$/.test(u.hostname)) return null;
+      var parts = u.pathname.split("/").filter(Boolean), id = "";
+      for (var i = parts.length - 1; i >= 0; i--) { var m = parts[i].match(/^(?:id)?(\d{5,})$/); if (m) { id = m[1]; break; } }
+      if (!id || parts.indexOf("album") < 0) return null;
+      return { cc: /^[a-z]{2}$/i.test(parts[0]) ? parts[0] : "jp", id: id };
+    } catch (e) { return null; }
+  }
+  function linkKey(url) {
+    url = String(url || "").trim(); if (!url) return "";
+    var a = appleAlbum(url); if (a) return "apple:" + a.id;
+    try {
+      var u = new URL(url, location.href);
+      var keep = /(youtube\.com)$/.test(u.hostname) ? (u.searchParams.get("v") || "") : u.search; // YouTube: the video id matters
+      return (u.hostname.replace(/^www\./, "") + u.pathname.replace(/\/+$/, "") + keep).toLowerCase();
+    } catch (e) { return url; }
+  }
+  function albumUrl(url) {
+    var a = appleAlbum(url); return a ? "https://music.apple.com/" + a.cc + "/album/" + a.id : url;
+  }
   function splitArtists(s) { return String(s || "").split(/\s*[,，、]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function mediaList(v) { return String(v || "").split(/[・、,，\/／]+/).map(normMedia).filter(Boolean); }
   function mediaTags(list) { return list.map(function (m) { return '<span class="md">' + esc(m) + "</span>"; }).join(""); }
@@ -657,6 +727,17 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
       var common = lists[0].filter(function (x) { return lists.every(function (l) { return l.indexOf(x) >= 0; }); });
       g.artist = same ? g.tracks[0].artist : (common.length ? common.join(", ") : "Various Artists");
       g.mixed = !same; g.common = common;
+      // one link shared by the songs (e.g. the album page): show it once for the whole album
+      // a page used by several songs of this album is shown once for the album, not under every song
+      var count = {}, firstUrl = {};
+      g.tracks.forEach(function (t) {
+        var k = linkKey(t.link); if (!k) return;
+        count[k] = (count[k] || 0) + 1; if (!firstUrl[k]) firstUrl[k] = t.link;
+      });
+      var keys = Object.keys(count);
+      g.sharedKeys = keys.filter(function (k) { return count[k] >= 2 || keys.length === 1; });
+      g.sharedLinks = g.sharedKeys.map(function (k) { return albumUrl(firstUrl[k]); });
+      g.link = g.sharedLinks[0] || "";
     }
     return g;
   });
@@ -757,9 +838,9 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
         return '<li class="trk"><div class="trk-h"><span class="trk-t">' + esc(t.title || "Untitled") + '</span><span class="trk-c">' + esc(t.credit || "") + "</span></div>" +
           (own ? '<p class="trk-ar">' + esc(own) + "</p>" : "") +
           (t.note ? '<p class="trk-n">' + esc(t.note) + "</p>" : "") +
-          ((t.audio || t.link) ? '<div class="trk-a">' +
+          ((t.audio || (t.link && w.sharedKeys.indexOf(linkKey(t.link)) < 0)) ? '<div class="trk-a">' +
             (t.audio ? '<button type="button" data-src="' + esc(t.audio) + '">' + ICON + '<span class="lbl">試聴する</span></button>' : "") +
-            (t.link ? '<a href="' + esc(t.link) + '" target="_blank" rel="noopener">' + esc(serviceName(t.link)) + ' <span aria-hidden="true">↗</span></a>' : "") +
+            (t.link && w.sharedKeys.indexOf(linkKey(t.link)) < 0 ? '<a href="' + esc(t.link) + '" target="_blank" rel="noopener">' + esc(serviceName(t.link)) + ' <span aria-hidden="true">↗</span></a>' : "") +
             "</div>" : "") + "</li>";
       }).join("");
     }
@@ -767,6 +848,17 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
       link.href = w.link;
       link.querySelector(".lbl").textContent = serviceName(w.link);
       document.getElementById("dUrl").textContent = w.link;
+    }
+    var acts = document.getElementById("dActions");
+    acts.querySelectorAll(".d-more").forEach(function (x) { x.remove(); });
+    if (w.album && w.sharedLinks.length > 1) {
+      w.sharedLinks.slice(1).forEach(function (u) {
+        var a = document.createElement("a");
+        a.className = "d-btn d-more"; a.href = u; a.target = "_blank"; a.rel = "noopener";
+        a.innerHTML = esc(serviceName(u)) + ' <span aria-hidden="true">↗</span>';
+        acts.appendChild(a);
+      });
+      urlBox.hidden = true;
     }
     document.getElementById("dActions").hidden = !w.audio && !w.link;
     document.getElementById("dPrev").disabled = pos === 0;
