@@ -1,7 +1,7 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 2:40:32）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 3:10:08）
    ---------------------------------------------------------
-   album: 収録アルバム / format: リリース形態 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
+   album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / link: リンク / audio: 試聴音源 / note: 解説
    ========================================================= */
 
@@ -17,8 +17,87 @@ window.SITE = {
 
 window.WORKS = [
   {
+    "album": "『ウマ娘 プリティーダービー』WINNING LIVE 32",
+    "format": "",
+    "media": "CD・デジタル配信",
+    "title": "ケイちゃんとクーちゃん",
+    "artist": "",
+    "credit": "編曲",
+    "date": "2026.03.25",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4d/76/a0/4d76a007-19b2-9c00-b81e-fe981787073e/4540774191659.png/1000x1000bb.jpg",
+    "link": "https://music.apple.com/jp/album/%E3%82%B1%E3%82%A4%E3%81%A1%E3%82%83%E3%82%93%E3%81%A8%E3%82%AF%E3%83%BC%E3%81%A1%E3%82%83%E3%82%93/1879733663?i=1879733751",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/37/86/bd/3786bd5d-9892-501b-5b8a-fbe4853d0814/mzaf_1345265150120560268.plus.aac.p.m4a",
+    "note": "共編曲：畑田浩孝"
+  },
+  {
+    "album": "『ウマ娘 プリティーダービー』WINNING LIVE 32",
+    "format": "",
+    "media": "CD・デジタル配信",
+    "title": "The Twinkle Legends CM -TIARA-",
+    "artist": "",
+    "credit": "編曲",
+    "date": "2026.03.25",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4d/76/a0/4d76a007-19b2-9c00-b81e-fe981787073e/4540774191659.png/1000x1000bb.jpg",
+    "link": "https://music.apple.com/jp/album/the-twinkle-legends-cm-tiara/1879733663?i=1879733703",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/56/92/0656927b-6e12-26f0-5de6-014e9ea52daf/mzaf_7521773181502222634.plus.aac.p.m4a",
+    "note": ""
+  },
+  {
+    "album": "『ウマ娘 プリティーダービー』WINNING LIVE 25",
+    "format": "",
+    "media": "CD・デジタル配信",
+    "title": "P.O.P. NEW WORLD!!",
+    "artist": "",
+    "credit": "編曲",
+    "date": "2025.03.05",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
+    "link": "https://music.apple.com/jp/album/p-o-p-new-world/1793708472?i=1793708861",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/cc/14/e7/cc14e7be-383d-865b-705a-51b8df54923f/mzaf_11823041245803211337.plus.aac.p.m4a",
+    "note": ""
+  },
+  {
+    "album": "『ウマ娘 プリティーダービー』WINNING LIVE 25",
+    "format": "",
+    "media": "CD・デジタル配信",
+    "title": "Overrun!",
+    "artist": "",
+    "credit": "編曲",
+    "date": "2025.03.05",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
+    "link": "https://music.apple.com/jp/album/overrun/1793708472?i=1793708841",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/13/9c/a2/139ca23f-40cd-cb02-b0f9-629a80b44d20/mzaf_6923092461812106363.plus.aac.p.m4a",
+    "note": "共編曲：守谷勇人（IM.Lab）"
+  },
+  {
+    "album": "『ウマ娘 プリティーダービー』WINNING LIVE 25",
+    "format": "",
+    "media": "CD・デジタル配信",
+    "title": "和風な学級委員長ですから",
+    "artist": "",
+    "credit": "編曲",
+    "date": "2025.03.05",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
+    "link": "https://music.apple.com/jp/album/%E5%92%8C%E9%A2%A8%E3%81%AA%E5%AD%A6%E7%B4%9A%E5%A7%94%E5%93%A1%E9%95%B7%E3%81%A7%E3%81%99%E3%81%8B%E3%82%89/1793708472?i=1793708831",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/db/4e/58/db4e580a-87de-2bb0-d7ed-273736c693ef/mzaf_5523103535858129056.plus.aac.p.m4a",
+    "note": ""
+  },
+  {
+    "album": "『ウマ娘 プリティーダービー』WINNING LIVE 25",
+    "format": "",
+    "media": "CD・デジタル配信",
+    "title": "マーベラスチョコ☆★",
+    "artist": "",
+    "credit": "編曲",
+    "date": "2025.03.05",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
+    "link": "https://music.apple.com/jp/album/%E3%83%9E%E3%83%BC%E3%83%99%E3%83%A9%E3%82%B9%E3%83%81%E3%83%A7%E3%82%B3/1793708472?i=1793708702",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/fe/d9/f5/fed9f567-3962-dcde-10e6-1797c029cf30/mzaf_4347897915601246532.plus.aac.p.m4a",
+    "note": ""
+  },
+  {
     "album": "",
     "format": "7th Music",
+    "media": "デジタル配信",
     "title": "月影マスカレード",
     "artist": "Switch Drop",
     "credit": "作曲・編曲",
@@ -31,6 +110,7 @@ window.WORKS = [
   {
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
     "format": "",
+    "media": "Blu-ray・DVD",
     "title": "DEAR MY LOVER",
     "artist": "Hey! Say! JUMP",
     "credit": "オーケストレーション",
@@ -43,6 +123,7 @@ window.WORKS = [
   {
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
     "format": "",
+    "media": "Blu-ray・DVD",
     "title": "Give Me Love",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
@@ -55,6 +136,7 @@ window.WORKS = [
   {
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
     "format": "",
+    "media": "Blu-ray・DVD",
     "title": "Magic Power",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
@@ -67,6 +149,7 @@ window.WORKS = [
   {
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
     "format": "",
+    "media": "Blu-ray・DVD",
     "title": "Entertainment",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
@@ -79,6 +162,7 @@ window.WORKS = [
   {
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
     "format": "",
+    "media": "Blu-ray・DVD",
     "title": "愛よ、僕を導いてゆけ",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
@@ -91,6 +175,7 @@ window.WORKS = [
   {
     "album": "SEASIDE - single",
     "format": "",
+    "media": "デジタル配信",
     "title": "SEASIDE",
     "artist": "遥か、彼方。",
     "credit": "作曲・作詞・編曲",
@@ -103,6 +188,7 @@ window.WORKS = [
   {
     "album": "SEASIDE - single",
     "format": "",
+    "media": "デジタル配信",
     "title": "SEASIDE (Instrumental)",
     "artist": "遥か、彼方。",
     "credit": "作曲・作詞・編曲",
@@ -115,6 +201,7 @@ window.WORKS = [
   {
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "恋花(Day 第2幕「BRILLIANT STAGE」より)-Live",
     "artist": "四条貴音 (CV: 原 由実), 東京フィルハーモニー交響楽団, THE IDOLM@STER Series & Bandai Namco Game Music",
     "credit": "編曲・オーケストラアレンジ",
@@ -127,6 +214,7 @@ window.WORKS = [
   {
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "ARRIVE TO STAR(Day 第2幕「BRILLIANT STAGE」より)-Live",
     "artist": "桜庭 薫 (CV.内田雄馬), 東京フィルハーモニー交響楽団, THE IDOLM@STER Series & Bandai Namco Game Music",
     "credit": "編曲・オーケストラアレンジ",
@@ -139,6 +227,7 @@ window.WORKS = [
   {
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "Because(Day 第2幕「BRILLIANT STAGE」より)-Live",
     "artist": "結城アイラ, 桜庭 薫 (CV.内田雄馬), 東京フィルハーモニー交響楽団, THE IDOLM@STER Series & Bandai Namco Game Music",
     "credit": "編曲・オーケストラアレンジ",
@@ -151,6 +240,7 @@ window.WORKS = [
   {
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "statice(Night 第2幕「BRILLIANT STAGE」より)-Live",
     "artist": "浅倉 透 (CV.和久井 優), 東京フィルハーモニー交響楽団, THE IDOLM@STER Series & Bandai Namco Game Music",
     "credit": "編曲・オーケストラアレンジ",
@@ -163,6 +253,7 @@ window.WORKS = [
   {
     "album": "黎明",
     "format": "",
+    "media": "デジタル配信",
     "title": "裁き",
     "artist": "島太星",
     "credit": "編曲",
@@ -175,6 +266,7 @@ window.WORKS = [
   {
     "album": "",
     "format": "",
+    "media": "デジタル配信",
     "title": "ずっと、君だけ!",
     "artist": "PALE TULLE",
     "credit": "作曲・作詞・編曲",
@@ -187,6 +279,7 @@ window.WORKS = [
   {
     "album": "THE IDOLM@STER ORCHESTRA CONCERT ～SYMPHONY OF FIVE STARS!!!!!～ コンサートアルバム",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "The 1st Movement 〜未来のための二重奏〜(DAY2 第2幕「Brillante Stage!!!!!」より)-Live",
     "artist": "Altessimo, 東京フィルハーモニー交響楽団, THE IDOLM@STER Series & Bandai Namco Game Music",
     "credit": "編曲・オーケストラアレンジ",
@@ -199,9 +292,10 @@ window.WORKS = [
   {
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "バイアリーターク",
     "artist": "",
-    "credit": "作曲・編曲",
+    "credit": "編曲",
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
     "link": "https://music.apple.com/jp/album/%E3%83%90%E3%82%A4%E3%82%A2%E3%83%AA%E3%83%BC%E3%82%BF%E3%83%BC%E3%82%AF/1813837020?i=1813837237",
@@ -211,9 +305,10 @@ window.WORKS = [
   {
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "WBC開幕",
     "artist": "",
-    "credit": "作曲・編曲",
+    "credit": "編曲",
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
     "link": "https://music.apple.com/jp/album/wbc%E9%96%8B%E5%B9%95/1813837020?i=1813837246",
@@ -223,9 +318,10 @@ window.WORKS = [
   {
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "SUPER WBC開幕",
     "artist": "",
-    "credit": "作曲・編曲",
+    "credit": "編曲",
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
     "link": "https://music.apple.com/jp/album/super-wbc%E9%96%8B%E5%B9%95/1813837020?i=1813837247",
@@ -235,9 +331,10 @@ window.WORKS = [
   {
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "猪突猛進×ひたむき×アイズ",
     "artist": "",
-    "credit": "作曲・編曲",
+    "credit": "編曲",
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
     "link": "https://music.apple.com/jp/album/%E7%8C%AA%E7%AA%81%E7%8C%9B%E9%80%B2-%E3%81%B2%E3%81%9F%E3%82%80%E3%81%8D-%E3%82%A2%E3%82%A4%E3%82%BA/1813837020?i=1813837260",
@@ -247,9 +344,10 @@ window.WORKS = [
   {
     "album": "アニメ「ウマ娘 プリティーダービー ROAD TO THE TOP」アルバム",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "健気な憧れの先輩",
     "artist": "",
-    "credit": "作曲・編曲",
+    "credit": "編曲",
     "date": "2023.05.10",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/79/04/9e/79049ecd-92f4-8cf5-c8b3-0b123bbe560d/4540774909834.png/1000x1000bb.jpg",
     "link": "https://music.apple.com/jp/album/%E5%81%A5%E6%B0%97%E3%81%AA%E6%86%A7%E3%82%8C%E3%81%AE%E5%85%88%E8%BC%A9/1813856178?i=1813856443",
@@ -259,9 +357,10 @@ window.WORKS = [
   {
     "album": "アニメ「ウマ娘 プリティーダービー ROAD TO THE TOP」アルバム",
     "format": "",
+    "media": "CD・デジタル配信",
     "title": "陽だまりの中で風薫る",
     "artist": "",
-    "credit": "作曲・編曲",
+    "credit": "編曲",
     "date": "2023.05.10",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/79/04/9e/79049ecd-92f4-8cf5-c8b3-0b123bbe560d/4540774909834.png/1000x1000bb.jpg",
     "link": "https://music.apple.com/jp/album/%E9%99%BD%E3%81%A0%E3%81%BE%E3%82%8A%E3%81%AE%E4%B8%AD%E3%81%A7%E9%A2%A8%E8%96%AB%E3%82%8B/1813856178?i=1813856451",
