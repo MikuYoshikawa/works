@@ -1,5 +1,5 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 4:02:18）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 4:20:54）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / link: リンク / audio: 試聴音源 / note: 解説
@@ -154,7 +154,7 @@ window.WORKS = [
     "artist": "Hey! Say! JUMP",
     "credit": "オーケストレーション",
     "date": "2026.09.02",
-    "image": "https://web.storm-labels.co.jp/images/45/a5e/fb0303a386a7adbd30a6ec147b01d-01.jpg",
+    "image": "https://m.media-amazon.com/images/I/51jSB8xKsOL._AC_SY679_.jpg\nhttps://m.media-amazon.com/images/I/51auvIn96oL._AC_SY679_.jpg",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
     "note": "編曲：遠藤ナオキ"
@@ -167,7 +167,7 @@ window.WORKS = [
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
     "date": "2026.09.02",
-    "image": "https://web.storm-labels.co.jp/images/45/a5e/fb0303a386a7adbd30a6ec147b01d-01.jpg",
+    "image": "https://m.media-amazon.com/images/I/51jSB8xKsOL._AC_SY679_.jpg\nhttps://m.media-amazon.com/images/I/51auvIn96oL._AC_SY679_.jpg",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
     "note": "共編曲：遠藤ナオキ"
@@ -180,7 +180,7 @@ window.WORKS = [
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
     "date": "2026.09.02",
-    "image": "https://web.storm-labels.co.jp/images/45/a5e/fb0303a386a7adbd30a6ec147b01d-01.jpg",
+    "image": "https://m.media-amazon.com/images/I/51jSB8xKsOL._AC_SY679_.jpg\nhttps://m.media-amazon.com/images/I/51auvIn96oL._AC_SY679_.jpg",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
     "note": "共編曲：遠藤ナオキ"
@@ -193,7 +193,7 @@ window.WORKS = [
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
     "date": "2026.09.02",
-    "image": "https://web.storm-labels.co.jp/images/45/a5e/fb0303a386a7adbd30a6ec147b01d-01.jpg",
+    "image": "https://m.media-amazon.com/images/I/51jSB8xKsOL._AC_SY679_.jpg\nhttps://m.media-amazon.com/images/I/51auvIn96oL._AC_SY679_.jpg",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
     "note": "共編曲：遠藤ナオキ"
@@ -206,7 +206,7 @@ window.WORKS = [
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
     "date": "2026.09.02",
-    "image": "https://web.storm-labels.co.jp/images/45/a5e/fb0303a386a7adbd30a6ec147b01d-01.jpg",
+    "image": "https://m.media-amazon.com/images/I/51jSB8xKsOL._AC_SY679_.jpg\nhttps://m.media-amazon.com/images/I/51auvIn96oL._AC_SY679_.jpg",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
     "note": "共編曲：遠藤ナオキ"
