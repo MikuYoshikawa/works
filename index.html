@@ -254,6 +254,7 @@ dialog.detail[open] { animation: dIn .28s ease-out; }
 .trk-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .trk-t { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; min-width: 0; }
 .trk-c { font-size: 12px; color: var(--sub); }
+.trk-ar { margin: -4px 0 0; font-size: 13px; color: #333; overflow-wrap: anywhere; }
 .trk-n { margin: 0; font-size: 14px; color: #333; white-space: pre-line; }
 .trk-a { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
 .trk-a a, .trk-a button {
@@ -466,6 +467,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     out.sort(function (a, b) { var ia = order.indexOf(a), ib = order.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
     return out.join("・");
   }
+  function splitArtists(s) { return String(s || "").split(/\s*[,，、]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function asSingle(w, album) {
     return { album: false, tracks: [w], title: w.title, artist: w.artist,
       format: w.format || (album ? album + " 収録" : ""), date: dateOf(w), image: w.image,
@@ -475,7 +477,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   WORKS.forEach(function (w) {
     var a = String(w.album || "").trim();
     if (!a) { ITEMS.push(asSingle(w)); return; }
-    var key = a + "|" + String(w.artist || "").trim();
+    var key = a;
     var g = groups[key];
     if (!g) { g = groups[key] = { album: true, name: a, tracks: [], title: a, artist: w.artist, format: "", date: "", image: "", link: "" }; ITEMS.push(g); }
     g.tracks.push(w);
@@ -485,7 +487,15 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   });
   ITEMS = ITEMS.map(function (g) {
     if (g.album && g.tracks.length === 1) return asSingle(g.tracks[0], g.name);
-    if (g.album) g.credit = unionRoles(g.tracks);
+    if (g.album) {
+      g.credit = unionRoles(g.tracks);
+      // compilation albums: show the artists every track shares, and each track's own artists in the list
+      var lists = g.tracks.map(function (t) { return splitArtists(t.artist); });
+      var same = g.tracks.every(function (t) { return String(t.artist || "") === String(g.tracks[0].artist || ""); });
+      var common = lists[0].filter(function (x) { return lists.every(function (l) { return l.indexOf(x) >= 0; }); });
+      g.artist = same ? g.tracks[0].artist : (common.length ? common.join(", ") : "Various Artists");
+      g.mixed = !same; g.common = common;
+    }
     return g;
   });
 
@@ -563,7 +573,9 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     if (w.album) {
       document.getElementById("dTracksH").textContent = "Works on this album — " + w.tracks.length + "曲";
       document.getElementById("dTracks").innerHTML = w.tracks.map(function (t) {
+        var own = w.mixed ? splitArtists(t.artist).filter(function (x) { return w.common.indexOf(x) < 0; }).join(", ") : "";
         return '<li class="trk"><div class="trk-h"><span class="trk-t">' + esc(t.title || "Untitled") + '</span><span class="trk-c">' + esc(t.credit || "") + "</span></div>" +
+          (own ? '<p class="trk-ar">' + esc(own) + "</p>" : "") +
           (t.note ? '<p class="trk-n">' + esc(t.note) + "</p>" : "") +
           ((t.audio || t.link) ? '<div class="trk-a">' +
             (t.audio ? '<button type="button" data-src="' + esc(t.audio) + '">' + ICON + '<span class="lbl">試聴する</span></button>' : "") +
