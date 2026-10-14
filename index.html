@@ -23,6 +23,7 @@
   color-scheme: light;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0;
   background: var(--bg);
@@ -156,7 +157,7 @@ h1 sup {
 /* meta */
 .meta { display: grid; gap: 2px; min-width: 0; }
 .f {
-  display: block; margin-bottom: 2px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-bottom: 4px;
   font-family: var(--mono); font-size: 10.5px; letter-spacing: .07em; color: var(--sub);
   overflow-wrap: anywhere;
 }
@@ -223,6 +224,11 @@ dialog.detail[open] { animation: dIn .28s ease-out; }
 .d-art .ph-t { font-size: clamp(20px, 3vw, 36px); }
 .d-art .ph-b { font-size: 11px; }
 .d-info { min-width: 0; max-width: 34em; }
+.md {
+  display: inline-block; border: 1px solid var(--line); color: var(--sub);
+  font-family: var(--mono); font-size: 10px; letter-spacing: .04em; line-height: 1; padding: 3px 5px;
+}
+.fm { margin-right: 2px; }
 .d-format {
   margin: 0 0 12px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; color: var(--sub);
   overflow-wrap: anywhere;
@@ -384,6 +390,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
         <dl class="d-spec">
           <div><dt>Credit</dt><dd id="dCredit"></dd></div>
           <div><dt>Date</dt><dd id="dDate"></dd></div>
+          <div id="dMediaRow"><dt>Media</dt><dd id="dMedia"></dd></div>
         </dl>
         <p class="d-note" id="dNote"></p>
         <div class="d-tracks" id="dTracksBox" hidden>
@@ -527,8 +534,10 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     return out.join("・");
   }
   function splitArtists(s) { return String(s || "").split(/\s*[,，、]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function mediaList(v) { return String(v || "").split(/[・、,，\/／]+/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function mediaTags(list) { return list.map(function (m) { return '<span class="md">' + esc(m) + "</span>"; }).join(""); }
   function asSingle(w, album) {
-    return { album: false, tracks: [w], title: w.title, artist: w.artist,
+    return { album: false, tracks: [w], title: w.title, artist: w.artist, media: mediaList(w.media),
       format: w.format || (album ? album + " 収録" : ""), date: dateOf(w), image: w.image,
       link: w.link, credit: w.credit, note: w.note, audio: w.audio };
   }
@@ -548,6 +557,8 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     if (g.album && g.tracks.length === 1) return asSingle(g.tracks[0], g.name);
     if (g.album) {
       g.credit = unionRoles(g.tracks);
+      g.media = [];
+      g.tracks.forEach(function (t) { mediaList(t.media).forEach(function (m) { if (g.media.indexOf(m) < 0) g.media.push(m); }); });
       // compilation albums: show the artists every track shares, and each track's own artists in the list
       var lists = g.tracks.map(function (t) { return splitArtists(t.artist); });
       var same = g.tracks.every(function (t) { return String(t.artist || "") === String(g.tracks[0].artist || ""); });
@@ -570,7 +581,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     grid.innerHTML = list.map(function (w, i) {
       return '<li class="work"><button class="card" type="button" data-i="' + i + '" aria-haspopup="dialog">' +
         '<span class="cover">' + coverHTML(w, true) + "</span>" +
-        '<span class="meta">' + (w.format ? '<span class="f">' + esc(w.format) + "</span>" : "") + '<span class="t">' + esc(w.title || "Untitled") + "</span>" +
+        '<span class="meta">' + ((w.format || w.media.length) ? '<span class="f">' + (w.format ? '<span class="fm">' + esc(w.format) + "</span>" : "") + mediaTags(w.media) + "</span>" : "") + '<span class="t">' + esc(w.title || "Untitled") + "</span>" +
         (w.artist ? '<span class="a">' + esc(w.artist) + "</span>" : "") +
         '<span class="c"><span class="cr">' + esc(w.credit || "") + (w.album ? " ／ " + w.tracks.length + "曲" : "") + '</span><span class="y">' + esc(dateOf(w) || "—") + "</span></span>" +
         "</span></button></li>";
@@ -623,6 +634,8 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     var ar = document.getElementById("dArtist"); ar.textContent = w.artist || ""; ar.hidden = !w.artist;
     document.getElementById("dCredit").textContent = w.credit || "—";
     document.getElementById("dDate").textContent = dateOf(w) || "—";
+    document.getElementById("dMedia").textContent = w.media.join(" / ");
+    document.getElementById("dMediaRow").hidden = !w.media.length;
     var note = document.getElementById("dNote"); note.textContent = w.note || ""; note.hidden = !w.note;
     playBtn.hidden = !w.audio; if (w.audio) playBtn.setAttribute("data-src", w.audio); else playBtn.removeAttribute("data-src");
     var link = document.getElementById("dLink"), urlBox = document.getElementById("dUrlBox");

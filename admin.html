@@ -14,6 +14,7 @@
   color-scheme: light;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.7; }
 .wrap { max-width: 1080px; margin: 0 auto; padding: 32px max(20px, env(safe-area-inset-right, 0px)) 96px max(20px, env(safe-area-inset-left, 0px)); }
 header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--ink); padding-bottom: 14px; }
@@ -154,6 +155,11 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <input type="text" id="f-date" inputmode="numeric" placeholder="2026.03.12">
         </div>
         <div class="span2">
+          <label for="f-media">媒体<span class="hint">ボタンで選ぶか、直接入力（複数OK）</span></label>
+          <div class="chips" id="mchips"></div>
+          <input type="text" id="f-media" placeholder="例：CD・Blu-ray">
+        </div>
+        <div class="span2">
           <label for="f-credit">担当内容<span class="hint">ボタンで選ぶか、直接入力</span></label>
           <div class="chips" id="chips"></div>
           <input type="text" id="f-credit" placeholder="例：作曲・編曲">
@@ -273,6 +279,24 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   });
   $("f-credit").addEventListener("input", renderChips);
 
+  // ---- media chips ----
+  var MEDIA_CHOICES = ["CD", "デジタル配信", "Blu-ray", "DVD", "アナログ盤"];
+  function mediaParts() { return $("f-media").value.split(/[・、,，\/／]+/).map(function (s) { return s.trim(); }).filter(Boolean); }
+  function renderMediaChips() {
+    var parts = mediaParts();
+    $("mchips").innerHTML = MEDIA_CHOICES.map(function (r) {
+      return '<button type="button" data-r="' + r + '" aria-pressed="' + (parts.indexOf(r) >= 0) + '">' + r + "</button>";
+    }).join("");
+  }
+  $("mchips").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    var r = b.getAttribute("data-r"), parts = mediaParts(), i = parts.indexOf(r);
+    if (i >= 0) parts.splice(i, 1); else parts.push(r);
+    parts.sort(function (x, y) { var ix = MEDIA_CHOICES.indexOf(x), iy = MEDIA_CHOICES.indexOf(y); return (ix < 0 ? 99 : ix) - (iy < 0 ? 99 : iy); });
+    $("f-media").value = parts.join("・"); renderMediaChips();
+  });
+  $("f-media").addEventListener("input", renderMediaChips);
+
   // ---- thumbnail preview ----
   function updateThumb() {
     var src = $("f-image").value.trim();
@@ -285,7 +309,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-image").addEventListener("input", function () { clearTimeout(updateThumb.t); updateThumb.t = setTimeout(updateThumb, 400); });
 
   // ---- form ----
-  var FIELDS = ["album", "format", "title", "artist", "credit", "date", "image", "link", "audio", "note"];
+  var FIELDS = ["album", "format", "media", "title", "artist", "credit", "date", "image", "link", "audio", "note"];
   function readForm() {
     var w = {};
     FIELDS.forEach(function (k) { w[k] = $("f-" + k).value.trim(); });
@@ -298,7 +322,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       if (onlyEmpty && $("f-" + k).value.trim()) return;
       $("f-" + k).value = w[k];
     });
-    renderChips(); updateThumb();
+    renderChips(); renderMediaChips(); updateThumb();
   }
   function normDate(v) {
     var m = String(v || "").trim().match(/^(\d{4})(?:[.\/\-年](\d{1,2})(?:[.\/\-月](\d{1,2})日?)?月?)?$/);
@@ -310,15 +334,57 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   function resetForm() {
     FIELDS.forEach(function (k) { $("f-" + k).value = ""; });
     editingIndex = -1; insertAfter = -1; $("formTitle").textContent = "作品を追加"; $("saveBtn").textContent = "リストに追加";
-    renderChips(); updateThumb(); renderList();
+    renderChips(); renderMediaChips(); updateThumb(); renderList();
   }
   $("clearBtn").addEventListener("click", function () { resetForm(); $("fetchStatus").textContent = ""; });
+  // ---- keep songs on the same album in step ----
+  function albumKey(v) { return String(v || "").trim(); }
+  // after editing one song: carry a renamed album, a changed release type and changed media over to the album's other songs
+  function syncAlbum(before, after, idx) {
+    var oldA = albumKey(before.album), newA = albumKey(after.album), count = 0;
+    if (!oldA && !newA) return 0;
+    var renamed = oldA && newA && oldA !== newA;
+    var fmtChanged = String(before.format || "") !== String(after.format || "");
+    var mediaChanged = String(before.media || "") !== String(after.media || "");
+    var dateChanged = String(before.date || before.year || "") !== String(after.date || "");
+    state.works.forEach(function (o, i) {
+      if (i === idx) return;
+      var a = albumKey(o.album), touched = false;
+      if (renamed && a === oldA) { o.album = newA; a = newA; touched = true; }
+      if (newA && a === newA) {
+        if (fmtChanged && o.format !== after.format) { o.format = after.format; touched = true; }
+        if (mediaChanged && o.media !== after.media) { o.media = after.media; touched = true; }
+        if (dateChanged && o.date !== after.date) { o.date = after.date; touched = true; }
+      }
+      if (touched) count++;
+    });
+    return count;
+  }
+  function syncNote(n, w) { return n ? "同じアルバム『" + albumKey(w.album) + "』のほかの " + n + " 曲にも反映しました。" : ""; }
+  // a new song on an existing album takes the album's release type and media when those are left empty
+  function inheritAlbum(w) {
+    var a = albumKey(w.album); if (!a) return;
+    var mate = state.works.filter(function (o) { return albumKey(o.album) === a; })[0];
+    if (!mate) return;
+    if (!w.format && mate.format) w.format = mate.format;
+    if (!w.media && mate.media) w.media = mate.media;
+    if (!w.date && (mate.date || mate.year)) w.date = String(mate.date || mate.year);
+  }
+
   $("saveBtn").addEventListener("click", function () {
     var w = readForm();
     if (!w.title) { setStatus("fetchStatus", "曲名を入力してください。", "err"); $("f-title").focus(); return; }
-    if (editingIndex >= 0) { state.works[editingIndex] = w; setStatus("exportStatus", "「" + w.title + "」を更新しました。最後に書き出しを忘れずに。", "ok"); }
-    else if (insertAfter >= 0) { state.works.splice(insertAfter + 1, 0, w); setStatus("exportStatus", "「" + w.title + "」をコピー元のすぐ下に追加しました。最後に書き出しを忘れずに。", "ok"); }
-    else { state.works.unshift(w); setStatus("exportStatus", "「" + w.title + "」をリストの先頭に追加しました。最後に書き出しを忘れずに。", "ok"); }
+    var synced = 0;
+    if (editingIndex >= 0) {
+      var before = state.works[editingIndex];
+      state.works[editingIndex] = w;
+      synced = syncAlbum(before, w, editingIndex);
+      setStatus("exportStatus", "「" + w.title + "」を更新しました。" + syncNote(synced, w) + "最後に書き出しを忘れずに。", "ok");
+    } else {
+      inheritAlbum(w);
+      if (insertAfter >= 0) { state.works.splice(insertAfter + 1, 0, w); setStatus("exportStatus", "「" + w.title + "」をコピー元のすぐ下に追加しました。最後に書き出しを忘れずに。", "ok"); }
+      else { state.works.unshift(w); setStatus("exportStatus", "「" + w.title + "」をリストの先頭に追加しました。最後に書き出しを忘れずに。", "ok"); }
+    }
     persist(); resetForm(); $("fetchStatus").textContent = ""; $("srcUrl").value = "";
   });
 
@@ -543,7 +609,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     }
 
     job.then(function (res) {
-      if (editingIndex < 0) FIELDS.forEach(function (k) { if (["credit", "format", "note", "album"].indexOf(k) < 0) $("f-" + k).value = ""; });
+      if (editingIndex < 0) FIELDS.forEach(function (k) { if (["credit", "format", "note", "album", "media"].indexOf(k) < 0) $("f-" + k).value = ""; });
       fillForm(res.w);
       if (res.credits) return res;
       // streaming pages rarely list credits, but try once quickly
@@ -756,7 +822,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       "/* =========================================================",
       "   WORKS データファイル（admin.html から書き出し: " + new Date().toLocaleString("ja-JP") + "）",
       "   ---------------------------------------------------------",
-      "   album: 収録アルバム / format: リリース形態 / title: 曲名 / artist: アーティスト名 / credit: 担当内容",
+      "   album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容",
       "   date: リリース日 / image: ジャケット画像 / link: リンク / audio: 試聴音源 / note: 解説",
       "   ========================================================= */",
       ""
@@ -781,7 +847,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     } catch (e) { setStatus("exportStatus", "コピーできませんでした。「works.js を書き出す」を使ってください。", "err"); }
   });
 
-  loadSite(); renderChips(); renderList();
+  loadSite(); renderChips(); renderMediaChips(); renderList();
 })();
 </script>
 </body>
