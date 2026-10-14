@@ -1,5 +1,5 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 3:26:08）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 3:42:37）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / link: リンク / audio: 試聴音源 / note: 解説
@@ -136,7 +136,7 @@ window.WORKS = [
   {
     "album": "",
     "format": "7th Music",
-    "media": "",
+    "media": "デジタル配信",
     "title": "月影マスカレード",
     "artist": "Switch Drop",
     "credit": "作曲・編曲",
@@ -149,7 +149,7 @@ window.WORKS = [
   {
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
     "format": "",
-    "media": "",
+    "media": "Blu-ray",
     "title": "DEAR MY LOVER",
     "artist": "Hey! Say! JUMP",
     "credit": "オーケストレーション",
@@ -162,7 +162,7 @@ window.WORKS = [
   {
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
     "format": "",
-    "media": "",
+    "media": "Blu-ray",
     "title": "Give Me Love",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
@@ -175,7 +175,7 @@ window.WORKS = [
   {
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
     "format": "",
-    "media": "",
+    "media": "Blu-ray",
     "title": "Magic Power",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
@@ -188,7 +188,7 @@ window.WORKS = [
   {
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
     "format": "",
-    "media": "",
+    "media": "Blu-ray",
     "title": "Entertainment",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
@@ -201,7 +201,7 @@ window.WORKS = [
   {
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
     "format": "",
-    "media": "",
+    "media": "Blu-ray",
     "title": "愛よ、僕を導いてゆけ",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
@@ -214,7 +214,7 @@ window.WORKS = [
   {
     "album": "SEASIDE - single",
     "format": "",
-    "media": "",
+    "media": "デジタル配信",
     "title": "SEASIDE",
     "artist": "遥か、彼方。",
     "credit": "作曲・作詞・編曲",
@@ -227,7 +227,7 @@ window.WORKS = [
   {
     "album": "SEASIDE - single",
     "format": "",
-    "media": "",
+    "media": "デジタル配信",
     "title": "SEASIDE (Instrumental)",
     "artist": "遥か、彼方。",
     "credit": "作曲・作詞・編曲",
@@ -240,7 +240,7 @@ window.WORKS = [
   {
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "恋花(Day 第2幕「BRILLIANT STAGE」より)-Live",
     "artist": "四条貴音 (CV: 原 由実), 東京フィルハーモニー交響楽団, THE IDOLM@STER Series & Bandai Namco Game Music",
     "credit": "編曲・オーケストラアレンジ",
@@ -253,7 +253,7 @@ window.WORKS = [
   {
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "ARRIVE TO STAR(Day 第2幕「BRILLIANT STAGE」より)-Live",
     "artist": "桜庭 薫 (CV.内田雄馬), 東京フィルハーモニー交響楽団, THE IDOLM@STER Series & Bandai Namco Game Music",
     "credit": "編曲・オーケストラアレンジ",
@@ -266,7 +266,7 @@ window.WORKS = [
   {
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "Because(Day 第2幕「BRILLIANT STAGE」より)-Live",
     "artist": "結城アイラ, 桜庭 薫 (CV.内田雄馬), 東京フィルハーモニー交響楽団, THE IDOLM@STER Series & Bandai Namco Game Music",
     "credit": "編曲・オーケストラアレンジ",
@@ -279,7 +279,7 @@ window.WORKS = [
   {
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "statice(Night 第2幕「BRILLIANT STAGE」より)-Live",
     "artist": "浅倉 透 (CV.和久井 優), 東京フィルハーモニー交響楽団, THE IDOLM@STER Series & Bandai Namco Game Music",
     "credit": "編曲・オーケストラアレンジ",
@@ -292,7 +292,7 @@ window.WORKS = [
   {
     "album": "黎明",
     "format": "",
-    "media": "",
+    "media": "デジタル配信",
     "title": "裁き",
     "artist": "島太星",
     "credit": "編曲",
@@ -305,7 +305,7 @@ window.WORKS = [
   {
     "album": "",
     "format": "",
-    "media": "",
+    "media": "デジタル配信",
     "title": "ずっと、君だけ!",
     "artist": "PALE TULLE",
     "credit": "作曲・作詞・編曲",
@@ -318,7 +318,7 @@ window.WORKS = [
   {
     "album": "THE IDOLM@STER ORCHESTRA CONCERT ～SYMPHONY OF FIVE STARS!!!!!～ コンサートアルバム",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "The 1st Movement 〜未来のための二重奏〜(DAY2 第2幕「Brillante Stage!!!!!」より)-Live",
     "artist": "Altessimo, 東京フィルハーモニー交響楽団, THE IDOLM@STER Series & Bandai Namco Game Music",
     "credit": "編曲・オーケストラアレンジ",
@@ -331,7 +331,7 @@ window.WORKS = [
   {
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "バイアリーターク",
     "artist": "",
     "credit": "作曲・編曲",
@@ -344,7 +344,7 @@ window.WORKS = [
   {
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "WBC開幕",
     "artist": "",
     "credit": "作曲・編曲",
@@ -357,7 +357,7 @@ window.WORKS = [
   {
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "SUPER WBC開幕",
     "artist": "",
     "credit": "作曲・編曲",
@@ -370,7 +370,7 @@ window.WORKS = [
   {
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "猪突猛進×ひたむき×アイズ",
     "artist": "",
     "credit": "作曲・編曲",
@@ -383,7 +383,7 @@ window.WORKS = [
   {
     "album": "アニメ「ウマ娘 プリティーダービー ROAD TO THE TOP」アルバム",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "健気な憧れの先輩",
     "artist": "",
     "credit": "作曲・編曲",
@@ -396,7 +396,7 @@ window.WORKS = [
   {
     "album": "アニメ「ウマ娘 プリティーダービー ROAD TO THE TOP」アルバム",
     "format": "",
-    "media": "",
+    "media": "CD・デジタル配信",
     "title": "陽だまりの中で風薫る",
     "artist": "",
     "credit": "作曲・編曲",
