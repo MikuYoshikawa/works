@@ -66,6 +66,16 @@ button:disabled { opacity: .45; cursor: default; }
 .banner { background: var(--tile); padding: 10px 14px; font-size: 13px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
 .steps { margin: 12px 0 0; padding-left: 1.3em; font-size: 14px; }
 .steps li { margin-bottom: 4px; }
+.credits { border: 1px solid var(--line); background: var(--tile); padding: 14px 16px; margin: 4px 0 14px; }
+.credits-h { margin: 0 0 6px; font: 500 12px var(--mono); letter-spacing: .06em; color: var(--sub); }
+.credits ul { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.credits li { padding: 3px 0; overflow-wrap: anywhere; }
+.credits li.me { font-weight: 700; }
+.credits li.me::before { content: "● "; }
+.credits-note { margin: 8px 0 0; font-size: 13px; }
+.paste { margin-top: 14px; font-size: 14px; }
+.paste summary { cursor: pointer; text-decoration: underline; color: var(--sub); }
+.paste textarea { margin: 10px 0 8px; }
 code { font-family: var(--mono); font-size: .9em; background: var(--tile); padding: 1px 5px; }
 </style>
 </head>
@@ -85,11 +95,24 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   <section>
     <h2><span class="n">01</span>URL から自動入力</h2>
     <div class="row">
-      <input type="url" id="srcUrl" placeholder="Apple Music / Spotify / YouTube / SoundCloud のURLを貼り付け" autocomplete="off">
+      <input type="url" id="srcUrl" placeholder="配信URL、またはレーベル・アーティストのリリース情報ページのURL" autocomplete="off">
       <button class="primary" type="button" id="fetchBtn">読み込む</button>
     </div>
     <p class="status" id="fetchStatus"></p>
-    <p class="hint" style="margin:0">Apple Music のURLだと、曲名・アーティスト・リリース日・ジャケット・試聴音源までまとめて入ります。担当内容（作曲・編曲など）は配信サービスから取得できないため、下で選んでください。</p>
+    <div class="credits" id="creditBox" hidden>
+      <p class="credits-h">ページから見つかったクレジット</p>
+      <ul id="creditList"></ul>
+      <p class="credits-note" id="creditNote"></p>
+    </div>
+    <p class="hint" style="margin:0">
+      ・<b>Apple Music</b> のURL：曲名・アーティスト・リリース日・ジャケット・試聴音源が入ります。<br>
+      ・<b>レーベルやアーティストのリリース情報ページ</b>のURL：「作曲：〇〇」「編曲：〇〇」などの表記から、あなたの担当内容を自動で選びます（下の「04 プロフィール」で<b>クレジット上の名前</b>を設定しておいてください）。
+    </p>
+    <details class="paste">
+      <summary>ページが読み込めないときは、クレジットの文章を貼り付け</summary>
+      <textarea id="creditText" placeholder="例：作詞：〇〇〇〇　作曲・編曲：〇〇〇〇"></textarea>
+      <button type="button" id="parseBtn">クレジットを読み取る</button>
+    </details>
   </section>
 
   <!-- 2. form -->
@@ -100,6 +123,11 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
         <div class="thumb" id="thumb">NO IMAGE</div>
       </div>
       <div class="grid2">
+        <div class="span2">
+          <label for="f-album">収録アルバム名<span class="hint">同じアルバム名・同じアーティストの曲は、サイトで1つのページにまとまります（シングルなら空欄）</span></label>
+          <input type="text" id="f-album" list="albumList" autocomplete="off">
+          <datalist id="albumList"></datalist>
+        </div>
         <div class="span2">
           <label for="f-format">リリース形態<span class="hint">曲名の上に小さく表示（例：3rd Single、1st Album『〇〇』収録）</span></label>
           <input type="text" id="f-format" placeholder="3rd Single">
@@ -159,6 +187,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       <div><label for="s-role">肩書き</label><input type="text" id="s-role"></div>
       <div class="span2"><label for="s-bio">紹介文</label><textarea id="s-bio"></textarea></div>
       <div class="span2"><label for="s-email">連絡先メールアドレス</label><input type="email" id="s-email"></div>
+      <div class="span2"><label for="s-creditNames">クレジット上の名前<span class="hint">表記ゆれがあれば「,」で区切って複数（例：山田太郎, Taro Yamada）</span></label><input type="text" id="s-creditNames"></div>
     </div>
   </section>
 
@@ -241,7 +270,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-image").addEventListener("input", function () { clearTimeout(updateThumb.t); updateThumb.t = setTimeout(updateThumb, 400); });
 
   // ---- form ----
-  var FIELDS = ["format", "title", "artist", "credit", "date", "image", "link", "audio", "note"];
+  var FIELDS = ["album", "format", "title", "artist", "credit", "date", "image", "link", "audio", "note"];
   function readForm() {
     var w = {};
     FIELDS.forEach(function (k) { w[k] = $("f-" + k).value.trim(); });
@@ -279,7 +308,14 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
 
   // ---- list ----
   var pendingDelete = -1;
+  function renderAlbums() {
+    var seen = {};
+    $("albumList").innerHTML = state.works.map(function (w) { return String(w.album || "").trim(); })
+      .filter(function (n) { if (!n || seen[n]) return false; seen[n] = 1; return true; })
+      .map(function (n) { return '<option value="' + esc(n) + '"></option>'; }).join("");
+  }
   function renderList() {
+    renderAlbums();
     $("listCount").textContent = "(" + state.works.length + ")";
     $("list").innerHTML = state.works.map(function (w, i) {
       var del = pendingDelete === i
@@ -289,7 +325,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           '<button type="button" data-a="edit" data-i="' + i + '">編集</button>' +
           '<button type="button" class="del" data-a="del" data-i="' + i + '">削除</button>';
       return '<li class="' + (i === editingIndex ? "editing" : "") + '"><div class="tb">' + (w.image ? '<img src="' + esc(w.image) + '" alt="" onerror="this.remove()">' : "") + "</div>" +
-        '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
+        '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.album ? "『" + w.album + "』" : "", w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
         '<div class="ops">' + del + "</div></li>";
     }).join("");
   }
@@ -312,8 +348,8 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   });
 
   // ---- site ----
-  function loadSite() { ["name", "role", "bio", "email"].forEach(function (k) { $("s-" + k).value = state.site[k] || ""; }); }
-  ["name", "role", "bio", "email"].forEach(function (k) {
+  function loadSite() { ["name", "role", "bio", "email", "creditNames"].forEach(function (k) { $("s-" + k).value = state.site[k] || ""; }); }
+  ["name", "role", "bio", "email", "creditNames"].forEach(function (k) {
     $("s-" + k).addEventListener("input", function () { state.site[k] = $("s-" + k).value; persist(); });
   });
 
@@ -345,6 +381,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       var r = d && d.results && d.results[0]; if (!r) throw new Error("notfound");
       return {
         title: r.trackName || r.collectionName || "",
+        album: albumName(r),
         artist: r.artistName || "",
         date: isoToDate(r.releaseDate),
         image: bigArtwork(r.artworkUrl100),
@@ -352,6 +389,11 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
         link: u.href
       };
     });
+  }
+  function albumName(r) {
+    var c = String(r.collectionName || "");
+    if (!r.trackName || /\s-\s(Single|シングル)$/i.test(c)) return "";
+    return c.replace(/\s-\s(EP|Single)$/i, "").trim();
   }
   function guessFromItunes(title) {
     return jsonp("https://itunes.apple.com/search?term=" + encodeURIComponent(title) + "&country=jp&entity=song&limit=10").then(function (d) {
@@ -388,7 +430,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
         return { w: { title: d.title || "", artist: d.author_name || "", image: id ? "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg" : (d.thumbnail_url || ""), link: raw },
                  note: "YouTubeは動画タイトル・チャンネル名がそのまま入ります。必要に応じて整えてください。" };
       });
-    } else {
+    } else if (/(spotify|soundcloud)\.com$/.test(host)) {
       job = oembed(raw).then(function (d) {
         var w = { title: d.title || "", artist: d.author_name || "", image: d.thumbnail_url || "", link: raw };
         if (/spotify\.com$/.test(host) && w.title) {
@@ -400,15 +442,189 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
         }
         return { w: w, note: "" };
       });
+    } else {
+      // any other site (label / artist / news page)
+      job = scanPage(raw, 2).then(function (p) {
+        var w = { title: p.title, artist: p.artist, image: p.image, date: p.date, link: raw };
+        var titleForCredits = $("f-title").value.trim() || p.title;
+        return { w: w, note: "ページの情報から入力しました。曲名やアーティスト名の表記を確認してください。", credits: extractCredits(p.text, titleForCredits) };
+      });
     }
 
     job.then(function (res) {
-      if (editingIndex < 0) FIELDS.forEach(function (k) { if (["credit", "format", "note"].indexOf(k) < 0) $("f-" + k).value = ""; });
+      if (editingIndex < 0) FIELDS.forEach(function (k) { if (["credit", "format", "note", "album"].indexOf(k) < 0) $("f-" + k).value = ""; });
       fillForm(res.w);
-      setStatus("fetchStatus", "読み込みました。" + (res.note ? res.note + " " : "") + "担当内容を選んで「" + $("saveBtn").textContent + "」を押してください。", "ok");
+      if (res.credits) return res;
+      // streaming pages rarely list credits, but try once quickly
+      return scanPage(raw, 0).then(function (p) {
+        res.credits = extractCredits(p.text, $("f-title").value.trim()); return res;
+      }).catch(function () { res.credits = []; return res; });
+    }).then(function (res) {
+      var msg = showCredits(res.credits);
+      setStatus("fetchStatus", "読み込みました。" + (res.note ? res.note + " " : "") + msg, "ok");
     }).catch(function () {
-      setStatus("fetchStatus", "このURLからは情報を取得できませんでした。下のフォームに手入力するか、Apple Music のURLで試してください。", "err");
+      showCredits(null);
+      setStatus("fetchStatus", "このページからは情報を取得できませんでした。下の「クレジットの文章を貼り付け」を使うか、フォームに手入力してください。", "err");
     }).then(function () { btn.disabled = false; });
+  });
+
+  // ---- credit reading ----
+  // fetch any page through public relay services (needed because browsers block reading other sites directly)
+  var RELAYS = [
+    function (u) { return "https://api.allorigins.win/raw?url=" + encodeURIComponent(u); },
+    function (u) { return "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(u); },
+    function (u) { return "https://r.jina.ai/" + u; }
+  ];
+  function fetchText(url, ms) {
+    var ctl = window.AbortController ? new AbortController() : null;
+    var t = setTimeout(function () { if (ctl) ctl.abort(); }, ms);
+    return fetch(url, ctl ? { signal: ctl.signal } : {}).then(function (r) {
+      clearTimeout(t); if (!r.ok) throw new Error(r.status); return r.text();
+    }, function (e) { clearTimeout(t); throw e; });
+  }
+  function scanPage(url, lastRelay) {
+    var i = 0;
+    function next() {
+      if (i > lastRelay) return Promise.reject(new Error("unreachable"));
+      var relay = RELAYS[i++];
+      return fetchText(relay(url), 12000).then(function (body) {
+        if (!body || body.length < 40) throw new Error("empty");
+        return /<html|<head|<meta|<body/i.test(body.slice(0, 3000)) ? fromHTML(body, url) : fromPlain(body, url);
+      }).catch(next);
+    }
+    return next();
+  }
+  function absUrl(v, base) { try { return v ? new URL(v, base).href : ""; } catch (e) { return ""; } }
+  function splitTitle(raw) {
+    var t = String(raw || "").replace(/\s+/g, " ").trim(), artist = "";
+    var m = t.match(/^(.*?)\s*[「『“"]([^」』”"]+)[」』”"]/);
+    if (m) { artist = m[1].replace(/(新曲|ニュー|New|配信|リリース|決定|の|が).*$/i, "").replace(/[\s:：\-|｜]+$/, ""); t = m[2]; }
+    else t = t.split(/\s[|｜–—-]\s/)[0];
+    return { title: t.trim(), artist: artist.trim() };
+  }
+  function findDate(text) {
+    var re = /(発売|リリース|配信|release|on sale)[^0-9\n]{0,20}(20\d{2})\s*[年.\/\-]\s*(\d{1,2})\s*[月.\/\-]\s*(\d{1,2})/i;
+    var m = String(text).match(re);
+    return m ? normDate(m[2] + "." + m[3] + "." + m[4]) : "";
+  }
+  function fromHTML(html, base) {
+    var doc = new DOMParser().parseFromString(html, "text/html");
+    function meta(n) { var e = doc.querySelector('meta[property="' + n + '"], meta[name="' + n + '"]'); return e ? (e.getAttribute("content") || "") : ""; }
+    var ogTitle = meta("og:title") || (doc.title || "");
+    var image = absUrl(meta("og:image") || meta("twitter:image"), base);
+    doc.querySelectorAll("script, style, noscript, svg, template").forEach(function (e) { e.remove(); });
+    doc.querySelectorAll("br").forEach(function (e) { e.replaceWith("\n"); });
+    doc.querySelectorAll("p, div, li, dt, dd, tr, td, th, h1, h2, h3, h4, h5, h6, section, article, span.credit").forEach(function (e) { e.append("\n"); });
+    var text = doc.body ? doc.body.textContent : "";
+    var st = splitTitle(ogTitle);
+    return { title: st.title, artist: st.artist, image: image, date: findDate(text), text: text };
+  }
+  function fromPlain(body, base) {
+    var tm = body.match(/^Title:\s*(.+)$/m);
+    var im = body.match(/!\[[^\]]*\]\((https?:\/\/[^)\s]+\.(?:jpe?g|png|webp)[^)\s]*)\)/i);
+    var st = splitTitle(tm ? tm[1] : "");
+    return { title: st.title, artist: st.artist, image: im ? im[1] : "", date: findDate(body), text: body };
+  }
+
+  var ROLE_WORDS = "作詞|作曲|編曲|Lyrics|Words|Music|Composed|Composer|Composition|Arranged|Arrangement|Arranger|Written|Songwriters?|詞|曲";
+  var LABEL_RE;
+  try {
+    LABEL_RE = new RegExp("(?<![\\p{L}\\p{N}])((?:" + ROLE_WORDS + ")(?:\\s*(?:[・･/／&＆,、]|and)?\\s*(?:" + ROLE_WORDS + "))*)\\s*(by\\s+|[:：]\\s*|$)", "giu");
+  } catch (e) {
+    LABEL_RE = new RegExp("((?:" + ROLE_WORDS + ")(?:\\s*(?:[・･/／&＆,、]|and)?\\s*(?:" + ROLE_WORDS + "))*)\\s*(by\\s+|[:：]\\s*|$)", "gi");
+  }
+  function rolesOf(label) {
+    var out = [];
+    (label.match(new RegExp(ROLE_WORDS, "gi")) || []).forEach(function (w) {
+      w = w.toLowerCase();
+      var r = /^(作詞|詞|lyrics|words)$/.test(w) ? ["作詞"]
+            : /^(作曲|曲|music|composed|composer|composition|songwriters?)$/.test(w) ? ["作曲"]
+            : /^(編曲|arranged|arrangement|arranger)$/.test(w) ? ["編曲"]
+            : w === "written" ? ["作詞", "作曲"] : [];
+      r.forEach(function (x) { if (out.indexOf(x) < 0) out.push(x); });
+    });
+    return out;
+  }
+  function cleanNames(s) { return String(s || "").replace(/^[\s/／|｜・、,，:：]+|[\s/／|｜・、,，]+$/g, "").slice(0, 120); }
+  function creditsFromText(text) {
+    var lines = String(text).split(/\n/).map(function (l) { return l.replace(/[\t 　]+/g, " ").trim(); }).filter(Boolean);
+    var found = [];
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i], ms = [], m;
+      if (line.length > 300) continue;
+      LABEL_RE.lastIndex = 0;
+      while ((m = LABEL_RE.exec(line))) {
+        if (m[0] === "") { LABEL_RE.lastIndex++; continue; }
+        var endsLine = m[2] === "";
+        if (endsLine && line !== m[1].trim()) continue; // a role word at the end of a sentence is not a label
+        ms.push({ start: m.index, end: m.index + m[0].length, label: m[1], alone: endsLine });
+      }
+      ms.forEach(function (x, k) {
+        var names = x.alone ? (lines[i + 1] || "") : line.slice(x.end, k + 1 < ms.length ? ms[k + 1].start : line.length);
+        names = cleanNames(names);
+        var roles = rolesOf(x.label);
+        if (names && roles.length && names.length < 120) found.push({ label: x.label.trim(), roles: roles, names: names });
+      });
+    }
+    return found;
+  }
+  function extractCredits(text, title) {
+    text = String(text || "");
+    if (title) {
+      // on pages that list several songs, look just after this song's title first
+      var parts = [], idx = -1, guard = 0;
+      var TRACK = /^\s*(\d{1,2}|M-?\d{1,2}|Tr\.?\s*\d+|#\d+)\s*[.．:：)）\-]/i;
+      while ((idx = text.indexOf(title, idx + 1)) >= 0 && guard++ < 20) {
+        var ls = text.slice(idx, idx + 700).split("\n"), keep = [ls[0]];
+        for (var j = 1; j < ls.length; j++) { if (TRACK.test(ls[j])) break; keep.push(ls[j]); }
+        parts.push(keep.join("\n"));
+      }
+      var near = creditsFromText(parts.join("\n"));
+      if (near.length) return dedupe(near);
+    }
+    return dedupe(creditsFromText(text));
+  }
+  function dedupe(list) {
+    var seen = {}; return list.filter(function (c) { var k = c.label + "|" + c.names; if (seen[k]) return false; seen[k] = 1; return true; }).slice(0, 20);
+  }
+  function myNames() {
+    var raw = (state.site.creditNames || "") + "," + (state.site.name || "");
+    return raw.split(/[,，、\n]/).map(normName).filter(function (s) { return s && s !== "yourname"; });
+  }
+  function normName(s) { return String(s || "").toLowerCase().replace(/[\s　・･.]/g, ""); }
+  function showCredits(credits) {
+    var box = $("creditBox");
+    if (!credits || !credits.length) {
+      box.hidden = true;
+      return credits ? "クレジット表記は見つかりませんでした。担当内容を選んでください。" : "";
+    }
+    var mine = myNames(), roles = [];
+    $("creditList").innerHTML = credits.map(function (c) {
+      var hit = mine.some(function (n) { return normName(c.names).indexOf(n) >= 0; });
+      if (hit) c.roles.forEach(function (r) { if (roles.indexOf(r) < 0) roles.push(r); });
+      return '<li class="' + (hit ? "me" : "") + '">' + esc(c.label) + "：" + esc(c.names) + "</li>";
+    }).join("");
+    box.hidden = false;
+    if (!mine.length) {
+      $("creditNote").textContent = "「04 プロフィール」の「クレジット上の名前」を入れると、あなたの担当を自動で選べます。";
+      return "見つかったクレジットを確認して、担当内容を選んでください。";
+    }
+    if (!roles.length) {
+      $("creditNote").textContent = "あなたの名前が見つかりませんでした。表記が違う場合は「クレジット上の名前」に追加してください。";
+      return "担当内容を選んでください。";
+    }
+    roles.sort(function (a, b) { return ROLE_CHOICES.indexOf(a) - ROLE_CHOICES.indexOf(b); });
+    $("f-credit").value = roles.join("・"); renderChips();
+    $("creditNote").textContent = "● の行にあなたの名前があったので、担当内容を「" + roles.join("・") + "」にしました。";
+    return "担当内容を自動で選びました。確認して「" + $("saveBtn").textContent + "」を押してください。";
+  }
+  $("parseBtn").addEventListener("click", function () {
+    var text = $("creditText").value;
+    if (!text.trim()) { setStatus("fetchStatus", "クレジットの文章を貼り付けてください。", "err"); return; }
+    var credits = extractCredits(text, $("f-title").value.trim());
+    var d = findDate(text); if (d && !$("f-date").value.trim()) $("f-date").value = d;
+    var msg = showCredits(credits);
+    setStatus("fetchStatus", credits.length ? msg : "クレジット表記（作曲：〇〇 など）が見つかりませんでした。", credits.length ? "ok" : "err");
   });
 
   // ---- export ----
@@ -417,7 +633,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       "/* =========================================================",
       "   WORKS データファイル（admin.html から書き出し: " + new Date().toLocaleString("ja-JP") + "）",
       "   ---------------------------------------------------------",
-      "   format: リリース形態 / title: 曲名 / artist: アーティスト名 / credit: 担当内容",
+      "   album: 収録アルバム / format: リリース形態 / title: 曲名 / artist: アーティスト名 / credit: 担当内容",
       "   date: リリース日 / image: ジャケット画像 / link: リンク / audio: 試聴音源 / note: 解説",
       "   ========================================================= */",
       ""

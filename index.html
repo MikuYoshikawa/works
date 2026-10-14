@@ -247,6 +247,27 @@ dialog.detail[open] { animation: dIn .28s ease-out; }
 .d-play.on { background: var(--ink); color: var(--bg); }
 .d-play.on .i-play { display: none; }
 .d-play.on .i-pause { display: inline; }
+.d-tracks { margin-top: 36px; }
+.d-tracks-h { margin: 0 0 4px; font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--sub); }
+.d-tracks-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.trk { padding-block: 16px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
+.trk-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.trk-t { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; min-width: 0; }
+.trk-c { font-size: 12px; color: var(--sub); }
+.trk-n { margin: 0; font-size: 14px; color: #333; white-space: pre-line; }
+.trk-a { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+.trk-a a, .trk-a button {
+  font: 500 13px var(--body); color: var(--ink); background: none; border: 0; padding: 4px 0; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.trk-a button { text-decoration: none; border: 1px solid var(--ink); padding: 5px 12px; }
+.trk-a button.on { background: var(--ink); color: var(--bg); }
+.trk-a svg { width: 9px; height: 9px; fill: currentColor; }
+.trk-a .i-pause, .d-play .i-pause { display: none; }
+.trk-a button.on .i-play { display: none; }
+.trk-a button.on .i-pause { display: inline; }
+.trk-a a:focus-visible, .trk-a button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .d-url {
   margin-top: 18px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: baseline;
   font-family: var(--mono); font-size: 12px;
@@ -338,6 +359,10 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
           <div><dt>Date</dt><dd id="dDate"></dd></div>
         </dl>
         <p class="d-note" id="dNote"></p>
+        <div class="d-tracks" id="dTracksBox" hidden>
+          <p class="d-tracks-h" id="dTracksH"></p>
+          <ol class="d-tracks-list" id="dTracks"></ol>
+        </div>
         <div class="d-actions" id="dActions">
           <button class="d-btn d-play" id="dPlay" type="button">
             <svg viewBox="0 0 12 12" aria-hidden="true"><path class="i-play" d="M2 1l9 5-9 5z"/><path class="i-pause" d="M2 1h3v10H2zM7 1h3v10H7z"/></svg><span class="lbl">試聴する</span>
@@ -434,11 +459,43 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     });
   }
 
+  // ---------- group songs on the same album ----------
+  function unionRoles(tracks) {
+    var out = [];
+    tracks.forEach(function (t) { roles(t.credit).forEach(function (r) { if (out.indexOf(r) < 0) out.push(r); }); });
+    out.sort(function (a, b) { var ia = order.indexOf(a), ib = order.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+    return out.join("・");
+  }
+  function asSingle(w, album) {
+    return { album: false, tracks: [w], title: w.title, artist: w.artist,
+      format: w.format || (album ? album + " 収録" : ""), date: dateOf(w), image: w.image,
+      link: w.link, credit: w.credit, note: w.note, audio: w.audio };
+  }
+  var ITEMS = [], groups = {};
+  WORKS.forEach(function (w) {
+    var a = String(w.album || "").trim();
+    if (!a) { ITEMS.push(asSingle(w)); return; }
+    var key = a + "|" + String(w.artist || "").trim();
+    var g = groups[key];
+    if (!g) { g = groups[key] = { album: true, name: a, tracks: [], title: a, artist: w.artist, format: "", date: "", image: "", link: "" }; ITEMS.push(g); }
+    g.tracks.push(w);
+    if (!g.format && w.format) g.format = w.format;
+    if (!g.image && w.image) g.image = w.image;
+    if (!g.date && dateOf(w)) g.date = dateOf(w);
+  });
+  ITEMS = ITEMS.map(function (g) {
+    if (g.album && g.tracks.length === 1) return asSingle(g.tracks[0], g.name);
+    if (g.album) g.credit = unionRoles(g.tracks);
+    return g;
+  });
+
   // ---------- grid ----------
   var list = [];
   var grid = document.getElementById("grid");
   function drawGrid() {
-    list = WORKS.filter(function (w) { return current === "All" || roles(w.credit).indexOf(current) >= 0; });
+    list = ITEMS.filter(function (g) {
+      return current === "All" || g.tracks.some(function (t) { return roles(t.credit).indexOf(current) >= 0; });
+    });
     document.getElementById("count").textContent = "(" + pad(WORKS.length) + ")";
     if (!list.length) { grid.innerHTML = '<li class="empty">作品がまだ登録されていません。</li>'; return; }
     grid.innerHTML = list.map(function (w, i) {
@@ -446,7 +503,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
         '<span class="cover">' + coverHTML(w, true) + "</span>" +
         '<span class="meta">' + (w.format ? '<span class="f">' + esc(w.format) + "</span>" : "") + '<span class="t">' + esc(w.title || "Untitled") + "</span>" +
         (w.artist ? '<span class="a">' + esc(w.artist) + "</span>" : "") +
-        '<span class="c"><span class="cr">' + esc(w.credit || "") + '</span><span class="y">' + esc(dateOf(w) || "—") + "</span></span>" +
+        '<span class="c"><span class="cr">' + esc(w.credit || "") + (w.album ? " ／ " + w.tracks.length + "曲" : "") + '</span><span class="y">' + esc(dateOf(w) || "—") + "</span></span>" +
         "</span></button></li>";
     }).join("");
     guardImages(grid, function (im) { return list[+im.closest(".card").getAttribute("data-i")]; });
@@ -458,19 +515,23 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   // ---------- detail ----------
   var dlg = document.getElementById("detail");
   var pos = 0, lastCard = null;
-  var player = new Audio();
+  var player = new Audio(), curBtn = null;
   var playBtn = document.getElementById("dPlay");
-  function setPlaying(on) {
-    playBtn.classList.toggle("on", on);
-    playBtn.querySelector(".lbl").textContent = on ? "停止" : "試聴する";
+  function mark(btn, on) {
+    if (!btn) return;
+    btn.classList.toggle("on", on);
+    var l = btn.querySelector(".lbl"); if (l) l.textContent = on ? "停止" : "試聴する";
   }
-  player.addEventListener("ended", function () { setPlaying(false); });
-  function stopAudio() { player.pause(); setPlaying(false); }
-  playBtn.addEventListener("click", function () {
-    if (!player.paused) { stopAudio(); return; }
-    var p = player.play(); setPlaying(true);
-    if (p && p.catch) p.catch(function () { setPlaying(false); });
-  });
+  function stopAudio() { player.pause(); mark(curBtn, false); curBtn = null; }
+  player.addEventListener("ended", stopAudio);
+  function toggleAudio(btn) {
+    if (curBtn === btn) { stopAudio(); return; }
+    stopAudio();
+    player.src = btn.getAttribute("data-src"); curBtn = btn; mark(btn, true);
+    var p = player.play(); if (p && p.catch) p.catch(stopAudio);
+  }
+  dlg.addEventListener("click", function (e) { var b = e.target.closest("[data-src]"); if (b) toggleAudio(b); });
+  var ICON = '<svg viewBox="0 0 12 12" aria-hidden="true"><path class="i-play" d="M2 1l9 5-9 5z"/><path class="i-pause" d="M2 1h3v10H2zM7 1h3v10H7z"/></svg>';
 
   function serviceName(url) {
     var h = ""; try { h = new URL(url, location.href).hostname; } catch (e) {}
@@ -494,9 +555,22 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     document.getElementById("dCredit").textContent = w.credit || "—";
     document.getElementById("dDate").textContent = dateOf(w) || "—";
     var note = document.getElementById("dNote"); note.textContent = w.note || ""; note.hidden = !w.note;
-    playBtn.hidden = !w.audio; if (w.audio) player.src = w.audio;
+    playBtn.hidden = !w.audio; if (w.audio) playBtn.setAttribute("data-src", w.audio); else playBtn.removeAttribute("data-src");
     var link = document.getElementById("dLink"), urlBox = document.getElementById("dUrlBox");
     link.hidden = urlBox.hidden = !w.link;
+    var tbox = document.getElementById("dTracksBox");
+    tbox.hidden = !w.album;
+    if (w.album) {
+      document.getElementById("dTracksH").textContent = "Works on this album — " + w.tracks.length + "曲";
+      document.getElementById("dTracks").innerHTML = w.tracks.map(function (t) {
+        return '<li class="trk"><div class="trk-h"><span class="trk-t">' + esc(t.title || "Untitled") + '</span><span class="trk-c">' + esc(t.credit || "") + "</span></div>" +
+          (t.note ? '<p class="trk-n">' + esc(t.note) + "</p>" : "") +
+          ((t.audio || t.link) ? '<div class="trk-a">' +
+            (t.audio ? '<button type="button" data-src="' + esc(t.audio) + '">' + ICON + '<span class="lbl">試聴する</span></button>' : "") +
+            (t.link ? '<a href="' + esc(t.link) + '" target="_blank" rel="noopener">' + esc(serviceName(t.link)) + ' <span aria-hidden="true">↗</span></a>' : "") +
+            "</div>" : "") + "</li>";
+      }).join("");
+    }
     if (w.link) {
       link.href = w.link;
       link.querySelector(".lbl").textContent = serviceName(w.link);
