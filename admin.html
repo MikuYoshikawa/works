@@ -165,9 +165,9 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <input type="text" id="f-credit" placeholder="例：作曲・編曲">
         </div>
         <div class="span2">
-          <label for="f-image">ジャケット画像<span class="hint">画像のURL、または画像が載っているページのURL（配信ページ・レーベルのページなど）</span></label>
-          <div class="row">
-            <input type="text" id="f-image" placeholder="https://…">
+          <label for="f-image">ジャケット画像<span class="hint">複数枚は1行に1つずつ。画像のURL、または画像が載っているページのURLを入れて「URLから取得」（最後の行が画像に置き換わります）。1行目がメインの画像です</span></label>
+          <div class="row" style="align-items:flex-start">
+            <textarea id="f-image" rows="2" placeholder="https://…" style="min-height:52px"></textarea>
             <button type="button" id="imgFetchBtn">URLから取得</button>
           </div>
           <p class="status" id="imgStatus"></p>
@@ -300,8 +300,9 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-media").addEventListener("input", renderMediaChips);
 
   // ---- thumbnail preview ----
+  function imageLines() { return $("f-image").value.split(/\n/).map(function (s) { return s.trim(); }).filter(Boolean); }
   function updateThumb() {
-    var src = $("f-image").value.trim();
+    var src = imageLines()[0] || "";
     if (!src) { $("thumb").textContent = "NO IMAGE"; return; }
     var img = new Image(); img.alt = "";
     img.onerror = function () { $("thumb").textContent = "画像を読み込めません"; };
@@ -316,6 +317,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     var w = {};
     FIELDS.forEach(function (k) { w[k] = $("f-" + k).value.trim(); });
     w.date = normDate(w.date);
+    w.image = imageLines().join("\n");
     return w;
   }
   function fillForm(w, onlyEmpty) {
@@ -349,6 +351,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     var fmtChanged = String(before.format || "") !== String(after.format || "");
     var mediaChanged = String(before.media || "") !== String(after.media || "");
     var dateChanged = String(before.date || before.year || "") !== String(after.date || "");
+    var imageChanged = String(before.image || "") !== String(after.image || "");
     state.works.forEach(function (o, i) {
       if (i === idx) return;
       var a = albumKey(o.album), touched = false;
@@ -357,6 +360,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
         if (fmtChanged && o.format !== after.format) { o.format = after.format; touched = true; }
         if (mediaChanged && o.media !== after.media) { o.media = after.media; touched = true; }
         if (dateChanged && o.date !== after.date) { o.date = after.date; touched = true; }
+        if (imageChanged && o.image !== after.image) { o.image = after.image; touched = true; }
       }
       if (touched) count++;
     });
@@ -371,6 +375,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     if (!w.format && mate.format) w.format = mate.format;
     if (!w.media && mate.media) w.media = mate.media;
     if (!w.date && (mate.date || mate.year)) w.date = String(mate.date || mate.year);
+    if (!w.image && mate.image) w.image = mate.image;
   }
 
   $("saveBtn").addEventListener("click", function () {
@@ -409,7 +414,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           '<button type="button" class="del" data-a="del" data-i="' + i + '">削除</button>';
       return '<li data-i="' + i + '" class="' + (i === editingIndex ? "editing" : "") + '">' +
         '<button type="button" class="handle" aria-label="ドラッグして並べ替え（キーボードは↑↓キー）"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12"/></svg></button>' +
-        '<div class="tb">' + (w.image ? '<img src="' + esc(w.image) + '" alt="" onerror="this.remove()">' : "") + "</div>" +
+        '<div class="tb">' + (w.image ? '<img src="' + esc(String(w.image).split(/\n/)[0].trim()) + '" alt="" onerror="this.remove()">' : "") + "</div>" +
         '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.album ? "『" + w.album + "』" : "", w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
         '<div class="ops">' + del + "</div></li>";
     }).join("");
@@ -811,20 +816,21 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     return scanPage(raw, 2).then(function (p) { return p.image; });
   }
   $("imgFetchBtn").addEventListener("click", function () {
-    var raw = $("f-image").value.trim(), btn = $("imgFetchBtn");
+    var lines = imageLines(), raw = lines[lines.length - 1] || "", btn = $("imgFetchBtn");
     if (!/^https?:\/\//i.test(raw)) { setStatus("imgStatus", "https:// から始まるURLを貼り付けてください。", "err"); return; }
     btn.disabled = true; setStatus("imgStatus", "画像を探しています…");
     findJacket(raw).then(function (src) {
       if (!src) throw new Error("none");
       return testImage(src);
     }).then(function (src) {
-      $("f-image").value = src; updateThumb();
-      setStatus("imgStatus", "ジャケット画像を入れました。左のプレビューで確認してください。", "ok");
+      lines[lines.length - 1] = src;
+      $("f-image").value = lines.join("\n"); updateThumb();
+      setStatus("imgStatus", lines.length > 1 ? lines.length + "枚目のジャケット画像を入れました。" : "ジャケット画像を入れました。左のプレビューで確認してください。", "ok");
     }).catch(function () {
       setStatus("imgStatus", "このURLからは画像が見つかりませんでした。画像を長押しして「画像アドレスをコピー」したURLを貼ると確実です。", "err");
     }).then(function () { btn.disabled = false; });
   });
-  $("f-image").addEventListener("keydown", function (e) { if (e.key === "Enter") $("imgFetchBtn").click(); });
+
 
   // ---- export ----
   function buildFile() {

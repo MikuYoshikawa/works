@@ -51,7 +51,7 @@ a { color: inherit; }
 .topline .name { font-family: var(--body); font-size: clamp(17px, 1.7vw, 22px); font-weight: 700; letter-spacing: .05em; text-transform: none; }
 .topline .role { color: var(--sub); }
 h1 {
-  margin: clamp(40px, 7vw, 88px) 0 0;
+  grid-area: title; margin: 0; align-self: end;
   font-family: var(--display);
   font-variation-settings: "wdth" 125;
   font-weight: 300;
@@ -65,14 +65,23 @@ h1 sup {
   line-height: 1; margin-top: .6em; color: var(--sub);
   font-variant-numeric: tabular-nums;
 }
+/* WORKS on the left, portrait on the right; the introduction opens under WORKS */
 .intro {
-  margin-top: clamp(32px, 4.5vw, 52px);
-  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(18px, 3vw, 40px); align-items: start;
+  margin-top: clamp(40px, 7vw, 88px);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "title photo" "bio photo";
+  grid-template-rows: auto 1fr;
+  column-gap: clamp(20px, 4vw, 64px); row-gap: 0;
 }
-.intro.no-photo { grid-template-columns: minmax(0, 1fr); }
+.intro.no-photo { grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "bio"; }
 .portrait {
-  width: clamp(104px, 17vw, 220px); max-width: 100%; aspect-ratio: 1 / 1;
+  grid-area: photo;
+  width: clamp(132px, 26vw, 340px); max-width: 100%; aspect-ratio: 1 / 1;
   margin: 0; overflow: hidden; background: var(--tile);
+}
+@media (max-width: 600px) {
+  .intro { grid-template-areas: "title photo" "bio bio"; grid-template-rows: auto auto; }
+  .portrait { width: clamp(116px, 34vw, 160px); }
 }
 .portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pf-btn {
@@ -92,7 +101,7 @@ h1 sup {
 @keyframes bioIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .bio.reveal { animation: none; } .pf-cap { transition: none; } }
 .bio {
-  margin: 0;
+  grid-area: bio; margin: clamp(24px, 3vw, 36px) 0 0;
   max-width: 34em;
   color: #333;
   text-wrap: pretty;
@@ -230,23 +239,32 @@ h1 sup {
 .c .y { font-family: var(--mono); font-size: 11px; font-variant-numeric: tabular-nums; flex: none; }
 /* ---------- detail view ---------- */
 html.lock { overflow: hidden; }
+/* the detail floats as a panel over the faded list */
 dialog.detail {
-  border: 0; padding: 0; margin: 0;
-  width: 100%; height: 100%; max-width: none; max-height: none;
+  border: 1px solid var(--line); padding: 0; margin: auto;
+  width: min(1180px, calc(100% - 48px)); height: auto;
+  max-width: none; max-height: calc(100% - 48px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   background: var(--bg); color: var(--ink);
   overflow: auto; overscroll-behavior: contain;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .14), 0 2px 8px rgba(0, 0, 0, .05);
 }
-dialog.detail::backdrop { background: var(--bg); }
-dialog.detail[open] { animation: dIn .28s ease-out; }
-@keyframes dIn { from { opacity: 0; } to { opacity: 1; } }
+dialog.detail::backdrop {
+  background: rgba(255, 255, 255, .72);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+dialog.detail[open] { animation: dIn .3s cubic-bezier(.2, .7, .2, 1); }
+dialog.detail[open]::backdrop { animation: bIn .3s ease-out; }
+@keyframes dIn { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes bIn { from { opacity: 0; } to { opacity: 1; } }
 .d-frame {
-  min-height: 100%;
   display: flex; flex-direction: column;
-  max-width: 1480px; margin: 0 auto;
-  padding-top: max(20px, env(safe-area-inset-top, 0px));
-  padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
-  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
-  padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+  padding: clamp(18px, 2.6vw, 36px) clamp(18px, 3.4vw, 48px);
+}
+@media (max-width: 600px) {
+  dialog.detail {
+    width: calc(100% - 20px);
+    max-height: calc(100% - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  }
 }
 .d-top, .d-nav {
   display: flex; justify-content: space-between; align-items: center; gap: 12px;
@@ -270,13 +288,23 @@ dialog.detail[open] { animation: dIn .28s ease-out; }
 }
 @media (min-width: 900px) {
   .d-body { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); align-items: start; padding-block: 48px; }
-  .d-body .d-art { position: sticky; top: 32px; }
+  .d-body .d-media { position: sticky; top: 32px; }
   .d-info { padding-top: 8px; }
 }
 .d-art {
   position: relative; aspect-ratio: 1 / 1; width: 100%; max-width: min(100%, 680px);
   background: var(--tile); overflow: hidden;
 }
+.d-media { min-width: 0; }
+.d-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.d-thumbs button {
+  width: 58px; height: 58px; padding: 0; border: 1px solid var(--line); background: var(--tile);
+  cursor: pointer; overflow: hidden; opacity: .55; transition: opacity .15s;
+}
+.d-thumbs button img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.d-thumbs button:hover { opacity: .85; }
+.d-thumbs button[aria-pressed="true"] { opacity: 1; border-color: var(--ink); }
+.d-thumbs button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .d-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .d-art .ph-t { font-size: clamp(20px, 3vw, 36px); }
 .d-art .ph-b { font-size: 11px; }
@@ -388,7 +416,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
 @media (prefers-reduced-motion: reduce) {
   .cover img { transition: none; }
   .card:hover img { transform: none; }
-  dialog.detail[open] { animation: none; }
+  dialog.detail[open], dialog.detail[open]::backdrop { animation: none; }
 }
 </style>
 </head>
@@ -399,8 +427,8 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     <span class="name" id="siteName"></span>
     <span class="role" id="siteRole"></span>
   </div>
-  <h1>WORKS<sup id="count"></sup></h1>
   <div class="intro" id="intro">
+    <h1>WORKS<sup id="count"></sup></h1>
     <figure class="portrait" id="portrait">
       <button type="button" class="pf-btn" id="pfBtn" aria-expanded="false" aria-controls="siteBio">
         <img id="photo" alt="">
@@ -459,7 +487,10 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
       <button class="d-close" id="dClose" type="button">Close <span aria-hidden="true">×</span></button>
     </div>
     <div class="d-body">
-      <div class="d-art" id="dArt"></div>
+      <div class="d-media">
+        <div class="d-art" id="dArt"></div>
+        <div class="d-thumbs" id="dThumbs" hidden></div>
+      </div>
       <div class="d-info">
         <p class="d-format" id="dFormat"></p>
         <h2 class="d-title" id="dTitle"></h2>
@@ -698,9 +729,10 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   function splitArtists(s) { return String(s || "").split(/\s*[,，、]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function mediaList(v) { return String(v || "").split(/[・、,，\/／]+/).map(normMedia).filter(Boolean); }
   function mediaTags(list) { return list.map(function (m) { return '<span class="md">' + esc(m) + "</span>"; }).join(""); }
+  function imageList(v) { return String(v || "").split(/\s*[\r\n]+\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function asSingle(w, album) {
     return { album: false, tracks: [w], title: w.title, artist: w.artist, media: mediaList(w.media),
-      format: w.format || (album ? album + " 収録" : ""), date: dateOf(w), image: w.image,
+      format: w.format || (album ? album + " 収録" : ""), date: dateOf(w), images: imageList(w.image), image: imageList(w.image)[0] || "",
       link: w.link, credit: w.credit, note: w.note, audio: w.audio };
   }
   var ITEMS = [], groups = {};
@@ -712,7 +744,9 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     if (!g) { g = groups[key] = { album: true, name: a, tracks: [], title: a, artist: w.artist, format: "", date: "", image: "", link: "" }; ITEMS.push(g); }
     g.tracks.push(w);
     if (!g.format && w.format) g.format = w.format;
-    if (!g.image && w.image) g.image = w.image;
+    if (!g.images) g.images = [];
+    imageList(w.image).forEach(function (u) { if (g.images.indexOf(u) < 0) g.images.push(u); });
+    g.image = g.images[0] || "";
     if (!g.date && dateOf(w)) g.date = dateOf(w);
   });
   ITEMS = ITEMS.map(function (g) {
@@ -815,9 +849,20 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     var w = list[pos]; if (!w) return;
     stopAudio();
     document.getElementById("dIdx").textContent = pad(pos + 1) + " / " + pad(list.length);
-    var art = document.getElementById("dArt");
-    art.innerHTML = coverHTML(w, false);
-    guardImages(art, function () { return w; });
+    var art = document.getElementById("dArt"), thumbs = document.getElementById("dThumbs");
+    var imgs = (w.images || []).slice();
+    function show(i) {
+      art.innerHTML = imgs.length ? '<img src="' + esc(imgs[i]) + '" alt="' + esc((w.title || "") + " ジャケット " + (i + 1)) + '">' : coverHTML(w, false);
+      guardImages(art, function () { return w; });
+      thumbs.querySelectorAll("button").forEach(function (b, k) { b.setAttribute("aria-pressed", String(k === i)); });
+    }
+    thumbs.innerHTML = imgs.length > 1 ? imgs.map(function (u, i) {
+      return '<button type="button" data-k="' + i + '" aria-label="ジャケット ' + (i + 1) + ' を表示"><img src="' + esc(u) + '" alt=""></button>';
+    }).join("") : "";
+    thumbs.hidden = imgs.length < 2;
+    thumbs.onclick = function (e) { var b = e.target.closest("button"); if (b) show(+b.getAttribute("data-k")); };
+    thumbs.querySelectorAll("img").forEach(function (im) { im.onerror = function () { im.closest("button").remove(); }; });
+    show(0);
     var fm = document.getElementById("dFormat"); fm.textContent = w.format || ""; fm.hidden = !w.format;
     document.getElementById("dTitle").textContent = w.title || "Untitled";
     var ar = document.getElementById("dArtist"); ar.textContent = w.artist || ""; ar.hidden = !w.artist;
@@ -880,6 +925,11 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     if (lastCard && lastCard.focus) lastCard.focus();
   });
   document.getElementById("dClose").addEventListener("click", closeDetail);
+  dlg.addEventListener("click", function (e) {
+    if (e.target !== dlg) return;
+    var r = dlg.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closeDetail();
+  });
   document.getElementById("dPrev").addEventListener("click", function () { if (pos > 0) { pos--; fillDetail(); } });
   document.getElementById("dNext").addEventListener("click", function () { if (pos < list.length - 1) { pos++; fillDetail(); } });
   dlg.addEventListener("keydown", function (e) {
