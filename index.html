@@ -80,8 +80,10 @@ h1 sup {
   margin: 0; overflow: hidden; background: var(--tile);
 }
 @media (max-width: 600px) {
-  .intro { grid-template-areas: "title photo" "bio bio"; grid-template-rows: auto auto; }
-  .portrait { width: clamp(116px, 34vw, 160px); }
+  .intro { grid-template-areas: "title photo" "bio bio"; grid-template-rows: auto auto; column-gap: 16px; }
+  .portrait { width: clamp(96px, 30vw, 150px); }
+  h1 { font-size: min(9.4vw, 46px); min-width: 0; white-space: nowrap; }
+  h1 sup { font-size: 11px; }
 }
 .portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pf-btn {
@@ -188,13 +190,13 @@ h1 sup {
 .cover {
   position: relative; display: block;
   aspect-ratio: 1 / 1; width: 100%; max-width: 100%;
-  background: var(--tile);
+  background: transparent;
   overflow: hidden;
   text-decoration: none;
 }
 .cover img {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; display: block;
+  object-fit: contain; display: block;
   transition: transform .6s cubic-bezier(.2,.7,.2,1);
 }
 
@@ -293,19 +295,19 @@ dialog.detail[open]::backdrop { animation: bIn .3s ease-out; }
 }
 .d-art {
   position: relative; aspect-ratio: 1 / 1; width: 100%; max-width: min(100%, 680px);
-  background: var(--tile); overflow: hidden;
+  background: transparent; overflow: hidden;
 }
 .d-media { min-width: 0; }
 .d-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .d-thumbs button {
-  width: 58px; height: 58px; padding: 0; border: 1px solid var(--line); background: var(--tile);
+  width: 58px; height: 58px; padding: 0; border: 1px solid var(--line); background: transparent;
   cursor: pointer; overflow: hidden; opacity: .55; transition: opacity .15s;
 }
-.d-thumbs button img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.d-thumbs button img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .d-thumbs button:hover { opacity: .85; }
 .d-thumbs button[aria-pressed="true"] { opacity: 1; border-color: var(--ink); }
 .d-thumbs button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.d-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.d-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .d-art .ph-t { font-size: clamp(20px, 3vw, 36px); }
 .d-art .ph-b { font-size: 11px; }
 .d-info { min-width: 0; max-width: 34em; }
