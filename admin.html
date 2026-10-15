@@ -186,6 +186,11 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <input type="text" id="f-audio">
         </div>
         <div class="span2">
+          <label for="f-mv">MV（YouTube のURL）<span class="hint">MVがある曲だけ。詳細画面にサムネイルが出て、押すと再生されます</span></label>
+          <input type="text" id="f-mv" placeholder="https://www.youtube.com/watch?v=…">
+          <img id="mvThumb" alt="" hidden style="margin-top:8px;width:160px;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--line)">
+        </div>
+        <div class="span2">
           <label for="f-note">作品解説・コメント<span class="hint">詳細画面に表示されます（空でもOK）</span></label>
           <textarea id="f-note" placeholder="例：ドラマ主題歌として書き下ろし。"></textarea>
         </div>
@@ -315,7 +320,22 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
 
   // ---- thumbnail preview ----
   function imageLines() { return $("f-image").value.split(/\n/).map(function (s) { return s.trim(); }).filter(Boolean); }
+  function updateMvThumb() {
+    var id = ytId2($("f-mv").value), im = $("mvThumb");
+    if (id) { im.src = "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg"; im.hidden = false; } else { im.hidden = true; im.removeAttribute("src"); }
+  }
+  function ytId2(url) {
+    try {
+      var u = new URL(String(url || "").trim());
+      if (/(^|\.)youtu\.be$/.test(u.hostname)) return u.pathname.slice(1).split("/")[0];
+      if (!/(^|\.)youtube\.com$/.test(u.hostname)) return "";
+      if (u.searchParams.get("v")) return u.searchParams.get("v");
+      var m = u.pathname.match(/\/(shorts|embed|live)\/([\w-]{6,})/); return m ? m[2] : "";
+    } catch (e) { return ""; }
+  }
+  document.addEventListener("input", function (e) { if (e.target && e.target.id === "f-mv") updateMvThumb(); });
   function updateThumb() {
+    updateMvThumb();
     var src = resolveImg(imageLines()[0] || "");
     if (!src) { $("thumb").textContent = "NO IMAGE"; return; }
     var img = new Image(); img.alt = "";
@@ -326,7 +346,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-image").addEventListener("input", function () { clearTimeout(updateThumb.t); updateThumb.t = setTimeout(updateThumb, 400); });
 
   // ---- form ----
-  var FIELDS = ["album", "format", "media", "title", "artist", "credit", "date", "image", "imageCredit", "link", "audio", "note"];
+  var FIELDS = ["album", "format", "media", "title", "artist", "credit", "date", "image", "imageCredit", "link", "audio", "mv", "note"];
   function readForm() {
     var w = {};
     FIELDS.forEach(function (k) { w[k] = $("f-" + k).value.trim(); });
@@ -616,7 +636,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     } else if (/(youtube\.com|youtu\.be)$/.test(host)) {
       job = oembed(raw).then(function (d) {
         var id = ytId(u);
-        return { w: { title: d.title || "", artist: d.author_name || "", image: id ? "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg" : (d.thumbnail_url || ""), link: raw },
+        return { w: { title: d.title || "", artist: d.author_name || "", image: id ? "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg" : (d.thumbnail_url || ""), link: raw, mv: raw },
                  note: "YouTubeは動画タイトル・チャンネル名がそのまま入ります。必要に応じて整えてください。" };
       });
     } else if (/(spotify|soundcloud)\.com$/.test(host)) {
@@ -894,7 +914,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       "   WORKS データファイル（admin.html から書き出し: " + new Date().toLocaleString("ja-JP") + "）",
       "   ---------------------------------------------------------",
       "   album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容",
-      "   date: リリース日 / image: ジャケット画像 / imageCredit: ジャケットのクレジット / link: リンク / audio: 試聴音源 / note: 解説",
+      "   date: リリース日 / image: ジャケット画像 / imageCredit: ジャケットのクレジット / link: リンク / audio: 試聴音源 / mv: MV(YouTube) / note: 解説",
       "   ========================================================= */",
       ""
     ].join("\n");
