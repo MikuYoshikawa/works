@@ -816,6 +816,12 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       var m = u.pathname.match(/\/(shorts|embed|live)\/([\w-]{6,})/); return m ? m[2] : "";
     } catch (e) { return ""; }
   }
+  // on an album page the album's own links are enough: song-by-song links are only shown when the album has none
+  var curAlbum = null;
+  function trackOnly(t) {
+    if (curAlbum && curAlbum.sharedKeys && curAlbum.sharedKeys.length) return [];
+    return linkList(t.link);
+  }
   function mvHTML(url) {
     var id = ytId(url); if (!id) return "";
     return '<div class="mv-box" data-yt="' + esc(id) + '"><button type="button" class="mv-play" aria-label="MVを再生">' +
@@ -1027,6 +1033,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     playBtn.hidden = !w.audio; if (w.audio) playBtn.setAttribute("data-src", w.audio); else playBtn.removeAttribute("data-src");
     var link = document.getElementById("dLink"), urlBox = document.getElementById("dUrlBox");
     link.hidden = !w.link; urlBox.hidden = true;
+    curAlbum = w.album ? w : null;
     var tbox = document.getElementById("dTracksBox");
     tbox.hidden = !w.album;
     if (w.album) {
@@ -1037,9 +1044,9 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
           (own ? '<p class="trk-ar">' + esc(own) + "</p>" : "") +
           (t.note ? '<p class="trk-n">' + esc(t.note) + "</p>" : "") +
           (ytId(t.mv) ? '<div class="trk-mv">' + mvHTML(t.mv) + "</div>" : "") +
-          ((t.audio || linkList(t.link).some(function (u) { return w.sharedKeys.indexOf(linkKey(u)) < 0; })) ? '<div class="trk-a">' +
+          ((t.audio || trackOnly(t).length) ? '<div class="trk-a">' +
             (t.audio ? '<button type="button" data-src="' + esc(t.audio) + '">' + ICON + '<span class="lbl">試聴する</span></button>' : "") +
-            linkList(t.link).filter(function (u) { return w.sharedKeys.indexOf(linkKey(u)) < 0; }).map(function (u) {
+            trackOnly(t).map(function (u) {
               return '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(serviceName(u)) + ' <span aria-hidden="true">↗</span></a>';
             }).join("") +
             "</div>" : "") + "</li>";

@@ -397,6 +397,9 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     var dateChanged = String(before.date || before.year || "") !== String(after.date || "");
     var imageChanged = String(before.image || "") !== String(after.image || "");
     var icChanged = String(before.imageCredit || "") !== String(after.imageCredit || "");
+    function lns(v) { return String(v || "").split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean); }
+    var bL = lns(before.link), aL = lns(after.link);
+    var addedL = aL.filter(function (u) { return bL.indexOf(u) < 0; }), removedL = bL.filter(function (u) { return aL.indexOf(u) < 0; });
     state.works.forEach(function (o, i) {
       if (i === idx) return;
       var a = albumKey(o.album), touched = false;
@@ -407,6 +410,12 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
         if (dateChanged && o.date !== after.date) { o.date = after.date; touched = true; }
         if (imageChanged && o.image !== after.image) { o.image = after.image; touched = true; }
         if (icChanged && o.imageCredit !== after.imageCredit) { o.imageCredit = after.imageCredit; touched = true; }
+        if (addedL.length || removedL.length) {
+          // links added to / removed from this song are added to / removed from the album's other songs too
+          var ol = lns(o.link), nl = ol.filter(function (u) { return removedL.indexOf(u) < 0; });
+          addedL.forEach(function (u) { if (nl.indexOf(u) < 0) nl.push(u); });
+          if (nl.join("\n") !== ol.join("\n")) { o.link = nl.join("\n"); touched = true; }
+        }
       }
       if (touched) count++;
     });
@@ -423,6 +432,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     if (!w.date && (mate.date || mate.year)) w.date = String(mate.date || mate.year);
     if (!w.image && mate.image) w.image = mate.image;
     if (!w.imageCredit && mate.imageCredit) w.imageCredit = mate.imageCredit;
+    if (!w.link && mate.link) w.link = mate.link;
   }
 
   $("saveBtn").addEventListener("click", function () {
