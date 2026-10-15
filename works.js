@@ -1,5 +1,5 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 14:49:44）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 15:02:53）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / link: リンク / audio: 試聴音源 / note: 解説
@@ -100,7 +100,7 @@ window.WORKS = [
     "media": "CD・デジタル配信",
     "title": "和風な学級委員長ですから",
     "artist": "",
-    "credit": "",
+    "credit": "編曲",
     "date": "2025.03.05",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
     "link": "https://music.apple.com/jp/album/%E5%92%8C%E9%A2%A8%E3%81%AA%E5%AD%A6%E7%B4%9A%E5%A7%94%E5%93%A1%E9%95%B7%E3%81%A7%E3%81%99%E3%81%8B%E3%82%89/1793708472?i=1793708831",
@@ -113,7 +113,7 @@ window.WORKS = [
     "media": "CD・デジタル配信",
     "title": "ベストデート",
     "artist": "",
-    "credit": "",
+    "credit": "編曲",
     "date": "2025.03.05",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
     "link": "https://music.apple.com/jp/album/%E3%83%99%E3%82%B9%E3%83%88%E3%83%87%E3%83%BC%E3%83%88/1793708472?i=1793708713",
@@ -264,7 +264,7 @@ window.WORKS = [
     "note": "共編曲：遠藤ナオキ"
   },
   {
-    "album": "SEASIDE - single",
+    "album": "SEASIDE",
     "format": "",
     "media": "デジタル配信",
     "title": "SEASIDE",
@@ -277,7 +277,7 @@ window.WORKS = [
     "note": ""
   },
   {
-    "album": "SEASIDE - single",
+    "album": "SEASIDE",
     "format": "",
     "media": "デジタル配信",
     "title": "SEASIDE (Instrumental)",
