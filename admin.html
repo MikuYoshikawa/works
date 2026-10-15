@@ -335,6 +335,14 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   });
   $("f-media").addEventListener("input", renderMediaChips);
 
+  // ---- event page preset ----
+  $("f-page").addEventListener("change", function () {
+    if (this.value !== "event") return;
+    $("f-credit").value = "作曲・作詞・編曲";
+    $("f-media").value = "Digital";
+    renderChips(); renderMediaChips();
+  });
+
   // ---- thumbnail preview ----
   function imageLines() { return $("f-image").value.split(/\n/).map(function (s) { return s.trim(); }).filter(Boolean); }
   function updateMvThumb() {
