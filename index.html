@@ -99,9 +99,11 @@ h1 sup {
 @media (hover: hover) { .pf-btn:hover .pf-cap { opacity: 1; } }
 .pf-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .pf-btn:focus-visible .pf-cap, .pf-btn.armed .pf-cap { opacity: 1; }
-.bio.reveal { animation: bioIn .35s ease-out; }
+.bio.reveal { animation: bioIn .45s ease-out; }
+.bio.leave { animation: bioOut .4s ease-in forwards; }
 @keyframes bioIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .bio.reveal { animation: none; } .pf-cap { transition: none; } }
+@keyframes bioOut { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) { .bio.reveal, .bio.leave { animation: none; } .pf-cap { transition: none; } }
 .bio {
   grid-area: bio; margin: clamp(24px, 3vw, 36px) 0 0;
   max-width: 34em;
@@ -622,12 +624,20 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     bio.hidden = true;
     btn.setAttribute("aria-label", "プロフィールを表示");
     var pointer = "mouse", armed = false;
+    var leaveTimer = null;
     function setOpen(open) {
-      bio.hidden = !open;
+      clearTimeout(leaveTimer);
       btn.setAttribute("aria-expanded", String(open));
       cap.textContent = open ? "プロフィールを閉じる" : "プロフィールを表示";
       btn.setAttribute("aria-label", cap.textContent);
-      if (open) { bio.classList.remove("reveal"); void bio.offsetWidth; bio.classList.add("reveal"); }
+      bio.classList.remove("reveal", "leave"); void bio.offsetWidth;
+      if (open) { bio.hidden = false; bio.classList.add("reveal"); }
+      else {
+        // fade out first, then remove it from the layout
+        var reduce = false; try { reduce = matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
+        if (reduce) bio.hidden = true;
+        else { bio.classList.add("leave"); leaveTimer = setTimeout(function () { bio.hidden = true; bio.classList.remove("leave"); }, 400); }
+      }
       armed = false; btn.classList.remove("armed");
     }
     btn.addEventListener("pointerdown", function (e) { pointer = e.pointerType || "mouse"; });
