@@ -1,8 +1,8 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 16:09:15）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 16:15:34）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
-   date: リリース日 / image: ジャケット画像 / imageCredit: ジャケットのクレジット / link: リンク / audio: 試聴音源 / note: 解説
+   date: リリース日 / image: ジャケット画像 / imageCredit: ジャケットのクレジット / link: リンク / audio: 試聴音源 / mv: MV(YouTube) / note: 解説
    ========================================================= */
 
 window.SITE = {
@@ -29,6 +29,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E3%81%93%E3%81%93%E3%81%8B%E3%82%89/6792219151?i=6792219699",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d9/bb/59/d9bb592e-68f4-e968-2f34-d003d50cf8c0/mzaf_14595622131894305304.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -43,6 +44,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://bugs-island.jimdofree.com/",
     "audio": "",
+    "mv": "",
     "note": "作・演出・振付・作詞：近藤大介"
   },
   {
@@ -57,6 +59,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://bugs-island.jimdofree.com/",
     "audio": "",
+    "mv": "",
     "note": "作・演出・振付・作詞：近藤大介"
   },
   {
@@ -71,6 +74,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://event.1242.com/events/itsuai2/",
     "audio": "",
+    "mv": "",
     "note": "演出・音楽・原案：小林顕作\n編曲：遠藤ナオキ"
   },
   {
@@ -85,6 +89,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/p-o-p-new-world/1793708472?i=1793708861",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/cc/14/e7/cc14e7be-383d-865b-705a-51b8df54923f/mzaf_11823041245803211337.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -99,6 +104,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/overrun/1793708472?i=1793708841",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/13/9c/a2/139ca23f-40cd-cb02-b0f9-629a80b44d20/mzaf_6923092461812106363.plus.aac.p.m4a",
+    "mv": "",
     "note": "共編曲：守谷勇人（IM.Labで共編曲）"
   },
   {
@@ -113,6 +119,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E5%92%8C%E9%A2%A8%E3%81%AA%E5%AD%A6%E7%B4%9A%E5%A7%94%E5%93%A1%E9%95%B7%E3%81%A7%E3%81%99%E3%81%8B%E3%82%89/1793708472?i=1793708831",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/db/4e/58/db4e580a-87de-2bb0-d7ed-273736c693ef/mzaf_5523103535858129056.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -127,6 +134,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E3%83%99%E3%82%B9%E3%83%88%E3%83%87%E3%83%BC%E3%83%88/1793708472?i=1793708713",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/67/74/21/67742126-da8d-8c05-a21f-08e6b1ac2bce/mzaf_14756617861931041010.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -141,6 +149,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E3%83%9E%E3%83%BC%E3%83%99%E3%83%A9%E3%82%B9%E3%83%81%E3%83%A7%E3%82%B3/1793708472?i=1793708702",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/fe/d9/f5/fed9f567-3962-dcde-10e6-1797c029cf30/mzaf_4347897915601246532.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -155,6 +164,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E3%82%B1%E3%82%A4%E3%81%A1%E3%82%83%E3%82%93%E3%81%A8%E3%82%AF%E3%83%BC%E3%81%A1%E3%82%83%E3%82%93/1879733663?i=1879733751",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/37/86/bd/3786bd5d-9892-501b-5b8a-fbe4853d0814/mzaf_1345265150120560268.plus.aac.p.m4a",
+    "mv": "",
     "note": "共編曲：畑田浩孝"
   },
   {
@@ -169,6 +179,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/the-twinkle-legends-cm-tiara/1879733663?i=1879733703",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/56/92/0656927b-6e12-26f0-5de6-014e9ea52daf/mzaf_7521773181502222634.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -183,6 +194,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://mahonare.asmik-ace.co.jp/blu-ray",
     "audio": "",
+    "mv": "",
     "note": "作曲：下村陽子\n共編曲：松尾早人、原口大"
   },
   {
@@ -197,6 +209,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://mahonare.asmik-ace.co.jp/blu-ray",
     "audio": "",
+    "mv": "",
     "note": "作曲：下村陽子\n共編曲：松尾早人、原口大"
   },
   {
@@ -211,6 +224,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E6%9C%88%E5%BD%B1%E3%83%9E%E3%82%B9%E3%82%AB%E3%83%AC%E3%83%BC%E3%83%89/6815639880?i=6815639881",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b6/b9/6c/b6b96c87-92b3-db08-8d09-46e3d7646ca9/mzaf_10126943234904296885.plus.aac.p.m4a",
+    "mv": "https://youtu.be/pBnkdX3SM3o?si=FnYJ3TA4NzznVhFc",
     "note": "作詞：ハニホヘト、えなぴ、ゆうぴーまん\n共作曲：ハニホヘト"
   },
   {
@@ -225,6 +239,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
+    "mv": "",
     "note": "編曲：遠藤ナオキ"
   },
   {
@@ -239,6 +254,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
+    "mv": "",
     "note": "共編曲：遠藤ナオキ"
   },
   {
@@ -253,6 +269,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
+    "mv": "",
     "note": "共編曲：遠藤ナオキ"
   },
   {
@@ -267,6 +284,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
+    "mv": "",
     "note": "共編曲：遠藤ナオキ"
   },
   {
@@ -281,6 +299,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
+    "mv": "",
     "note": "共編曲：遠藤ナオキ"
   },
   {
@@ -295,6 +314,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/seaside/6801726435?i=6801726741",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ff/33/ba/ff33ba0e-1f17-b215-b5fa-9f36b433a1f3/mzaf_8618983110849683353.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -309,6 +329,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/seaside-instrumental/6801726435?i=6801726748",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/56/4d/7f/564d7ff6-37d5-948a-b4ba-d8490483f6fa/mzaf_11287096124172525655.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -323,6 +344,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E6%81%8B%E8%8A%B1-day-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503455",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/5e/47/44/5e474459-0f41-1774-d07b-ca2f5bbe1e6f/mzaf_7351339502447318390.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -337,6 +359,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/arrive-to-star-day-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503459",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/cf/02/20/cf0220da-7a67-5677-dbd5-db2ddfd653e4/mzaf_16590717273393405133.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -351,6 +374,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/because-day-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503686",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9f/49/e4/9f49e43c-efbe-d35f-8581-d8a5c28e6163/mzaf_6857459958958137712.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -365,6 +389,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/statice-night-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503703",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/be/48/7e/be487e0b-506c-154a-748d-83ee3f01adfa/mzaf_17935580529825848454.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -379,6 +404,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E8%A3%81%E3%81%8D/6793341703?i=6793342069",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/00/55/52/0055522e-103f-4294-091e-27137222c13f/mzaf_15931413683826846340.plus.aac.p.m4a",
+    "mv": "",
     "note": "作詞・作曲：島太星"
   },
   {
@@ -393,6 +419,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E3%81%9A%E3%81%A3%E3%81%A8-%E5%90%9B%E3%81%A0%E3%81%91/1884263793?i=1884263795",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/20/00/52/20005213-9334-806b-824d-e2b0fcb56f5f/mzaf_1380806418053965960.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -407,6 +434,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/the-1st-movement-%E6%9C%AA%E6%9D%A5%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E4%BA%8C%E9%87%8D%E5%A5%8F-day2-%E7%AC%AC2%E5%B9%95-brillante-stage-%E3%82%88%E3%82%8A-live/1785776646?i=1785777155",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/55/9f/46/559f469c-c3db-abfa-821e-495f1de6906f/mzaf_11773808515689550171.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -421,6 +449,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E3%83%90%E3%82%A4%E3%82%A2%E3%83%AA%E3%83%BC%E3%82%BF%E3%83%BC%E3%82%AF/1813837020?i=1813837237",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/36/a5/88/36a58869-a04c-07c6-cb3e-dff061f9181c/mzaf_10679240525526879951.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -435,6 +464,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/wbc%E9%96%8B%E5%B9%95/1813837020?i=1813837246",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/39/bc/91/39bc91ee-1b16-d836-8eaa-1a16f0dd7a38/mzaf_12360359857397815026.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -449,6 +479,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/super-wbc%E9%96%8B%E5%B9%95/1813837020?i=1813837247",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f5/d2/0f/f5d20f05-fddf-ef2f-9028-19511d4666b2/mzaf_9200938899062138680.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -463,6 +494,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E7%8C%AA%E7%AA%81%E7%8C%9B%E9%80%B2-%E3%81%B2%E3%81%9F%E3%82%80%E3%81%8D-%E3%82%A2%E3%82%A4%E3%82%BA/1813837020?i=1813837260",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/18/8a/09/188a0925-4e40-1307-1847-cfed755126d5/mzaf_1134933196635393996.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -477,6 +509,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E5%81%A5%E6%B0%97%E3%81%AA%E6%86%A7%E3%82%8C%E3%81%AE%E5%85%88%E8%BC%A9/1813856178?i=1813856443",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/95/b1/fb/95b1fbd5-ac31-2b9c-db88-a631ef9b50c3/mzaf_5615738520049713899.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   },
   {
@@ -491,6 +524,7 @@ window.WORKS = [
     "imageCredit": "",
     "link": "https://music.apple.com/jp/album/%E9%99%BD%E3%81%A0%E3%81%BE%E3%82%8A%E3%81%AE%E4%B8%AD%E3%81%A7%E9%A2%A8%E8%96%AB%E3%82%8B/1813856178?i=1813856451",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/dd/28/ab/dd28abd6-a9b2-cb03-14be-6dcbccd1b414/mzaf_1999722614060116034.plus.aac.p.m4a",
+    "mv": "",
     "note": ""
   }
 ];
