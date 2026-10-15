@@ -185,20 +185,30 @@ h1 sup {
   -webkit-tap-highlight-color: transparent;
 }
 .card:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; }
-.card:hover img { transform: scale(1.025); }
+/* hover on PC: the jacket lifts and grows a little, the others step back */
+@media (hover: hover) and (pointer: fine) {
+  .grid .card { transition: opacity .35s ease; }
+  .grid:has(.card:hover) .work:not(:hover) .card { opacity: .45; }
+  .card:hover .cover img, .card:hover .cover .ph {
+    transform: translateY(-6px) scale(1.06);
+    filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .22));
+  }
+}
 .card:hover .t { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 .cover {
   position: relative; display: block;
   aspect-ratio: 1 / 1; width: 100%; max-width: 100%;
   background: transparent;
-  overflow: hidden;
+  overflow: visible;
   text-decoration: none;
+}
+.cover img, .cover .ph {
+  transform-origin: 50% 100%;
+  transition: transform .5s cubic-bezier(.2,.7,.2,1), filter .5s ease;
 }
 .cover img {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: contain; object-position: left bottom; display: block;
-  transform-origin: left bottom;
-  transition: transform .6s cubic-bezier(.2,.7,.2,1);
 }
 
 /* placeholder when no image */
@@ -418,22 +428,43 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
 .fine { margin-top: 64px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: var(--mono); font-size: 11px; color: var(--sub); letter-spacing: .04em; }
 
 @media (prefers-reduced-motion: reduce) {
-  .cover img { transition: none; }
-  .card:hover img { transform: none; }
+  .cover img, .cover .ph { transition: none; }
+  .card:hover .cover img, .card:hover .cover .ph { transform: none; }
+  .d-step { animation: none !important; }
   dialog.detail[open], dialog.detail[open]::backdrop { animation: none; }
 }
+
+/* ---------- detail: parts appear one after another ---------- */
+.d-step { animation: dStep .7s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0ms); }
+@keyframes dStep { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* ---------- entrance: soft, one after another ---------- */
+html.intro-anim [data-rise], html.intro-anim .work.pending {
+  opacity: 0; transform: translateY(14px);
+}
+html.intro-anim [data-rise].in, html.intro-anim .work.in {
+  opacity: 1; transform: none;
+  transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.intro-anim [data-rise], html.intro-anim .work.pending { opacity: 1; transform: none; }
+}
 </style>
+<script>
+try { if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("intro-anim"); } catch (e) {}
+setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending").forEach(function (el) { el.classList.add("in"); }); }, 4000);
+</script>
 </head>
 <body>
 
 <header class="site wrap">
-  <div class="topline">
+  <div class="topline" data-rise>
     <span class="name" id="siteName"></span>
     <span class="role" id="siteRole"></span>
   </div>
   <div class="intro" id="intro">
-    <h1>WORKS<sup id="count"></sup></h1>
-    <figure class="portrait" id="portrait">
+    <h1 data-rise>WORKS<sup id="count"></sup></h1>
+    <figure class="portrait" id="portrait" data-rise>
       <button type="button" class="pf-btn" id="pfBtn" aria-expanded="false" aria-controls="siteBio">
         <img id="photo" alt="">
         <span class="pf-cap" id="pfCap" aria-hidden="true">プロフィールを表示</span>
@@ -444,7 +475,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
 </header>
 
 <main class="wrap">
-  <div class="bar">
+  <div class="bar" data-rise>
     <span class="label">Selected Works</span>
     <div class="bar-r">
       <div class="sel ms" id="roleWrap"><span id="roleLbl">Credit</span>
@@ -467,7 +498,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
 </main>
 
 <footer class="wrap">
-  <div class="contact">
+  <div class="contact" data-rise>
     <div id="mailBox">
       <p class="k">Mail</p>
       <p class="mail" id="mail"></p>
@@ -600,6 +631,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     return '<li><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(label) + ' <span aria-hidden="true">↗</span></a></li>';
   }).join("");
   document.getElementById("linksBox").hidden = !links.length;
+
   document.getElementById("copyright").textContent = "© " + new Date().getFullYear() + " " + (SITE.name || "");
   if (SITE.name) document.title = "WORKS — " + SITE.name;
   if (!email && !links.length) document.querySelector(".contact").hidden = true;
@@ -787,6 +819,43 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     });
   }
 
+  // ---------- entrance animation ----------
+  var firstDraw = true;
+  var animOn = document.documentElement.classList.contains("intro-anim");
+  function revealGrid() {
+    var cards = Array.prototype.slice.call(grid.querySelectorAll(".work.pending"));
+    if (!animOn || !("IntersectionObserver" in window)) { cards.forEach(function (c) { c.classList.add("in"); }); return; }
+    var queue = [], timer = null;
+    function flush() {
+      timer = null;
+      var el = queue.shift(); if (!el) return;
+      el.classList.add("in");
+      if (queue.length) timer = setTimeout(flush, 90);
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target); queue.push(en.target);
+        if (!timer) timer = setTimeout(flush, 0);
+      });
+    }, { rootMargin: "0px 0px -6% 0px" });
+    // wait until the header has settled, then let the cards follow
+    setTimeout(function () { cards.forEach(function (c) { io.observe(c); }); }, 650);
+  }
+  function revealHeader() {
+    var els = Array.prototype.slice.call(document.querySelectorAll("[data-rise]"));
+    if (!animOn) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    els.forEach(function (e, i) {
+      if (e.closest(".contact") || e.classList.contains("contact")) return;
+      setTimeout(function () { e.classList.add("in"); }, 80 + i * 160);
+    });
+    var c = document.querySelector(".contact[data-rise]");
+    if (c && "IntersectionObserver" in window) {
+      var io2 = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { c.classList.add("in"); io2.disconnect(); } });
+      io2.observe(c);
+    } else if (c) c.classList.add("in");
+  }
+
   // ---------- grid ----------
   var list = [];
   var grid = document.getElementById("grid");
@@ -798,7 +867,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     document.getElementById("count").textContent = "(" + pad(WORKS.length) + ")";
     if (!list.length) { grid.innerHTML = '<li class="empty">' + (WORKS.length ? "条件に合う作品がありません。" : "作品がまだ登録されていません。") + "</li>"; return; }
     grid.innerHTML = list.map(function (w, i) {
-      return '<li class="work"><button class="card" type="button" data-i="' + i + '" aria-haspopup="dialog">' +
+      return '<li class="work' + (firstDraw ? " pending" : "") + '"><button class="card" type="button" data-i="' + i + '" aria-haspopup="dialog">' +
         '<span class="cover">' + coverHTML(w, true) + "</span>" +
         '<span class="meta">' + ((w.format || w.media.length) ? '<span class="f">' + (w.format ? '<span class="fm">' + esc(w.format) + "</span>" : "") + mediaTags(w.media) + "</span>" : "") + '<span class="t">' + esc(w.title || "Untitled") + "</span>" +
         (w.artist ? '<span class="a">' + esc(w.artist) + "</span>" : "") +
@@ -806,6 +875,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
         "</span></button></li>";
     }).join("");
     guardImages(grid, function (im) { return list[+im.closest(".card").getAttribute("data-i")]; });
+    if (firstDraw) { firstDraw = false; revealGrid(); }
   }
   grid.addEventListener("click", function (e) {
     var c = e.target.closest(".card"); if (c) openDetail(+c.getAttribute("data-i"));
@@ -907,6 +977,17 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     document.getElementById("dPrev").disabled = pos === 0;
     document.getElementById("dNext").disabled = pos === list.length - 1;
     dlg.querySelector(".d-body").scrollTop = 0; dlg.scrollTop = 0;
+    // let the parts arrive one by one
+    var steps = [dlg.querySelector(".d-media"), document.getElementById("dFormat"), document.getElementById("dTitle"),
+      document.getElementById("dArtist")]
+      .concat(Array.prototype.slice.call(dlg.querySelectorAll(".d-spec > div")))
+      .concat([document.getElementById("dNote"), document.getElementById("dTracksH")])
+      .concat(Array.prototype.slice.call(dlg.querySelectorAll("#dTracks > li")))
+      .concat([document.getElementById("dActions")])
+      .filter(function (el) { return el && !el.hidden && !(el.closest("[hidden]")); });
+    dlg.querySelectorAll(".d-step").forEach(function (el) { el.classList.remove("d-step"); });
+    void dlg.offsetWidth;
+    steps.forEach(function (el, i) { el.style.setProperty("--d", (60 + Math.min(i, 14) * 70) + "ms"); el.classList.add("d-step"); });
   }
   function openDetail(i) {
     pos = i; lastCard = document.activeElement; fillDetail();
@@ -952,7 +1033,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     catch (err) { sel(); done("Select"); }
   });
 
-  drawFilters(); drawMedia(); drawGrid();
+  drawFilters(); drawMedia(); drawGrid(); revealHeader();
 })();
 </script>
 </body>
