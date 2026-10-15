@@ -273,6 +273,10 @@ dialog.detail[open] { animation: dIn .3s cubic-bezier(.2, .7, .2, 1); }
 dialog.detail[open]::backdrop { animation: bIn .3s ease-out; }
 @keyframes dIn { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
 @keyframes bIn { from { opacity: 0; } to { opacity: 1; } }
+dialog.detail.closing { animation: dOut .38s cubic-bezier(.4,0,.6,1) forwards; }
+dialog.detail.closing::backdrop { animation: bOut .38s ease-in forwards; }
+@keyframes dOut { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(14px) scale(.985); } }
+@keyframes bOut { from { opacity: 1; } to { opacity: 0; } }
 .d-frame {
   display: flex; flex-direction: column;
   padding: clamp(18px, 2.6vw, 36px) clamp(18px, 3.4vw, 48px);
@@ -456,7 +460,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   .cover img, .cover .ph { transition: none; }
   .card:hover .cover img, .card:hover .cover .ph { transform: none; }
   .d-step { animation: none !important; }
-  dialog.detail[open], dialog.detail[open]::backdrop { animation: none; }
+  dialog.detail[open], dialog.detail[open]::backdrop, dialog.detail.closing, dialog.detail.closing::backdrop { animation: none; }
 }
 
 /* ---------- detail: parts appear one after another ---------- */
@@ -1069,10 +1073,22 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     stopAudio();
     box.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0&playsinline=1" title="Music Video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
   });
+  var closeTimer = null;
   function closeDetail() {
     stopAudio();
-    if (dlg.open) { if (dlg.close) dlg.close(); else dlg.removeAttribute("open"); }
+    if (!dlg.open || dlg.classList.contains("closing")) return;
+    dlg.querySelectorAll(".mv-box iframe").forEach(function (f) { f.remove(); });
+    var reduce = false; try { reduce = matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
+    function finish() {
+      clearTimeout(closeTimer); dlg.classList.remove("closing");
+      if (dlg.open) { if (dlg.close) dlg.close(); else dlg.removeAttribute("open"); }
+    }
+    if (reduce) { finish(); return; }
+    dlg.classList.add("closing");          // fade the panel and the faded list back out, then close
+    closeTimer = setTimeout(finish, 380);
   }
+  // the Esc key closes gently too
+  dlg.addEventListener("cancel", function (e) { e.preventDefault(); closeDetail(); });
   dlg.addEventListener("close", function () {
     stopAudio(); document.documentElement.classList.remove("lock");
     dlg.querySelectorAll(".mv-box iframe").forEach(function (f) { f.remove(); }); // stop any playing MV
