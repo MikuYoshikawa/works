@@ -827,7 +827,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
   function asSingle(w, album) {
     return { album: false, tracks: [w], title: w.title, artist: w.artist, media: mediaList(w.media),
       format: w.format || (album ? album + " 収録" : ""), date: dateOf(w), images: imageList(w.image), image: imageList(w.image)[0] || "", imageCredit: w.imageCredit || "",
-      link: w.link, credit: w.credit, note: w.note, audio: w.audio, mv: w.mv || "" };
+      link: linkList(w.link)[0] || "", links: linkList(w.link), sharedKeys: [], credit: w.credit, note: w.note, audio: w.audio, mv: w.mv || "" };
   }
   var ITEMS = [], groups = {};
   WORKS.forEach(function (w) {
@@ -860,13 +860,16 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       // a page used by several songs of this album is shown once for the album, not under every song
       var count = {}, firstUrl = {};
       g.tracks.forEach(function (t) {
-        var k = linkKey(t.link); if (!k) return;
-        count[k] = (count[k] || 0) + 1; if (!firstUrl[k]) firstUrl[k] = t.link;
+        var seen = {};
+        linkList(t.link).forEach(function (u) {
+          var k = linkKey(u); if (!k || seen[k]) return; seen[k] = 1;
+          count[k] = (count[k] || 0) + 1; if (!firstUrl[k]) firstUrl[k] = u;
+        });
       });
       var keys = Object.keys(count);
       g.sharedKeys = keys.filter(function (k) { return count[k] >= 2 || keys.length === 1; });
       g.sharedLinks = g.sharedKeys.map(function (k) { return albumUrl(firstUrl[k]); });
-      g.link = g.sharedLinks[0] || "";
+      g.link = g.sharedLinks[0] || ""; g.links = g.sharedLinks;
     }
     return g;
   });
@@ -972,13 +975,26 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
   var ICON = '<svg viewBox="0 0 12 12" aria-hidden="true"><path class="i-play" d="M2 1l9 5-9 5z"/><path class="i-pause" d="M2 1h3v10H2zM7 1h3v10H7z"/></svg>';
 
   function serviceName(url) {
-    var h = ""; try { h = new URL(url, location.href).hostname; } catch (e) {}
-    if (/apple\.com$/.test(h)) return "Apple Music で聴く";
-    if (/spotify\.com$/.test(h)) return "Spotify で聴く";
-    if (/(youtube\.com|youtu\.be)$/.test(h)) return "YouTube で見る";
-    if (/soundcloud\.com$/.test(h)) return "SoundCloud で聴く";
-    return "作品ページを開く";
+    var h = ""; try { h = new URL(url, location.href).hostname.replace(/^www\./, ""); } catch (e) {}
+    if (/apple\.com$/.test(h)) return "Apple Music";
+    if (/spotify\.com$/.test(h)) return "Spotify";
+    if (/^music\.youtube\.com$/.test(h)) return "YouTube Music";
+    if (/(youtube\.com|youtu\.be)$/.test(h)) return "YouTube";
+    if (/music\.amazon\.|amazon\.(co\.jp|com)$|amzn\./.test(h)) return "Amazon Music";
+    if (/music\.line\.me$|line\.me$/.test(h)) return "LINE MUSIC";
+    if (/awa\.fm$/.test(h)) return "AWA";
+    if (/recochoku\.jp$/.test(h)) return "レコチョク";
+    if (/mora\.jp$/.test(h)) return "mora";
+    if (/kkbox\.com$/.test(h)) return "KKBOX";
+    if (/deezer\.com$/.test(h)) return "Deezer";
+    if (/tidal\.com$/.test(h)) return "TIDAL";
+    if (/soundcloud\.com$/.test(h)) return "SoundCloud";
+    if (/bandcamp\.com$/.test(h)) return "Bandcamp";
+    if (/tower\.jp$/.test(h)) return "TOWER RECORDS";
+    if (/(lnk\.to|linkco\.re|linkfire\.com|big-up\.style|friendship\.lnk\.to|orcd\.co|songwhip\.com|tunecore\.co\.jp)$/.test(h) || /^(lnk\.to|linkco\.re)$/.test(h)) return "配信サービス一覧";
+    return "作品ページ";
   }
+  function linkList(v) { return String(v || "").split(/\s*[\r\n]+\s*/).map(function (x) { return x.trim(); }).filter(function (x) { return /^https?:\/\//i.test(x); }); }
 
   function fillDetail() {
     var w = list[pos]; if (!w) return;
@@ -1023,9 +1039,11 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
           (own ? '<p class="trk-ar">' + esc(own) + "</p>" : "") +
           (t.note ? '<p class="trk-n">' + esc(t.note) + "</p>" : "") +
           (ytId(t.mv) ? '<div class="trk-mv">' + mvHTML(t.mv) + "</div>" : "") +
-          ((t.audio || (t.link && w.sharedKeys.indexOf(linkKey(t.link)) < 0)) ? '<div class="trk-a">' +
+          ((t.audio || linkList(t.link).some(function (u) { return w.sharedKeys.indexOf(linkKey(u)) < 0; })) ? '<div class="trk-a">' +
             (t.audio ? '<button type="button" data-src="' + esc(t.audio) + '">' + ICON + '<span class="lbl">試聴する</span></button>' : "") +
-            (t.link && w.sharedKeys.indexOf(linkKey(t.link)) < 0 ? '<a href="' + esc(t.link) + '" target="_blank" rel="noopener">' + esc(serviceName(t.link)) + ' <span aria-hidden="true">↗</span></a>' : "") +
+            linkList(t.link).filter(function (u) { return w.sharedKeys.indexOf(linkKey(u)) < 0; }).map(function (u) {
+              return '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(serviceName(u)) + ' <span aria-hidden="true">↗</span></a>';
+            }).join("") +
             "</div>" : "") + "</li>";
       }).join("");
     }
@@ -1036,8 +1054,8 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     }
     var acts = document.getElementById("dActions");
     acts.querySelectorAll(".d-more").forEach(function (x) { x.remove(); });
-    if (w.album && w.sharedLinks.length > 1) {
-      w.sharedLinks.slice(1).forEach(function (u) {
+    if ((w.links || []).length > 1) {
+      w.links.slice(1).forEach(function (u) {
         var a = document.createElement("a");
         a.className = "d-btn d-more"; a.href = u; a.target = "_blank"; a.rel = "noopener";
         a.innerHTML = esc(serviceName(u)) + ' <span aria-hidden="true">↗</span>';
