@@ -299,6 +299,7 @@ dialog.detail[open]::backdrop { animation: bIn .3s ease-out; }
   background: transparent; overflow: hidden;
 }
 .d-media { min-width: 0; }
+.d-artcredit { margin: 10px 0 0; font-family: var(--mono); font-size: 11px; letter-spacing: .03em; color: var(--sub); white-space: pre-line; overflow-wrap: anywhere; }
 .d-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .d-thumbs button {
   width: 58px; height: 58px; padding: 0; border: 1px solid var(--line); background: transparent;
@@ -467,16 +468,13 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
 
 <footer class="wrap">
   <div class="contact">
-    <div>
-      <p class="k">Contact</p>
-      <div id="mailBox">
-        <p class="mail" id="mail"></p>
-        <button class="copy" id="copyMail" type="button">Copy address</button>
-      </div>
-      <p class="inq" id="inquiry"></p>
+    <div id="mailBox">
+      <p class="k">Mail</p>
+      <p class="mail" id="mail"></p>
+      <button class="copy" id="copyMail" type="button">Copy address</button>
     </div>
     <div id="linksBox">
-      <p class="k">Links</p>
+      <p class="k">SNS</p>
       <ul class="sns" id="links"></ul>
     </div>
   </div>
@@ -493,6 +491,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
       <div class="d-media">
         <div class="d-art" id="dArt"></div>
         <div class="d-thumbs" id="dThumbs" hidden></div>
+        <p class="d-artcredit" id="dArtCredit" hidden></p>
       </div>
       <div class="d-info">
         <p class="d-format" id="dFormat"></p>
@@ -596,9 +595,6 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   if (!email && /^https?:\/\//.test(String(SITE.email || "").trim())) links.unshift(SITE.email.trim()); // older data: URL typed in the email field
   document.getElementById("mail").textContent = email;
   document.getElementById("mailBox").hidden = !email;
-  document.getElementById("inquiry").textContent = email
-    ? "楽曲制作のご依頼は、上記アドレスまでお気軽にご連絡ください。"
-    : "楽曲制作のご依頼は、各SNSのメッセージからお気軽にご連絡ください。";
   document.getElementById("links").innerHTML = links.map(function (u) {
     var label = snsLabel(u); if (!label) return "";
     return '<li><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(label) + ' <span aria-hidden="true">↗</span></a></li>';
@@ -731,7 +727,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   function imageList(v) { return String(v || "").split(/\s*[\r\n]+\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function asSingle(w, album) {
     return { album: false, tracks: [w], title: w.title, artist: w.artist, media: mediaList(w.media),
-      format: w.format || (album ? album + " 収録" : ""), date: dateOf(w), images: imageList(w.image), image: imageList(w.image)[0] || "",
+      format: w.format || (album ? album + " 収録" : ""), date: dateOf(w), images: imageList(w.image), image: imageList(w.image)[0] || "", imageCredit: w.imageCredit || "",
       link: w.link, credit: w.credit, note: w.note, audio: w.audio };
   }
   var ITEMS = [], groups = {};
@@ -743,6 +739,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     if (!g) { g = groups[key] = { album: true, name: a, tracks: [], title: a, artist: w.artist, format: "", date: "", image: "", link: "" }; ITEMS.push(g); }
     g.tracks.push(w);
     if (!g.format && w.format) g.format = w.format;
+    if (!g.imageCredit && w.imageCredit) g.imageCredit = w.imageCredit;
     if (!g.images) g.images = [];
     imageList(w.image).forEach(function (u) { if (g.images.indexOf(u) < 0) g.images.push(u); });
     g.image = g.images[0] || "";
@@ -862,6 +859,8 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     thumbs.onclick = function (e) { var b = e.target.closest("button"); if (b) show(+b.getAttribute("data-k")); };
     thumbs.querySelectorAll("img").forEach(function (im) { im.onerror = function () { im.closest("button").remove(); }; });
     show(0);
+    var ac = document.getElementById("dArtCredit");
+    ac.textContent = w.imageCredit || ""; ac.hidden = !w.imageCredit;
     var fm = document.getElementById("dFormat"); fm.textContent = w.format || ""; fm.hidden = !w.format;
     document.getElementById("dTitle").textContent = w.title || "Untitled";
     var ar = document.getElementById("dArtist"); ar.textContent = w.artist || ""; ar.hidden = !w.artist;
