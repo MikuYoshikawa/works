@@ -233,8 +233,10 @@ h1 sup {
 
 /* meta */
 .meta { display: grid; gap: 2px; min-width: 0; }
+/* media tags sit right under the jacket on every card (the row keeps its height even when empty) */
+.mrow { display: flex; flex-wrap: wrap; gap: 4px; min-height: 18px; margin-bottom: 8px; }
 .f {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-bottom: 4px;
+  display: block; margin-bottom: 2px; line-height: 1.7; min-height: 1.7em;
   font-family: var(--mono); font-size: 10.5px; letter-spacing: .07em; color: var(--sub);
   overflow-wrap: anywhere;
 }
@@ -310,6 +312,8 @@ dialog.detail[open]::backdrop { animation: bIn .3s ease-out; }
 }
 .d-media { min-width: 0; }
 .d-artcredit { margin: 10px 0 0; font-family: var(--mono); font-size: 11px; letter-spacing: .03em; color: var(--sub); white-space: pre-line; overflow-wrap: anywhere; }
+.d-mrow { margin: 12px 0 0; min-height: 0; }
+.d-mrow .md { font-size: 11px; padding: 4px 7px; }
 .d-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .d-thumbs button {
   width: 58px; height: 58px; padding: 0; border: 1px solid var(--line); background: transparent;
@@ -327,7 +331,6 @@ dialog.detail[open]::backdrop { animation: bIn .3s ease-out; }
   display: inline-block; border: 1px solid var(--line); color: var(--sub);
   font-family: var(--mono); font-size: 10px; letter-spacing: .04em; line-height: 1; padding: 3px 5px;
 }
-.fm { margin-right: 2px; }
 .d-format {
   margin: 0 0 12px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em; color: var(--sub);
   overflow-wrap: anywhere;
@@ -521,6 +524,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     <div class="d-body">
       <div class="d-media">
         <div class="d-art" id="dArt"></div>
+        <div class="mrow d-mrow" id="dMediaTags"></div>
         <div class="d-thumbs" id="dThumbs" hidden></div>
         <p class="d-artcredit" id="dArtCredit" hidden></p>
       </div>
@@ -531,7 +535,6 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
         <dl class="d-spec">
           <div><dt>Credit</dt><dd id="dCredit"></dd></div>
           <div><dt>Date</dt><dd id="dDate"></dd></div>
-          <div id="dMediaRow"><dt>Media</dt><dd id="dMedia"></dd></div>
         </dl>
         <p class="d-note" id="dNote"></p>
         <div class="d-tracks" id="dTracksBox" hidden>
@@ -588,6 +591,8 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       ["profile.jpg", "profile.jpeg", "profile.JPG", "profile.JPEG", "Profile.jpg", "Profile.JPG", "profile.png", "profile.PNG", "Profile.png", "profile.webp", "profile.heic", "profile.HEIC"]
         .forEach(function (n) { if (tries.indexOf(n) < 0) tries.push(n); });
     }
+    // a phone may have remembered "not found" from before the photo was uploaded: retry once without the cache
+    tries.splice(1, 0, photo + (photo.indexOf("?") < 0 ? "?" : "&") + "r=" + Date.now());
     var t = 0;
     img.onerror = function () { t++; if (t < tries.length) img.src = tries[t]; else off(); };
     img.src = tries[0];
@@ -876,7 +881,8 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     grid.innerHTML = list.map(function (w, i) {
       return '<li class="work' + (firstDraw ? " pending" : "") + '"><button class="card" type="button" data-i="' + i + '" aria-haspopup="dialog">' +
         '<span class="cover">' + coverHTML(w, true) + "</span>" +
-        '<span class="meta">' + ((w.format || w.media.length) ? '<span class="f">' + (w.format ? '<span class="fm">' + esc(w.format) + "</span>" : "") + mediaTags(w.media) + "</span>" : "") + '<span class="t">' + esc(w.title || "Untitled") + "</span>" +
+        '<span class="meta">' + '<span class="mrow">' + mediaTags(w.media) + "</span>" +
+        '<span class="f">' + esc(w.format || "") + "</span>" + '<span class="t">' + esc(w.title || "Untitled") + "</span>" +
         (w.artist ? '<span class="a">' + esc(w.artist) + "</span>" : "") +
         '<span class="c"><span class="cr">' + esc(w.credit || "") + (w.album ? " ／ " + w.tracks.length + "曲" : "") + '</span><span class="y">' + esc(dateOf(w) || "—") + "</span></span>" +
         "</span></button></li>";
@@ -943,8 +949,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     var ar = document.getElementById("dArtist"); ar.textContent = w.artist || ""; ar.hidden = !w.artist;
     document.getElementById("dCredit").textContent = w.credit || "—";
     document.getElementById("dDate").textContent = dateOf(w) || "—";
-    document.getElementById("dMedia").textContent = w.media.join(" / ");
-    document.getElementById("dMediaRow").hidden = !w.media.length;
+    var mt = document.getElementById("dMediaTags"); mt.innerHTML = mediaTags(w.media); mt.hidden = !w.media.length;
     var note = document.getElementById("dNote"); note.textContent = w.note || ""; note.hidden = !w.note;
     playBtn.hidden = !w.audio; if (w.audio) playBtn.setAttribute("data-src", w.audio); else playBtn.removeAttribute("data-src");
     var link = document.getElementById("dLink"), urlBox = document.getElementById("dUrlBox");
