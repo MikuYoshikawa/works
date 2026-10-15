@@ -1,5 +1,5 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 16:54:58）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 17:17:23）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / imageCredit: ジャケットのクレジット / link: リンク / audio: 試聴音源 / mv: MV(YouTube) / note: 解説
@@ -42,7 +42,7 @@ window.WORKS = [
     "date": "2026.09.16",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ca/16/94/ca1694e9-3dad-6819-a32f-0e502c0170da/PA00227399_0_254152_jacket.jpg/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E6%81%8B%E8%8A%B1-day-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503455",
+    "link": "https://music.apple.com/jp/album/%E6%81%8B%E8%8A%B1-day-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503455\nhttps://open.spotify.com/intl-ja/album/7uqbMKcLycWtFQZ9kkQYIM\nhttps://music.amazon.co.jp/albums/B0HJ8C61LG?marketplaceId=A1VC38T7YXB528&musicTerritory=JP&ref=dm_sh_GE9kv1BYkzorfdrZ8Y6BvK0O0\nhttps://music.line.me/webapp/album/mb0000000005bac075",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/5e/47/44/5e474459-0f41-1774-d07b-ca2f5bbe1e6f/mzaf_7351339502447318390.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -57,7 +57,7 @@ window.WORKS = [
     "date": "2026.09.16",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ca/16/94/ca1694e9-3dad-6819-a32f-0e502c0170da/PA00227399_0_254152_jacket.jpg/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/arrive-to-star-day-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503459",
+    "link": "https://music.apple.com/jp/album/arrive-to-star-day-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503459\nhttps://open.spotify.com/intl-ja/album/7uqbMKcLycWtFQZ9kkQYIM\nhttps://music.amazon.co.jp/albums/B0HJ8C61LG?marketplaceId=A1VC38T7YXB528&musicTerritory=JP&ref=dm_sh_GE9kv1BYkzorfdrZ8Y6BvK0O0\nhttps://music.line.me/webapp/album/mb0000000005bac075",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/cf/02/20/cf0220da-7a67-5677-dbd5-db2ddfd653e4/mzaf_16590717273393405133.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -72,7 +72,7 @@ window.WORKS = [
     "date": "2026.09.16",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ca/16/94/ca1694e9-3dad-6819-a32f-0e502c0170da/PA00227399_0_254152_jacket.jpg/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/because-day-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503686",
+    "link": "https://music.apple.com/jp/album/because-day-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503686\nhttps://open.spotify.com/intl-ja/album/7uqbMKcLycWtFQZ9kkQYIM\nhttps://music.amazon.co.jp/albums/B0HJ8C61LG?marketplaceId=A1VC38T7YXB528&musicTerritory=JP&ref=dm_sh_GE9kv1BYkzorfdrZ8Y6BvK0O0\nhttps://music.line.me/webapp/album/mb0000000005bac075",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9f/49/e4/9f49e43c-efbe-d35f-8581-d8a5c28e6163/mzaf_6857459958958137712.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -87,7 +87,7 @@ window.WORKS = [
     "date": "2026.09.16",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ca/16/94/ca1694e9-3dad-6819-a32f-0e502c0170da/PA00227399_0_254152_jacket.jpg/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/statice-night-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503703",
+    "link": "https://music.apple.com/jp/album/statice-night-%E7%AC%AC2%E5%B9%95-brilliant-stage-%E3%82%88%E3%82%8A-live/6810503176?i=6810503703\nhttps://open.spotify.com/intl-ja/album/7uqbMKcLycWtFQZ9kkQYIM\nhttps://music.amazon.co.jp/albums/B0HJ8C61LG?marketplaceId=A1VC38T7YXB528&musicTerritory=JP&ref=dm_sh_GE9kv1BYkzorfdrZ8Y6BvK0O0\nhttps://music.line.me/webapp/album/mb0000000005bac075",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/be/48/7e/be487e0b-506c-154a-748d-83ee3f01adfa/mzaf_17935580529825848454.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -192,7 +192,7 @@ window.WORKS = [
     "date": "2026.08.16",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/43/be/71/43be711e-bd6d-0380-ad01-29270f1e5d9b/4550759631179_cover.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/seaside/6801726435?i=6801726741",
+    "link": "https://music.apple.com/jp/album/seaside/6801726435?i=6801726741\nhttps://open.spotify.com/intl-ja/album/53mq5jOqSnxLZsQTgnyLiP\nhttps://music.amazon.co.jp/albums/B0HFBWPDRH\nhttps://music.line.me/webapp/album/mb0000000005a69e4d",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ff/33/ba/ff33ba0e-1f17-b215-b5fa-9f36b433a1f3/mzaf_8618983110849683353.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -207,7 +207,7 @@ window.WORKS = [
     "date": "2026.08.16",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/43/be/71/43be711e-bd6d-0380-ad01-29270f1e5d9b/4550759631179_cover.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/seaside-instrumental/6801726435?i=6801726748",
+    "link": "https://music.apple.com/jp/album/seaside-instrumental/6801726435?i=6801726748\nhttps://open.spotify.com/intl-ja/album/53mq5jOqSnxLZsQTgnyLiP\nhttps://music.amazon.co.jp/albums/B0HFBWPDRH\nhttps://music.line.me/webapp/album/mb0000000005a69e4d",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/56/4d/7f/564d7ff6-37d5-948a-b4ba-d8490483f6fa/mzaf_11287096124172525655.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -222,7 +222,7 @@ window.WORKS = [
     "date": "2026.08.13",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/78/20/ab/7820abc3-aa5c-49c1-e9e7-046778d34f01/885288100174.jpg/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E8%A3%81%E3%81%8D/6793341703?i=6793342069",
+    "link": "https://music.apple.com/jp/album/%E8%A3%81%E3%81%8D/6793341703?i=6793342069\nhttps://open.spotify.com/intl-ja/album/7eiJcoWHf9m0Kef2aM591G\nhttps://music.amazon.co.jp/tracks/B0H9WT3XBX?marketplaceId=A1VC38T7YXB528&musicTerritory=JP&ref=dm_sh_QQ5PokxQsOIfSJahbBtIEWJHq\nhttps://lin.ee/ShEXS76",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/00/55/52/0055522e-103f-4294-091e-27137222c13f/mzaf_15931413683826846340.plus.aac.p.m4a",
     "mv": "",
     "note": "作詞・作曲：島太星"
@@ -252,7 +252,7 @@ window.WORKS = [
     "date": "2026.07.31",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b4/03/34/b403346d-78d5-e912-b7c3-897a9da6d37d/4550758731603_cover.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E3%81%93%E3%81%93%E3%81%8B%E3%82%89/6792219151?i=6792219699",
+    "link": "https://music.apple.com/jp/album/%E3%81%93%E3%81%93%E3%81%8B%E3%82%89/6792219151?i=6792219699\nhttps://open.spotify.com/intl-ja/album/5QIf39zFHLVe8LzllQ0FUr\nhttps://music.amazon.co.jp/tracks/B0H9DKBMDW?marketplaceId=A1VC38T7YXB528&musicTerritory=JP&ref=dm_sh_zveEcdLPFcMLZlP5cDsT8E52A\nhttps://lin.ee/wOR1r7w",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d9/bb/59/d9bb592e-68f4-e968-2f34-d003d50cf8c0/mzaf_14595622131894305304.plus.aac.p.m4a",
     "mv": "",
     "note": ""
