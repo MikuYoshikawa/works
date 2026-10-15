@@ -1,5 +1,5 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 17:17:23）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 17:46:17）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / imageCredit: ジャケットのクレジット / link: リンク / audio: 試聴音源 / mv: MV(YouTube) / note: 解説
@@ -267,7 +267,7 @@ window.WORKS = [
     "date": "2026.03.25",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4d/76/a0/4d76a007-19b2-9c00-b81e-fe981787073e/4540774191659.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E3%82%B1%E3%82%A4%E3%81%A1%E3%82%83%E3%82%93%E3%81%A8%E3%82%AF%E3%83%BC%E3%81%A1%E3%82%83%E3%82%93/1879733663?i=1879733751",
+    "link": "https://music.apple.com/jp/album/%E3%82%B1%E3%82%A4%E3%81%A1%E3%82%83%E3%82%93%E3%81%A8%E3%82%AF%E3%83%BC%E3%81%A1%E3%82%83%E3%82%93/1879733663?i=1879733751\nhttps://open.spotify.com/intl-ja/album/0afCJX0i1cokRgQfhCeWHv\nhttps://music.amazon.co.jp/albums/B0GPVQFD6H\nhttps://music.line.me/webapp/album/mb00000000050f36b0",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/37/86/bd/3786bd5d-9892-501b-5b8a-fbe4853d0814/mzaf_1345265150120560268.plus.aac.p.m4a",
     "mv": "",
     "note": "共編曲：畑田浩孝"
@@ -282,7 +282,7 @@ window.WORKS = [
     "date": "2026.03.25",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4d/76/a0/4d76a007-19b2-9c00-b81e-fe981787073e/4540774191659.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/the-twinkle-legends-cm-tiara/1879733663?i=1879733703",
+    "link": "https://music.apple.com/jp/album/the-twinkle-legends-cm-tiara/1879733663?i=1879733703\nhttps://open.spotify.com/intl-ja/album/0afCJX0i1cokRgQfhCeWHv\nhttps://music.amazon.co.jp/albums/B0GPVQFD6H\nhttps://music.line.me/webapp/album/mb00000000050f36b0",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/56/92/0656927b-6e12-26f0-5de6-014e9ea52daf/mzaf_7521773181502222634.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -297,7 +297,7 @@ window.WORKS = [
     "date": "2026.03.14",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/21/a2/ae/21a2aef4-c385-2769-9fec-16a008ce4a83/4550754348539_cover.jpg/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E3%81%9A%E3%81%A3%E3%81%A8-%E5%90%9B%E3%81%A0%E3%81%91/1884263793?i=1884263795",
+    "link": "https://music.apple.com/jp/album/%E3%81%9A%E3%81%A3%E3%81%A8-%E5%90%9B%E3%81%A0%E3%81%91/1884263793?i=1884263795\nhttps://open.spotify.com/intl-ja/track/7IefhjwGMfMvZg9xE6HxHO\nhttps://music.amazon.co.jp/tracks/B0GS5RGSN2?marketplaceId=A1VC38T7YXB528&musicTerritory=JP&ref=dm_sh_XdUjefNqHv9FlUJbhwTYrJCgS\nhttps://lin.ee/tE1unSP",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/20/00/52/20005213-9334-806b-824d-e2b0fcb56f5f/mzaf_1380806418053965960.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -342,7 +342,7 @@ window.WORKS = [
     "date": "2025.03.05",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/p-o-p-new-world/1793708472?i=1793708861",
+    "link": "https://music.apple.com/jp/album/p-o-p-new-world/1793708472?i=1793708861\nhttps://open.spotify.com/intl-ja/album/4QzjUfJOJWSpD5TvV3L5hB\nhttps://music.amazon.co.jp/albums/B0DVLC4FR4\nhttps://music.line.me/webapp/album/mb000000000424999e",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/cc/14/e7/cc14e7be-383d-865b-705a-51b8df54923f/mzaf_11823041245803211337.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -357,7 +357,7 @@ window.WORKS = [
     "date": "2025.03.05",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/overrun/1793708472?i=1793708841",
+    "link": "https://music.apple.com/jp/album/overrun/1793708472?i=1793708841\nhttps://open.spotify.com/intl-ja/album/4QzjUfJOJWSpD5TvV3L5hB\nhttps://music.amazon.co.jp/albums/B0DVLC4FR4\nhttps://music.line.me/webapp/album/mb000000000424999e",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/13/9c/a2/139ca23f-40cd-cb02-b0f9-629a80b44d20/mzaf_6923092461812106363.plus.aac.p.m4a",
     "mv": "",
     "note": "共編曲：守谷勇人（IM.Labで共編曲）"
@@ -372,7 +372,7 @@ window.WORKS = [
     "date": "2025.03.05",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E5%92%8C%E9%A2%A8%E3%81%AA%E5%AD%A6%E7%B4%9A%E5%A7%94%E5%93%A1%E9%95%B7%E3%81%A7%E3%81%99%E3%81%8B%E3%82%89/1793708472?i=1793708831",
+    "link": "https://music.apple.com/jp/album/%E5%92%8C%E9%A2%A8%E3%81%AA%E5%AD%A6%E7%B4%9A%E5%A7%94%E5%93%A1%E9%95%B7%E3%81%A7%E3%81%99%E3%81%8B%E3%82%89/1793708472?i=1793708831\nhttps://open.spotify.com/intl-ja/album/4QzjUfJOJWSpD5TvV3L5hB\nhttps://music.amazon.co.jp/albums/B0DVLC4FR4\nhttps://music.line.me/webapp/album/mb000000000424999e",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/db/4e/58/db4e580a-87de-2bb0-d7ed-273736c693ef/mzaf_5523103535858129056.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -387,7 +387,7 @@ window.WORKS = [
     "date": "2025.03.05",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E3%83%99%E3%82%B9%E3%83%88%E3%83%87%E3%83%BC%E3%83%88/1793708472?i=1793708713",
+    "link": "https://music.apple.com/jp/album/%E3%83%99%E3%82%B9%E3%83%88%E3%83%87%E3%83%BC%E3%83%88/1793708472?i=1793708713\nhttps://open.spotify.com/intl-ja/album/4QzjUfJOJWSpD5TvV3L5hB\nhttps://music.amazon.co.jp/albums/B0DVLC4FR4\nhttps://music.line.me/webapp/album/mb000000000424999e",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/67/74/21/67742126-da8d-8c05-a21f-08e6b1ac2bce/mzaf_14756617861931041010.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -402,7 +402,7 @@ window.WORKS = [
     "date": "2025.03.05",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ef/85/9c/ef859c1b-b68c-474f-81d4-5a40b5e14455/195533004882.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E3%83%9E%E3%83%BC%E3%83%99%E3%83%A9%E3%82%B9%E3%83%81%E3%83%A7%E3%82%B3/1793708472?i=1793708702",
+    "link": "https://music.apple.com/jp/album/%E3%83%9E%E3%83%BC%E3%83%99%E3%83%A9%E3%82%B9%E3%83%81%E3%83%A7%E3%82%B3/1793708472?i=1793708702\nhttps://open.spotify.com/intl-ja/album/4QzjUfJOJWSpD5TvV3L5hB\nhttps://music.amazon.co.jp/albums/B0DVLC4FR4\nhttps://music.line.me/webapp/album/mb000000000424999e",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/fe/d9/f5/fed9f567-3962-dcde-10e6-1797c029cf30/mzaf_4347897915601246532.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -432,7 +432,7 @@ window.WORKS = [
     "date": "2024.12.27",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ae/cb/0f/aecb0f32-bbda-be2c-7664-0aabe8a071f6/PA00171446_0_209800_jacket.jpg/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/the-1st-movement-%E6%9C%AA%E6%9D%A5%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E4%BA%8C%E9%87%8D%E5%A5%8F-day2-%E7%AC%AC2%E5%B9%95-brillante-stage-%E3%82%88%E3%82%8A-live/1785776646?i=1785777155",
+    "link": "https://music.apple.com/jp/album/the-1st-movement-%E6%9C%AA%E6%9D%A5%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E4%BA%8C%E9%87%8D%E5%A5%8F-day2-%E7%AC%AC2%E5%B9%95-brillante-stage-%E3%82%88%E3%82%8A-live/1785776646?i=1785777155\nhttps://open.spotify.com/intl-ja/album/7eg0PtiB4AXMP579G0vSZI\nhttps://music.amazon.co.jp/tracks/B0DQL4SYLX?marketplaceId=A1VC38T7YXB528&musicTerritory=JP&ref=dm_sh_O8U6xfGBeReQ16ApaoacbhIxS\nhttps://lin.ee/YawvAsI",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/55/9f/46/559f469c-c3db-abfa-821e-495f1de6906f/mzaf_11773808515689550171.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -447,7 +447,7 @@ window.WORKS = [
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E3%83%90%E3%82%A4%E3%82%A2%E3%83%AA%E3%83%BC%E3%82%BF%E3%83%BC%E3%82%AF/1813837020?i=1813837237",
+    "link": "https://music.apple.com/jp/album/%E3%83%90%E3%82%A4%E3%82%A2%E3%83%AA%E3%83%BC%E3%82%BF%E3%83%BC%E3%82%AF/1813837020?i=1813837237\nhttps://open.spotify.com/intl-ja/album/3ELvYtN7bXr6RblUP4wtre\nhttps://music.amazon.co.jp/albums/B0F8B5T9T4\nhttps://music.line.me/webapp/album/mb000000000464901c",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/36/a5/88/36a58869-a04c-07c6-cb3e-dff061f9181c/mzaf_10679240525526879951.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -462,7 +462,7 @@ window.WORKS = [
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/wbc%E9%96%8B%E5%B9%95/1813837020?i=1813837246",
+    "link": "https://music.apple.com/jp/album/wbc%E9%96%8B%E5%B9%95/1813837020?i=1813837246\nhttps://open.spotify.com/intl-ja/album/3ELvYtN7bXr6RblUP4wtre\nhttps://music.amazon.co.jp/albums/B0F8B5T9T4\nhttps://music.line.me/webapp/album/mb000000000464901c",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/39/bc/91/39bc91ee-1b16-d836-8eaa-1a16f0dd7a38/mzaf_12360359857397815026.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -477,7 +477,7 @@ window.WORKS = [
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/super-wbc%E9%96%8B%E5%B9%95/1813837020?i=1813837247",
+    "link": "https://music.apple.com/jp/album/super-wbc%E9%96%8B%E5%B9%95/1813837020?i=1813837247\nhttps://open.spotify.com/intl-ja/album/3ELvYtN7bXr6RblUP4wtre\nhttps://music.amazon.co.jp/albums/B0F8B5T9T4\nhttps://music.line.me/webapp/album/mb000000000464901c",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f5/d2/0f/f5d20f05-fddf-ef2f-9028-19511d4666b2/mzaf_9200938899062138680.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -492,7 +492,7 @@ window.WORKS = [
     "date": "2024.03.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d9/6b/c5/d96bc5f2-af75-fa49-cd5f-57beedcc7147/4540774190263.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E7%8C%AA%E7%AA%81%E7%8C%9B%E9%80%B2-%E3%81%B2%E3%81%9F%E3%82%80%E3%81%8D-%E3%82%A2%E3%82%A4%E3%82%BA/1813837020?i=1813837260",
+    "link": "https://music.apple.com/jp/album/%E7%8C%AA%E7%AA%81%E7%8C%9B%E9%80%B2-%E3%81%B2%E3%81%9F%E3%82%80%E3%81%8D-%E3%82%A2%E3%82%A4%E3%82%BA/1813837020?i=1813837260\nhttps://open.spotify.com/intl-ja/album/3ELvYtN7bXr6RblUP4wtre\nhttps://music.amazon.co.jp/albums/B0F8B5T9T4\nhttps://music.line.me/webapp/album/mb000000000464901c",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/18/8a/09/188a0925-4e40-1307-1847-cfed755126d5/mzaf_1134933196635393996.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -507,7 +507,7 @@ window.WORKS = [
     "date": "2023.05.10",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/79/04/9e/79049ecd-92f4-8cf5-c8b3-0b123bbe560d/4540774909834.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E5%81%A5%E6%B0%97%E3%81%AA%E6%86%A7%E3%82%8C%E3%81%AE%E5%85%88%E8%BC%A9/1813856178?i=1813856443",
+    "link": "https://music.apple.com/jp/album/%E5%81%A5%E6%B0%97%E3%81%AA%E6%86%A7%E3%82%8C%E3%81%AE%E5%85%88%E8%BC%A9/1813856178?i=1813856443\nhttps://open.spotify.com/intl-ja/album/6a4jwuieOgfNtCfPQDnB0l\nhttps://music.amazon.co.jp/albums/B0F8B53XHK\nhttps://music.line.me/webapp/album/mb000000000464a2ee",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/95/b1/fb/95b1fbd5-ac31-2b9c-db88-a631ef9b50c3/mzaf_5615738520049713899.plus.aac.p.m4a",
     "mv": "",
     "note": ""
@@ -522,7 +522,7 @@ window.WORKS = [
     "date": "2023.05.10",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/79/04/9e/79049ecd-92f4-8cf5-c8b3-0b123bbe560d/4540774909834.png/1000x1000bb.jpg",
     "imageCredit": "",
-    "link": "https://music.apple.com/jp/album/%E9%99%BD%E3%81%A0%E3%81%BE%E3%82%8A%E3%81%AE%E4%B8%AD%E3%81%A7%E9%A2%A8%E8%96%AB%E3%82%8B/1813856178?i=1813856451",
+    "link": "https://music.apple.com/jp/album/%E9%99%BD%E3%81%A0%E3%81%BE%E3%82%8A%E3%81%AE%E4%B8%AD%E3%81%A7%E9%A2%A8%E8%96%AB%E3%82%8B/1813856178?i=1813856451\nhttps://open.spotify.com/intl-ja/album/6a4jwuieOgfNtCfPQDnB0l\nhttps://music.amazon.co.jp/albums/B0F8B53XHK\nhttps://music.line.me/webapp/album/mb000000000464a2ee",
     "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/dd/28/ab/dd28abd6-a9b2-cb03-14be-6dcbccd1b414/mzaf_1999722614060116034.plus.aac.p.m4a",
     "mv": "",
     "note": ""
