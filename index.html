@@ -112,6 +112,15 @@ h1 sup {
 }
 
 /* ---------- filter bar ---------- */
+/* switch between the main works and the Pococha・IRIAM event songs */
+.pages { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 0 0 22px; }
+.pages a {
+  font-family: var(--body); font-size: 15px; font-weight: 500; letter-spacing: .02em; color: var(--sub);
+  text-decoration: none; padding-bottom: 6px; border-bottom: 2px solid transparent;
+}
+.pages a:hover { color: var(--ink); }
+.pages a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ink); }
+.pages a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .bar {
   display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; flex-wrap: wrap;
   border-top: 1px solid var(--ink);
@@ -502,8 +511,12 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
 </header>
 
 <main class="wrap">
+  <nav class="pages" id="pages" data-rise hidden>
+    <a href="./" id="toMain" data-page="">Works</a>
+    <a href="#event" id="toEvent" data-page="event">Pococha・IRIAM イベント特典楽曲</a>
+  </nav>
   <div class="bar" data-rise>
-    <span class="label">Selected Works</span>
+    <span class="label" id="barLabel">Selected Works</span>
     <div class="bar-r">
       <div class="sel ms" id="roleWrap"><span id="roleLbl">Credit</span>
         <button type="button" class="ms-btn" aria-haspopup="true" aria-expanded="false" aria-labelledby="roleLbl roleVal"><span class="ms-val" id="roleVal">All</span></button>
@@ -586,7 +599,27 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
 <script>
 (function () {
   var SITE = window.SITE || {};
-  var WORKS = Array.isArray(window.WORKS) ? window.WORKS : [];
+  var ALL_WORKS = Array.isArray(window.WORKS) ? window.WORKS : [];
+  var PAGE = /^#event$/i.test(location.hash) ? "event" : "";
+  function pageOf(w) { return String(w.page || "") === "event" ? "event" : ""; }
+  var WORKS = ALL_WORKS.filter(function (w) { return pageOf(w) === PAGE; });
+  (function () {
+    var hasEvent = ALL_WORKS.some(function (w) { return pageOf(w) === "event"; });
+    var nav = document.getElementById("pages");
+    nav.hidden = !hasEvent && PAGE !== "event";
+    nav.querySelectorAll("a").forEach(function (a) {
+      if (a.getAttribute("data-page") === PAGE) a.setAttribute("aria-current", "page");
+      a.addEventListener("click", function (e) {
+        // switch pages with a fresh load so everything (filters, order, animation) starts over
+        e.preventDefault();
+        var target = a.getAttribute("data-page");
+        if (target === PAGE) return;
+        location.href = location.pathname + (target ? "#event" : "");
+      });
+    });
+    if (PAGE === "event") document.getElementById("barLabel").textContent = "Pococha・IRIAM Event Songs";
+    window.addEventListener("hashchange", function () { location.reload(); });
+  })();
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -678,7 +711,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
   document.getElementById("linksBox").hidden = !links.length;
 
   document.getElementById("copyright").textContent = "© " + new Date().getFullYear() + " " + (SITE.name || "");
-  if (SITE.name) document.title = "WORKS — " + SITE.name;
+  if (SITE.name) document.title = (PAGE === "event" ? "Pococha・IRIAM イベント特典楽曲 — " : "WORKS — ") + SITE.name;
   if (!email && !links.length) document.querySelector(".contact").hidden = true;
 
   document.getElementById("copyMail").addEventListener("click", function (e) {

@@ -135,6 +135,13 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       </div>
       <div class="grid2">
         <div class="span2">
+          <label for="f-page">載せるページ</label>
+          <select id="f-page" style="width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid #cfcfcb;background:#fff;border-radius:0">
+            <option value="">WORKS（メインの作品一覧）</option>
+            <option value="event">Pococha・IRIAM イベント特典楽曲</option>
+          </select>
+        </div>
+        <div class="span2">
           <label for="f-album">収録アルバム名<span class="hint">同じアルバム名の曲は、サイトで1つのページにまとまります（シングルなら空欄）</span></label>
           <input type="text" id="f-album" list="albumList" autocomplete="off">
           <datalist id="albumList"></datalist>
@@ -356,7 +363,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-image").addEventListener("input", function () { clearTimeout(updateThumb.t); updateThumb.t = setTimeout(updateThumb, 400); });
 
   // ---- form ----
-  var FIELDS = ["album", "format", "media", "title", "artist", "credit", "date", "image", "imageCredit", "link", "audio", "mv", "note"];
+  var FIELDS = ["page", "album", "format", "media", "title", "artist", "credit", "date", "image", "imageCredit", "link", "audio", "mv", "note"];
   function readForm() {
     var w = {};
     FIELDS.forEach(function (k) { w[k] = $("f-" + k).value.trim(); });
@@ -406,6 +413,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       if (renamed && a === oldA) { o.album = newA; a = newA; touched = true; }
       if (newA && a === newA) {
         if (fmtChanged && o.format !== after.format) { o.format = after.format; touched = true; }
+        if (String(before.page || "") !== String(after.page || "") && String(o.page || "") !== String(after.page || "")) { o.page = after.page; touched = true; }
         if (mediaChanged && o.media !== after.media) { o.media = after.media; touched = true; }
         if (dateChanged && o.date !== after.date) { o.date = after.date; touched = true; }
         if (imageChanged && o.image !== after.image) { o.image = after.image; touched = true; }
@@ -472,7 +480,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       return '<li data-i="' + i + '" class="' + (i === editingIndex ? "editing" : "") + '">' +
         '<button type="button" class="handle" aria-label="ドラッグして並べ替え（キーボードは↑↓キー）"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12"/></svg></button>' +
         '<div class="tb">' + (w.image ? '<img src="' + esc(resolveImg(String(w.image).split(/\n/)[0])) + '" alt="" onerror="this.remove()">' : "") + "</div>" +
-        '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.album ? "『" + w.album + "』" : "", w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
+        '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.page === "event" ? "［イベント特典］" : "", w.album ? "『" + w.album + "』" : "", w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
         '<div class="ops">' + del + "</div></li>";
     }).join("");
   }
