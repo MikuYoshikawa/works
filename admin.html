@@ -32,7 +32,8 @@ input[type=text], input[type=url], input[type=number], input[type=email], textar
 textarea { min-height: 84px; resize: vertical; }
 input:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 .row { display: flex; gap: 8px; }
-.row > input { flex: 1; min-width: 0; }
+.row { flex-wrap: wrap; }
+.row > input, .row > textarea { flex: 1 1 220px; min-width: 0; }
 .grid2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
 @media (min-width: 720px) { .grid2 { grid-template-columns: 1fr 1fr; } .span2 { grid-column: 1 / -1; } }
 button { font: inherit; font-size: 14px; cursor: pointer; padding: 10px 16px; border: 1px solid var(--ink); background: #fff; color: var(--ink); border-radius: 0; white-space: nowrap; }
@@ -169,6 +170,8 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <div class="row" style="align-items:flex-start">
             <textarea id="f-image" rows="2" placeholder="https://…" style="min-height:52px"></textarea>
             <button type="button" id="imgFetchBtn">URLから取得</button>
+            <button type="button" id="imgPickBtn">写真を選ぶ</button>
+            <input type="file" id="imgPick" accept="image/*" multiple hidden>
           </div>
           <p class="status" id="imgStatus"></p>
           <label for="f-imageCredit" style="margin-top:6px">ジャケットのクレジット<span class="hint">詳細画面の写真の下に小さく表示（空欄なら非表示）</span></label>
@@ -241,11 +244,18 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
 
   var original = {
     site: Object.assign({ name: "", role: "", bio: "", email: "" }, window.SITE || {}),
-    works: (window.WORKS || []).map(function (w) { return Object.assign({}, w); })
+    works: (window.WORKS || []).map(function (w) { return Object.assign({}, w); }),
+    images: Object.assign({}, window.IMAGES || {})
   };
   var state = clone(original);
   var editingIndex = -1, insertAfter = -1;
 
+  // photos picked from the phone are kept inside works.js and referenced as "img:xxxx"
+  function resolveImg(u) {
+    u = String(u || "").trim();
+    var m = u.match(/^img:([\w-]+)$/);
+    return m ? ((state && state.images && state.images[m[1]]) || "") : u;
+  }
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
@@ -255,6 +265,8 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     if (saved) {
       var d = JSON.parse(saved);
       if (d && Array.isArray(d.works) && JSON.stringify(d) !== JSON.stringify(original)) { state = d; $("draftBanner").hidden = false; }
+      if (!state.images) state.images = {};
+      Object.keys(original.images).forEach(function (k) { if (!state.images[k]) state.images[k] = original.images[k]; });
     }
   } catch (e) {}
   function persist() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
@@ -304,7 +316,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   // ---- thumbnail preview ----
   function imageLines() { return $("f-image").value.split(/\n/).map(function (s) { return s.trim(); }).filter(Boolean); }
   function updateThumb() {
-    var src = imageLines()[0] || "";
+    var src = resolveImg(imageLines()[0] || "");
     if (!src) { $("thumb").textContent = "NO IMAGE"; return; }
     var img = new Image(); img.alt = "";
     img.onerror = function () { $("thumb").textContent = "画像を読み込めません"; };
@@ -419,7 +431,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           '<button type="button" class="del" data-a="del" data-i="' + i + '">削除</button>';
       return '<li data-i="' + i + '" class="' + (i === editingIndex ? "editing" : "") + '">' +
         '<button type="button" class="handle" aria-label="ドラッグして並べ替え（キーボードは↑↓キー）"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12"/></svg></button>' +
-        '<div class="tb">' + (w.image ? '<img src="' + esc(String(w.image).split(/\n/)[0].trim()) + '" alt="" onerror="this.remove()">' : "") + "</div>" +
+        '<div class="tb">' + (w.image ? '<img src="' + esc(resolveImg(String(w.image).split(/\n/)[0])) + '" alt="" onerror="this.remove()">' : "") + "</div>" +
         '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.album ? "『" + w.album + "』" : "", w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
         '<div class="ops">' + del + "</div></li>";
     }).join("");
@@ -838,6 +850,44 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
 
 
   // ---- export ----
+  // ---- add jackets from the phone / computer ----
+  function shrink(file) {
+    return new Promise(function (ok, ng) {
+      var url = URL.createObjectURL(file), im = new Image();
+      im.onload = function () {
+        var max = 900, w = im.naturalWidth, h = im.naturalHeight, r = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement("canvas"); c.width = Math.round(w * r); c.height = Math.round(h * r);
+        var x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        ok(c.toDataURL("image/jpeg", 0.82));
+      };
+      im.onerror = function () { URL.revokeObjectURL(url); ng(new Error("decode")); };
+      im.src = url;
+    });
+  }
+  function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  $("imgPickBtn").addEventListener("click", function () { $("imgPick").click(); });
+  $("imgPick").addEventListener("change", function () {
+    var files = Array.prototype.slice.call(this.files || []); this.value = "";
+    if (!files.length) return;
+    setStatus("imgStatus", "写真を読み込んでいます…");
+    Promise.all(files.map(function (f) { return shrink(f).catch(function () { return null; }); })).then(function (list) {
+      var lines = imageLines(), added = 0;
+      list.forEach(function (data) { if (!data) return; var id = newId(); state.images[id] = data; lines.push("img:" + id); added++; });
+      $("f-image").value = lines.join("\n"); updateThumb(); persist();
+      setStatus("imgStatus", added ? added + "枚の写真を入れました。「" + $("saveBtn").textContent + "」を押すと作品に反映されます。" : "この写真は読み込めませんでした。別の写真で試してください。", added ? "ok" : "err");
+    });
+  });
+
+  function usedImages() {
+    var out = {};
+    state.works.forEach(function (w) {
+      String(w.image || "").split(/\n/).forEach(function (u) {
+        var m = u.trim().match(/^img:([\w-]+)$/); if (m && state.images[m[1]]) out[m[1]] = state.images[m[1]];
+      });
+    });
+    return out;
+  }
   function buildFile() {
     var head = [
       "/* =========================================================",
@@ -851,7 +901,9 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     var works = state.works.map(function (w) {
       var o = {}; FIELDS.forEach(function (k) { o[k] = w[k] == null ? "" : w[k]; }); return o;
     });
-    return head + "\nwindow.SITE = " + JSON.stringify(state.site, null, 2) + ";\n\nwindow.WORKS = " + JSON.stringify(works, null, 2) + ";\n";
+    var imgs = usedImages();
+    return head + "\nwindow.SITE = " + JSON.stringify(state.site, null, 2) + ";\n\nwindow.WORKS = " + JSON.stringify(works, null, 2) + ";\n" +
+      (Object.keys(imgs).length ? "\n/* スマホ・パソコンから追加したジャケット写真（自動で書き出されます） */\nwindow.IMAGES = " + JSON.stringify(imgs, null, 1) + ";\n" : "");
   }
   $("exportBtn").addEventListener("click", function () {
     var blob = new Blob([buildFile()], { type: "text/javascript;charset=utf-8" });

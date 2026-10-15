@@ -768,7 +768,12 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
   function splitArtists(s) { return String(s || "").split(/\s*[,，、]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function mediaList(v) { return String(v || "").split(/[・、,，\/／]+/).map(normMedia).filter(Boolean); }
   function mediaTags(list) { return list.map(function (m) { return '<span class="md">' + esc(m) + "</span>"; }).join(""); }
-  function imageList(v) { return String(v || "").split(/\s*[\r\n]+\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function imageList(v) {
+    var store = window.IMAGES || {};
+    return String(v || "").split(/\s*[\r\n]+\s*/).map(function (x) {
+      x = x.trim(); var m = x.match(/^img:([\w-]+)$/); return m ? (store[m[1]] || "") : x;
+    }).filter(Boolean);
+  }
   function asSingle(w, album) {
     return { album: false, tracks: [w], title: w.title, artist: w.artist, media: mediaList(w.media),
       format: w.format || (album ? album + " 収録" : ""), date: dateOf(w), images: imageList(w.image), image: imageList(w.image)[0] || "", imageCredit: w.imageCredit || "",
