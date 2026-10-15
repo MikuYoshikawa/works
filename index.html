@@ -582,8 +582,15 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     function off() { fig.hidden = true; document.getElementById("intro").classList.add("no-photo"); bio.hidden = false; }
     if (!photo) { off(); return; }
     img.alt = (SITE.name || "") + " のプロフィール写真";
-    img.onerror = off;
-    img.src = photo;
+    // if the file name differs a little (case, .jpeg, .png …), try the usual variants before giving up
+    var tries = [photo];
+    if (/^profile\.(jpe?g|png|webp|heic)$/i.test(photo)) {
+      ["profile.jpg", "profile.jpeg", "profile.JPG", "profile.JPEG", "Profile.jpg", "Profile.JPG", "profile.png", "profile.PNG", "Profile.png", "profile.webp", "profile.heic", "profile.HEIC"]
+        .forEach(function (n) { if (tries.indexOf(n) < 0) tries.push(n); });
+    }
+    var t = 0;
+    img.onerror = function () { t++; if (t < tries.length) img.src = tries[t]; else off(); };
+    img.src = tries[0];
     if (!bio.textContent) { btn.disabled = true; cap.hidden = true; return; }
     // the introduction opens from the photo: hover (or first tap on a touch screen) shows the label, click/second tap opens
     bio.hidden = true;
