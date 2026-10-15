@@ -182,6 +182,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <textarea id="f-link" rows="3" placeholder="https://music.apple.com/…&#10;https://open.spotify.com/…"></textarea>
           <div class="actions" style="margin-top:8px">
             <button type="button" id="moreLinksBtn">他の配信サービスを自動で追加</button>
+            <button type="button" class="ghost" id="songlinkBtn">Songlink で開く ↗</button>
             <button type="button" class="ghost" id="findLineBtn">LINE MUSICで探す ↗</button>
             <button type="button" class="ghost" id="findAwaBtn">AWAで探す ↗</button>
           </div>
@@ -697,13 +698,26 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   var SERVICES = [["spotify", "Spotify"], ["amazonMusic", "Amazon Music"], ["youtubeMusic", "YouTube Music"]];
   function linkLines() { return $("f-link").value.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function getJSONvia(url) {
-    return getJSON(url).catch(function () {
-      return fetchText(RELAYS[0](url), 15000).then(function (t) { return JSON.parse(t); });
-    });
+    function viaRelay(i) {
+      if (i > 1) return Promise.reject(new Error("unreachable"));
+      return fetchText(RELAYS[i](url), 15000).then(function (t) {
+        var d = JSON.parse(t); if (!d || !d.linksByPlatform) throw new Error("bad"); return d;
+      }).catch(function () { return viaRelay(i + 1); });
+    }
+    return getJSON(url).then(function (d) { if (!d || !d.linksByPlatform) throw new Error("bad"); return d; })
+      .catch(function () { return viaRelay(0); });
+  }
+  function baseLink() {
+    return linkLines().filter(function (u) { return /music\.apple\.com|spotify\.com|youtube\.com|amazon\./i.test(u); })[0] || "";
+  }
+  function openSonglink() {
+    var b = baseLink();
+    if (!b) { setStatus("linkStatus", "先に Apple Music などの曲のリンクを1つ入れてください。", "err"); return; }
+    window.open("https://song.link/" + b, "_blank", "noopener");
   }
   function addOtherServices(silentIfNone) {
     var lines = linkLines();
-    var base = lines.filter(function (u) { return /music\.apple\.com|spotify\.com|youtube\.com|amazon\./i.test(u); })[0];
+    var base = baseLink();
     if (!base) { if (!silentIfNone) setStatus("linkStatus", "先に Apple Music などの曲のリンクを1つ入れてください。", "err"); return Promise.resolve(); }
     setStatus("linkStatus", "他の配信サービスを探しています…");
     var api = "https://api.song.link/v1-alpha.1/links?userCountry=JP&url=" + encodeURIComponent(base);
@@ -719,9 +733,9 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       $("f-link").value = lines.join("\n");
       setStatus("linkStatus", added.length
         ? added.join("・") + " のリンクを追加しました。LINE MUSIC と AWA は自動では見つけられないので、右のボタンで探して貼ってください。"
-        : "追加できる配信サービスは見つかりませんでした（すでに入っているか、配信されていない可能性があります）。", added.length ? "ok" : "");
+        : "追加できる配信サービスは見つかりませんでした。「Songlink で開く」を押すと、各サービスのリンクを一覧で確認できます。", added.length ? "ok" : "");
     }).catch(function () {
-      setStatus("linkStatus", "他の配信サービスを探せませんでした。少し時間をおいてもう一度押してください。", "err");
+      setStatus("linkStatus", "自動では取得できませんでした。「Songlink で開く ↗」を押すと、この曲の各サービスのリンクが一覧で出るので、使いたいもののリンクをコピーして、上の欄に1行ずつ貼ってください。", "err");
     });
   }
   function serviceOf(u) {
@@ -736,6 +750,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     window.open("https://www.google.com/search?q=" + encodeURIComponent("site:" + site + " " + q), "_blank", "noopener");
   }
   $("moreLinksBtn").addEventListener("click", function () { addOtherServices(false); });
+  $("songlinkBtn").addEventListener("click", openSonglink);
   $("findLineBtn").addEventListener("click", function () { searchFor("music.line.me"); });
   $("findAwaBtn").addEventListener("click", function () { searchFor("s.awa.fm"); });
 
