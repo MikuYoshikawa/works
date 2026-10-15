@@ -1,5 +1,5 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 4:20:54）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 14:34:08）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / link: リンク / audio: 試聴音源 / note: 解説
@@ -8,7 +8,7 @@
 window.SITE = {
   "name": "𠮷川 美矩",
   "role": "Composer / Arranger",
-  "bio": "作曲家・編曲家。 2000年5月25日生まれ、茨城県出身。東京音楽大学 作曲指揮専攻 映画・放送音楽コース卒業。在学中より譜面アシスタントとして活動する傍ら、作曲家としてのキャリアをスタートさせる。卒業後は、歌モノの作曲・編曲からオーケストレーションまで、ジャンルや編成を問わず幅広く手がけている。",
+  "bio": "作曲家・編曲家。 2000年5月25日生まれ、茨城県出身。東京音楽大学 作曲指揮専攻 映画・放送音楽コース卒業。在学中より譜面アシスタントとして活動する傍ら、作曲家としてのキャリアをスタートさせる。卒業後は、歌モノの作曲・編曲からオーケストレーションまで、ジャンルや編成を問わず幅広く手がけている。千葉ロッテマリーンズのファン。",
   "email": "",
   "links": [
     "https://x.com/yo4kawa39_0525?s=11"
@@ -16,6 +16,58 @@ window.SITE = {
 };
 
 window.WORKS = [
+  {
+    "album": "恍惚",
+    "format": "",
+    "media": "Digital",
+    "title": "ここから",
+    "artist": "THE EUPHORIA",
+    "credit": "作曲・編曲",
+    "date": "2026.07.31",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b4/03/34/b403346d-78d5-e912-b7c3-897a9da6d37d/4550758731603_cover.png/1000x1000bb.jpg",
+    "link": "https://music.apple.com/jp/album/%E3%81%93%E3%81%93%E3%81%8B%E3%82%89/6792219151?i=6792219699",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d9/bb/59/d9bb592e-68f4-e968-2f34-d003d50cf8c0/mzaf_14595622131894305304.plus.aac.p.m4a",
+    "note": ""
+  },
+  {
+    "album": "",
+    "format": "",
+    "media": "Stage",
+    "title": "『Bugs island』 D.Raise オリジナルミュージカル",
+    "artist": "",
+    "credit": "作曲・編曲",
+    "date": "2026.08",
+    "image": "",
+    "link": "https://bugs-island.jimdofree.com/",
+    "audio": "",
+    "note": "作・演出・振付・作詞：近藤大介"
+  },
+  {
+    "album": "",
+    "format": "",
+    "media": "Stage",
+    "title": "『Bugs island』 D.Raise オリジナルミュージカル",
+    "artist": "",
+    "credit": "作曲・編曲",
+    "date": "2025.08",
+    "image": "",
+    "link": "https://bugs-island.jimdofree.com/",
+    "audio": "",
+    "note": "作・演出・振付・作詞：近藤大介"
+  },
+  {
+    "album": "",
+    "format": "",
+    "media": "Stage",
+    "title": "いつかアイツに会いに行く -BEYOND THE MOON-",
+    "artist": "",
+    "credit": "音楽アシスタント",
+    "date": "2026.09",
+    "image": "",
+    "link": "https://event.1242.com/events/itsuai2/",
+    "audio": "",
+    "note": "演出・音楽・原案：小林顕作\n編曲：遠藤ナオキ"
+  },
   {
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 25",
     "format": "",
@@ -115,23 +167,23 @@ window.WORKS = [
     "artist": "Blu-ray | TVアニメ",
     "credit": "編曲",
     "date": "2025.02.26",
-    "image": "https://mahonare.asmik-ace.co.jp/2024/wp-content/themes/mahonare/img/bluray_vol1_img@2x.webp",
+    "image": "",
     "link": "https://mahonare.asmik-ace.co.jp/blu-ray",
     "audio": "",
-    "note": "作曲：下村陽子\n共編曲：松尾早人、原口大（音楽制作：イマジン）"
+    "note": "作曲：下村陽子\n共編曲：松尾早人、原口大"
   },
   {
-    "album": "魔法使いになれなかった女の子の話 Blu-ray BOX下巻",
+    "album": "魔法使いになれなかった女の子の話 Blu-ray BOX 下巻",
     "format": "",
     "media": "Blu-ray",
     "title": "魔法使いになれなかった女の子の話",
     "artist": "Blu-ray | TVアニメ",
     "credit": "編曲",
     "date": "2025.03.26",
-    "image": "https://mahonare.asmik-ace.co.jp/2024/wp-content/themes/mahonare/img/bluray_vol2_img@2x.webp",
+    "image": "",
     "link": "https://mahonare.asmik-ace.co.jp/blu-ray",
     "audio": "",
-    "note": "作曲：下村陽子\n共編曲：松尾早人、原口大（音楽制作：イマジン）"
+    "note": "作曲：下村陽子\n共編曲：松尾早人、原口大"
   },
   {
     "album": "",
@@ -147,66 +199,66 @@ window.WORKS = [
     "note": "作詞：ハニホヘト、えなぴ、ゆうぴーまん\n共作曲：ハニホヘト"
   },
   {
-    "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
+    "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say",
     "format": "",
     "media": "Blu-ray",
     "title": "DEAR MY LOVER",
     "artist": "Hey! Say! JUMP",
     "credit": "オーケストレーション",
     "date": "2026.09.02",
-    "image": "https://m.media-amazon.com/images/I/51jSB8xKsOL._AC_SY679_.jpg\nhttps://m.media-amazon.com/images/I/51auvIn96oL._AC_SY679_.jpg",
+    "image": "",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
     "note": "編曲：遠藤ナオキ"
   },
   {
-    "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
+    "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say",
     "format": "",
     "media": "Blu-ray",
     "title": "Give Me Love",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
     "date": "2026.09.02",
-    "image": "https://m.media-amazon.com/images/I/51jSB8xKsOL._AC_SY679_.jpg\nhttps://m.media-amazon.com/images/I/51auvIn96oL._AC_SY679_.jpg",
+    "image": "",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
     "note": "共編曲：遠藤ナオキ"
   },
   {
-    "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
+    "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say",
     "format": "",
     "media": "Blu-ray",
     "title": "Magic Power",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
     "date": "2026.09.02",
-    "image": "https://m.media-amazon.com/images/I/51jSB8xKsOL._AC_SY679_.jpg\nhttps://m.media-amazon.com/images/I/51auvIn96oL._AC_SY679_.jpg",
+    "image": "",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
     "note": "共編曲：遠藤ナオキ"
   },
   {
-    "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
+    "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say",
     "format": "",
     "media": "Blu-ray",
     "title": "Entertainment",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
     "date": "2026.09.02",
-    "image": "https://m.media-amazon.com/images/I/51jSB8xKsOL._AC_SY679_.jpg\nhttps://m.media-amazon.com/images/I/51auvIn96oL._AC_SY679_.jpg",
+    "image": "",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
     "note": "共編曲：遠藤ナオキ"
   },
   {
-    "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say｜Hey! Say! JUMP｜Storm Labels",
+    "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say",
     "format": "",
     "media": "Blu-ray",
     "title": "愛よ、僕を導いてゆけ",
     "artist": "Hey! Say! JUMP",
     "credit": "編曲・オーケストラアレンジ",
     "date": "2026.09.02",
-    "image": "https://m.media-amazon.com/images/I/51jSB8xKsOL._AC_SY679_.jpg\nhttps://m.media-amazon.com/images/I/51auvIn96oL._AC_SY679_.jpg",
+    "image": "",
     "link": "https://web.storm-labels.co.jp/s/st/discography/LCXA-5298",
     "audio": "",
     "note": "共編曲：遠藤ナオキ"
