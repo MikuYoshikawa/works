@@ -183,6 +183,9 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <div class="actions" style="margin-top:8px">
             <button type="button" id="moreLinksBtn">他の配信サービスを自動で追加</button>
             <button type="button" class="ghost" id="songlinkBtn">Songlink で開く ↗</button>
+            <button type="button" class="ghost" id="findSpotifyBtn">Spotifyで探す ↗</button>
+            <button type="button" class="ghost" id="findAmazonBtn">Amazon Musicで探す ↗</button>
+            <button type="button" class="ghost" id="findYtmBtn">YouTube Musicで探す ↗</button>
             <button type="button" class="ghost" id="findLineBtn">LINE MUSICで探す ↗</button>
             <button type="button" class="ghost" id="findAwaBtn">AWAで探す ↗</button>
           </div>
@@ -744,11 +747,27 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     if (/music\.youtube\.com/i.test(u)) return "youtubeMusic";
     return "";
   }
+  function searchQuery() {
+    var title = $("f-title").value.trim().replace(/\s*[\(（][^)）]*[\)）]\s*/g, " ").replace(/-Live$/i, "").trim();
+    return [title, $("f-artist").value.trim().split(/[,，、]/)[0]].filter(Boolean).join(" ");
+  }
   function searchFor(site) {
-    var q = [$("f-title").value.trim(), $("f-artist").value.trim().split(/[,，、]/)[0]].filter(Boolean).join(" ");
+    var q = searchQuery();
     if (!q) { setStatus("linkStatus", "先に曲名を入れてください。", "err"); return; }
     window.open("https://www.google.com/search?q=" + encodeURIComponent("site:" + site + " " + q), "_blank", "noopener");
   }
+  function searchIn(service) {
+    var q = searchQuery();
+    if (!q) { setStatus("linkStatus", "先に曲名を入れてください。", "err"); return; }
+    var url = service === "spotify" ? "https://open.spotify.com/search/" + encodeURIComponent(q)
+      : service === "amazon" ? "https://music.amazon.co.jp/search/" + encodeURIComponent(q)
+      : "https://music.youtube.com/search?q=" + encodeURIComponent(q);
+    window.open(url, "_blank", "noopener");
+    setStatus("linkStatus", "開いたページで曲を見つけたら、共有ボタン（…）→「リンクをコピー」で URL をコピーして、上の欄の最後の行に貼ってください。", "");
+  }
+  $("findSpotifyBtn").addEventListener("click", function () { searchIn("spotify"); });
+  $("findAmazonBtn").addEventListener("click", function () { searchIn("amazon"); });
+  $("findYtmBtn").addEventListener("click", function () { searchIn("ytm"); });
   $("moreLinksBtn").addEventListener("click", function () { addOtherServices(false); });
   $("songlinkBtn").addEventListener("click", openSonglink);
   $("findLineBtn").addEventListener("click", function () { searchFor("music.line.me"); });
