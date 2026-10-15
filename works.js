@@ -1,5 +1,5 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 17:46:17）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 18:26:05）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / imageCredit: ジャケットのクレジット / link: リンク / audio: 試聴音源 / mv: MV(YouTube) / note: 解説
@@ -18,6 +18,103 @@ window.SITE = {
 
 window.WORKS = [
   {
+    "page": "event",
+    "album": "",
+    "format": "",
+    "media": "Digital",
+    "title": "あぷぷ!のエール",
+    "artist": "保ノ花えーる",
+    "credit": "作曲・作詞・編曲",
+    "date": "2025.12.26",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/2a/3b/9f/2a3b9fa6-5d0e-d936-612f-25c1e0c9cf58/4550714839794_cover.png/1000x1000bb.jpg",
+    "imageCredit": "",
+    "link": "https://linkco.re/e1h2SQdT",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3b/74/b1/3b74b167-4264-5827-fb9e-52e097fa244f/mzaf_10506337408546293854.plus.aac.p.m4a",
+    "mv": "",
+    "note": ""
+  },
+  {
+    "page": "event",
+    "album": "",
+    "format": "",
+    "media": "Digital",
+    "title": "ASOBO",
+    "artist": "猫町美トラ",
+    "credit": "作曲・作詞・編曲",
+    "date": "2026.01.23",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/9f/94/8f/9f948ffd-9f5d-0dc1-102d-09e0f05292ec/4550752621382_cover.png/1000x1000bb.jpg",
+    "imageCredit": "",
+    "link": "https://linkco.re/9MrmfhSS",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9d/ff/c8/9dffc823-c25e-b727-1e48-a2dc7fe72c33/mzaf_4655769947885851270.plus.aac.p.m4a",
+    "mv": "",
+    "note": ""
+  },
+  {
+    "page": "event",
+    "album": "",
+    "format": "",
+    "media": "Digital",
+    "title": "愛して!ファンファーレ♡",
+    "artist": "鳴愛もな",
+    "credit": "作曲・作詞・編曲",
+    "date": "2026.03.02",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ca/5e/60/ca5e60a1-abb7-560e-4254-f651a130f287/4550753642454_cover.png/1000x1000bb.jpg",
+    "imageCredit": "",
+    "link": "https://linkco.re/zB4NN00H",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/76/20/c3/7620c32f-5578-36de-9134-0f616086e570/mzaf_15031729931255473878.plus.aac.p.m4a",
+    "mv": "",
+    "note": ""
+  },
+  {
+    "page": "event",
+    "album": "",
+    "format": "",
+    "media": "Digital",
+    "title": "「またね」",
+    "artist": "真種透歌",
+    "credit": "作曲・作詞・編曲",
+    "date": "2026.03.06",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/99/de/94/99de94db-168c-07a9-2ef1-a5846cd3cb94/4550753807280_cover.png/1000x1000bb.jpg",
+    "imageCredit": "",
+    "link": "https://linkco.re/VgcpAq7U",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/2a/e9/5a/2ae95aa6-01cc-afc3-8476-1ba1b5925b4a/mzaf_993159222313195426.plus.aac.p.m4a",
+    "mv": "",
+    "note": ""
+  },
+  {
+    "page": "event",
+    "album": "",
+    "format": "",
+    "media": "Digital",
+    "title": "遠い日の約束",
+    "artist": "甘沖 とゆ",
+    "credit": "作曲・作詞・編曲",
+    "date": "2026.04.13",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/31/e4/3d/31e43d04-e710-22bf-bf50-a65aa1a5bd60/4550755043884_cover.png/1000x1000bb.jpg",
+    "imageCredit": "",
+    "link": "https://linkco.re/EA3D8qzH",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b8/d7/d8/b8d7d88b-8ada-905c-28b7-2015c451bc18/mzaf_17220716986127636601.plus.aac.p.m4a",
+    "mv": "",
+    "note": ""
+  },
+  {
+    "page": "event",
+    "album": "",
+    "format": "",
+    "media": "Digital",
+    "title": "O・N・M・T・P",
+    "artist": "黒党みるく",
+    "credit": "作曲・作詞・編曲",
+    "date": "2026.06.04",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b1/70/82/b1708207-0758-5204-fa35-018fff32b14f/4550756927565_cover.png/1000x1000bb.jpg",
+    "imageCredit": "",
+    "link": "https://linkco.re/Qzn5rA70",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/9e/a9/92/9ea99241-ea61-f2e5-5aee-f3e90487411a/mzaf_11774968798605537885.plus.aac.p.m4a",
+    "mv": "",
+    "note": ""
+  },
+  {
+    "page": "",
     "album": "",
     "format": "",
     "media": "デジタル配信",
@@ -33,6 +130,23 @@ window.WORKS = [
     "note": "作詞：ハニホヘト、えなぴ、ゆうぴーまん\n共作曲：ハニホヘト"
   },
   {
+    "page": "event",
+    "album": "",
+    "format": "",
+    "media": "Digital",
+    "title": "Rosetta",
+    "artist": "真宮夢めも",
+    "credit": "作曲・作詞・編曲",
+    "date": "2026.09.29",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/56/e3/e0/56e3e03c-50fd-d2dd-4f1f-c03283f086fc/4550760254152_cover.png/1000x1000bb.jpg",
+    "imageCredit": "",
+    "link": "https://linkco.re/TEn0Bmsv",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/98/3b/cd/983bcd01-9cac-6313-2025-bf3098b3fccd/mzaf_15611984019863007147.plus.aac.p.m4a",
+    "mv": "",
+    "note": ""
+  },
+  {
+    "page": "",
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
     "media": "CD・デジタル配信",
@@ -48,6 +162,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
     "media": "CD・デジタル配信",
@@ -63,6 +178,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
     "media": "CD・デジタル配信",
@@ -78,6 +194,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "THE IDOLM@STER 20th anniversary ORCHESTRA CONCERT SYMPHONY OF BRILLIANT STARS コンサートアルバム",
     "format": "",
     "media": "CD・デジタル配信",
@@ -93,6 +210,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say",
     "format": "",
     "media": "Blu-ray・DVD",
@@ -108,6 +226,7 @@ window.WORKS = [
     "note": "編曲：遠藤ナオキ"
   },
   {
+    "page": "",
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say",
     "format": "",
     "media": "Blu-ray・DVD",
@@ -123,6 +242,7 @@ window.WORKS = [
     "note": "共編曲：遠藤ナオキ"
   },
   {
+    "page": "",
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say",
     "format": "",
     "media": "Blu-ray・DVD",
@@ -138,6 +258,7 @@ window.WORKS = [
     "note": "共編曲：遠藤ナオキ"
   },
   {
+    "page": "",
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say",
     "format": "",
     "media": "Blu-ray・DVD",
@@ -153,6 +274,7 @@ window.WORKS = [
     "note": "共編曲：遠藤ナオキ"
   },
   {
+    "page": "",
     "album": "Hey! Say! JUMP DOME TOUR 2025-2026 S say",
     "format": "",
     "media": "Blu-ray・DVD",
@@ -168,6 +290,7 @@ window.WORKS = [
     "note": "共編曲：遠藤ナオキ"
   },
   {
+    "page": "",
     "album": "",
     "format": "",
     "media": "Stage",
@@ -183,6 +306,23 @@ window.WORKS = [
     "note": "演出・音楽・原案：小林顕作\n編曲：遠藤ナオキ"
   },
   {
+    "page": "event",
+    "album": "",
+    "format": "",
+    "media": "Digital",
+    "title": "桃の木音頭",
+    "artist": "桃の木にゃんこ",
+    "credit": "作曲・作詞・編曲",
+    "date": "2026.08.31",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/67/72/ea/6772eaf3-2980-4aaa-1e1d-d6eab0896d02/4550759765270_cover.png/1000x1000bb.jpg",
+    "imageCredit": "",
+    "link": "https://linkco.re/AQY6vba8",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/00/51/7a/00517a5a-8cbf-d3e7-6db4-247ec0da43c2/mzaf_10787494491497252195.plus.aac.p.m4a",
+    "mv": "",
+    "note": ""
+  },
+  {
+    "page": "",
     "album": "SEASIDE",
     "format": "",
     "media": "デジタル配信",
@@ -198,6 +338,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "SEASIDE",
     "format": "",
     "media": "デジタル配信",
@@ -213,6 +354,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "黎明",
     "format": "",
     "media": "デジタル配信",
@@ -228,6 +370,7 @@ window.WORKS = [
     "note": "作詞・作曲：島太星"
   },
   {
+    "page": "",
     "album": "",
     "format": "",
     "media": "Stage",
@@ -243,6 +386,7 @@ window.WORKS = [
     "note": "作・演出・振付・作詞：近藤大介"
   },
   {
+    "page": "",
     "album": "恍惚",
     "format": "",
     "media": "Digital",
@@ -258,6 +402,23 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "event",
+    "album": "",
+    "format": "",
+    "media": "Digital",
+    "title": "フォーユー!",
+    "artist": "チョコ森めあり",
+    "credit": "作曲・作詞・編曲",
+    "date": "2026.07.17",
+    "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/95/2a/bd/952abd28-26f5-09e4-0a53-4dc9cf636fab/4550758357520_cover.png/1000x1000bb.jpg",
+    "imageCredit": "",
+    "link": "https://linkco.re/Re69G11r",
+    "audio": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/eb/17/57/eb175743-e037-d463-2834-a6637de4e4b1/mzaf_1599783250490708819.plus.aac.p.m4a",
+    "mv": "",
+    "note": ""
+  },
+  {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 32",
     "format": "",
     "media": "CD・デジタル配信",
@@ -273,6 +434,7 @@ window.WORKS = [
     "note": "共編曲：畑田浩孝"
   },
   {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 32",
     "format": "",
     "media": "CD・デジタル配信",
@@ -288,6 +450,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "",
     "format": "",
     "media": "デジタル配信",
@@ -303,6 +466,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "",
     "format": "",
     "media": "Stage",
@@ -318,6 +482,7 @@ window.WORKS = [
     "note": "作・演出・振付・作詞：近藤大介"
   },
   {
+    "page": "",
     "album": "魔法使いになれなかった女の子の話 Blu-ray BOX 下巻",
     "format": "",
     "media": "Blu-ray",
@@ -333,6 +498,7 @@ window.WORKS = [
     "note": "作曲：下村陽子\n共編曲：松尾早人、原口大"
   },
   {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 25",
     "format": "",
     "media": "CD・デジタル配信",
@@ -348,6 +514,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 25",
     "format": "",
     "media": "CD・デジタル配信",
@@ -363,6 +530,7 @@ window.WORKS = [
     "note": "共編曲：守谷勇人（IM.Labで共編曲）"
   },
   {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 25",
     "format": "",
     "media": "CD・デジタル配信",
@@ -378,6 +546,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 25",
     "format": "",
     "media": "CD・デジタル配信",
@@ -393,6 +562,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 25",
     "format": "",
     "media": "CD・デジタル配信",
@@ -408,6 +578,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "魔法使いになれなかった女の子の話 Blu-ray BOX 上巻",
     "format": "",
     "media": "Blu-ray",
@@ -423,6 +594,7 @@ window.WORKS = [
     "note": "作曲：下村陽子\n共編曲：松尾早人、原口大"
   },
   {
+    "page": "",
     "album": "THE IDOLM@STER ORCHESTRA CONCERT ～SYMPHONY OF FIVE STARS!!!!!～ コンサートアルバム",
     "format": "",
     "media": "CD・デジタル配信",
@@ -438,6 +610,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
     "media": "CD・デジタル配信",
@@ -453,6 +626,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
     "media": "CD・デジタル配信",
@@ -468,6 +642,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
     "media": "CD・デジタル配信",
@@ -483,6 +658,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "『ウマ娘 プリティーダービー』WINNING LIVE 17",
     "format": "",
     "media": "CD・デジタル配信",
@@ -498,6 +674,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "アニメ「ウマ娘 プリティーダービー ROAD TO THE TOP」アルバム",
     "format": "",
     "media": "CD・デジタル配信",
@@ -513,6 +690,7 @@ window.WORKS = [
     "note": ""
   },
   {
+    "page": "",
     "album": "アニメ「ウマ娘 プリティーダービー ROAD TO THE TOP」アルバム",
     "format": "",
     "media": "CD・デジタル配信",
