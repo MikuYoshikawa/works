@@ -1,5 +1,5 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/15 15:19:51）
+   WORKS データファイル（admin.html から書き出し: 2026/10/15 15:25:54）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / link: リンク / audio: 試聴音源 / note: 解説
@@ -13,7 +13,7 @@ window.SITE = {
   "links": [
     "https://x.com/yo4kawa39_0525?s=11"
   ],
-  "photo": "profile"
+  "photo": "profile.jpg"
 };
 
 window.WORKS = [
