@@ -177,9 +177,15 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <label for="f-imageCredit" style="margin-top:6px">ジャケットのクレジット<span class="hint">詳細画面の写真の下に小さく表示（空欄なら非表示）</span></label>
           <input type="text" id="f-imageCredit" placeholder="例：Art Direction：〇〇 / Illustration：〇〇 / Photo：〇〇">
         </div>
-        <div>
-          <label for="f-link">リンク<span class="hint">配信ページなど</span></label>
-          <input type="text" id="f-link">
+        <div class="span2">
+          <label for="f-link">配信・作品ページのリンク<span class="hint">1行に1つずつ。Apple Music・Spotify・YouTube Music・Amazon Music・LINE MUSIC など、いくつでもOK（サービス名は自動で表示）</span></label>
+          <textarea id="f-link" rows="3" placeholder="https://music.apple.com/…&#10;https://open.spotify.com/…"></textarea>
+          <div class="actions" style="margin-top:8px">
+            <button type="button" id="moreLinksBtn">他の配信サービスを自動で追加</button>
+            <button type="button" class="ghost" id="findLineBtn">LINE MUSICで探す ↗</button>
+            <button type="button" class="ghost" id="findAwaBtn">AWAで探す ↗</button>
+          </div>
+          <p class="status" id="linkStatus"></p>
         </div>
         <div>
           <label for="f-audio">試聴音源<span class="hint">mp3のURLなど</span></label>
@@ -661,7 +667,9 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     }
 
     job.then(function (res) {
-      if (editingIndex < 0) FIELDS.forEach(function (k) { if (["credit", "format", "note", "album", "media"].indexOf(k) < 0) $("f-" + k).value = ""; });
+      var keepLinks = $("f-link").value.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean);
+      if (editingIndex < 0) FIELDS.forEach(function (k) { if (["credit", "format", "note", "album", "media", "link"].indexOf(k) < 0) $("f-" + k).value = ""; });
+      if (res.w.link) { if (keepLinks.indexOf(res.w.link) < 0) keepLinks.push(res.w.link); res.w.link = keepLinks.join("\n"); }
       fillForm(res.w);
       if (res.credits) return res;
       // streaming pages rarely list credits, but try once quickly
@@ -671,6 +679,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     }).then(function (res) {
       var msg = showCredits(res.credits);
       setStatus("fetchStatus", "読み込みました。" + (res.note ? res.note + " " : "") + msg, "ok");
+      if (/(music|itunes)\.apple\.com$/.test(host) || /spotify\.com$/.test(host)) addOtherServices(true);
     }).catch(function () {
       showCredits(null);
       setStatus("fetchStatus", "このページからは情報を取得できませんでした。下の「クレジットの文章を貼り付け」を使うか、フォームに手入力してください。", "err");
@@ -684,6 +693,52 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     function (u) { return "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(u); },
     function (u) { return "https://r.jina.ai/" + u; }
   ];
+  // ---- find the same song on other services (Odesli / song.link) ----
+  var SERVICES = [["spotify", "Spotify"], ["amazonMusic", "Amazon Music"], ["youtubeMusic", "YouTube Music"]];
+  function linkLines() { return $("f-link").value.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function getJSONvia(url) {
+    return getJSON(url).catch(function () {
+      return fetchText(RELAYS[0](url), 15000).then(function (t) { return JSON.parse(t); });
+    });
+  }
+  function addOtherServices(silentIfNone) {
+    var lines = linkLines();
+    var base = lines.filter(function (u) { return /music\.apple\.com|spotify\.com|youtube\.com|amazon\./i.test(u); })[0];
+    if (!base) { if (!silentIfNone) setStatus("linkStatus", "先に Apple Music などの曲のリンクを1つ入れてください。", "err"); return Promise.resolve(); }
+    setStatus("linkStatus", "他の配信サービスを探しています…");
+    var api = "https://api.song.link/v1-alpha.1/links?userCountry=JP&url=" + encodeURIComponent(base);
+    return getJSONvia(api).then(function (d) {
+      var by = (d && d.linksByPlatform) || {}, added = [];
+      var have = lines.map(function (u) { return u.replace(/[?#].*$/, ""); });
+      SERVICES.forEach(function (s) {
+        var hit = by[s[0]]; if (!hit || !hit.url) return;
+        if (lines.some(function (u) { return serviceOf(u) === s[0]; })) return;
+        if (have.indexOf(hit.url.replace(/[?#].*$/, "")) >= 0) return;
+        lines.push(hit.url); added.push(s[1]);
+      });
+      $("f-link").value = lines.join("\n");
+      setStatus("linkStatus", added.length
+        ? added.join("・") + " のリンクを追加しました。LINE MUSIC と AWA は自動では見つけられないので、右のボタンで探して貼ってください。"
+        : "追加できる配信サービスは見つかりませんでした（すでに入っているか、配信されていない可能性があります）。", added.length ? "ok" : "");
+    }).catch(function () {
+      setStatus("linkStatus", "他の配信サービスを探せませんでした。少し時間をおいてもう一度押してください。", "err");
+    });
+  }
+  function serviceOf(u) {
+    if (/open\.spotify\.com/i.test(u)) return "spotify";
+    if (/music\.amazon\.|amazon\.co\.jp\/music|amzn\./i.test(u)) return "amazonMusic";
+    if (/music\.youtube\.com/i.test(u)) return "youtubeMusic";
+    return "";
+  }
+  function searchFor(site) {
+    var q = [$("f-title").value.trim(), $("f-artist").value.trim().split(/[,，、]/)[0]].filter(Boolean).join(" ");
+    if (!q) { setStatus("linkStatus", "先に曲名を入れてください。", "err"); return; }
+    window.open("https://www.google.com/search?q=" + encodeURIComponent("site:" + site + " " + q), "_blank", "noopener");
+  }
+  $("moreLinksBtn").addEventListener("click", function () { addOtherServices(false); });
+  $("findLineBtn").addEventListener("click", function () { searchFor("music.line.me"); });
+  $("findAwaBtn").addEventListener("click", function () { searchFor("s.awa.fm"); });
+
   function fetchText(url, ms) {
     var ctl = window.AbortController ? new AbortController() : null;
     var t = setTimeout(function () { if (ctl) ctl.abort(); }, ms);
