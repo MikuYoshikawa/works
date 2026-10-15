@@ -157,7 +157,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
         <div class="span2">
           <label for="f-media">媒体<span class="hint">ボタンで選ぶか、直接入力（複数OK）</span></label>
           <div class="chips" id="mchips"></div>
-          <input type="text" id="f-media" placeholder="例：CD・Blu-ray">
+          <input type="text" id="f-media" placeholder="例：CD・Blu-ray（ミュージカルなどの公演は Stage）">
         </div>
         <div class="span2">
           <label for="f-credit">担当内容<span class="hint">ボタンで選ぶか、直接入力</span></label>
@@ -282,8 +282,8 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-credit").addEventListener("input", renderChips);
 
   // ---- media chips ----
-  var MEDIA_CHOICES = ["CD", "Digital", "Blu-ray", "DVD", "アナログ盤"];
-  function mediaParts() { return $("f-media").value.split(/[・、,，\/／]+/).map(function (s) { s = s.trim(); return /^(デジタル配信|デジタル|digital)$/i.test(s) ? "Digital" : s; }).filter(Boolean); }
+  var MEDIA_CHOICES = ["CD", "Digital", "Blu-ray", "DVD", "Stage"];
+  function mediaParts() { return $("f-media").value.split(/[・、,，\/／]+/).map(function (s) { s = s.trim(); return /^(デジタル配信|デジタル|digital)$/i.test(s) ? "Digital" : /^(公演|舞台|stage)$/i.test(s) ? "Stage" : /^(アナログ盤|アナログ|レコード|vinyl)$/i.test(s) ? "Vinyl" : s; }).filter(Boolean); }
   function renderMediaChips() {
     var parts = mediaParts();
     $("mchips").innerHTML = MEDIA_CHOICES.map(function (r) {

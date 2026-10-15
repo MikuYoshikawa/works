@@ -196,7 +196,8 @@ h1 sup {
 }
 .cover img {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: contain; display: block;
+  object-fit: contain; object-position: left bottom; display: block;
+  transform-origin: left bottom;
   transition: transform .6s cubic-bezier(.2,.7,.2,1);
 }
 
@@ -307,7 +308,7 @@ dialog.detail[open]::backdrop { animation: bIn .3s ease-out; }
 .d-thumbs button:hover { opacity: .85; }
 .d-thumbs button[aria-pressed="true"] { opacity: 1; border-color: var(--ink); }
 .d-thumbs button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.d-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.d-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: left top; }
 .d-art .ph-t { font-size: clamp(20px, 3vw, 36px); }
 .d-art .ph-b { font-size: 11px; }
 .d-info { min-width: 0; max-width: 34em; }
@@ -513,11 +514,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
           </button>
           <a class="d-btn d-link" id="dLink" href="#" target="_blank" rel="noopener"><span class="lbl"></span> <span aria-hidden="true">↗</span></a>
         </div>
-        <div class="d-url" id="dUrlBox">
-          <span class="k">URL</span>
-          <span class="v" id="dUrl"></span>
-          <button type="button" id="dCopy">Copy</button>
-        </div>
+        <span id="dUrlBox" hidden><span id="dUrl"></span><button type="button" id="dCopy" hidden></button></span>
       </div>
     </div>
     <div class="d-nav">
@@ -600,8 +597,8 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   document.getElementById("mail").textContent = email;
   document.getElementById("mailBox").hidden = !email;
   document.getElementById("inquiry").textContent = email
-    ? "楽曲制作・編曲・CM / 映像音楽のご依頼は、上記アドレスまでお気軽にご連絡ください。"
-    : "楽曲制作・編曲・CM / 映像音楽のご依頼は、各SNSのメッセージからお気軽にご連絡ください。";
+    ? "楽曲制作のご依頼は、上記アドレスまでお気軽にご連絡ください。"
+    : "楽曲制作のご依頼は、各SNSのメッセージからお気軽にご連絡ください。";
   document.getElementById("links").innerHTML = links.map(function (u) {
     var label = snsLabel(u); if (!label) return "";
     return '<li><a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(label) + ' <span aria-hidden="true">↗</span></a></li>';
@@ -670,8 +667,8 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
   function drawFilters() { roleMS.set(all); }
 
   // media names: older data may say デジタル配信
-  var MEDIA_ORDER = ["CD", "Digital", "Blu-ray", "DVD", "アナログ盤"];
-  function normMedia(m) { m = String(m || "").trim(); return /^(デジタル配信|デジタル|digital)$/i.test(m) ? "Digital" : m; }
+  var MEDIA_ORDER = ["CD", "Digital", "Blu-ray", "DVD", "Vinyl", "Stage"];
+  function normMedia(m) { m = String(m || "").trim(); return /^(デジタル配信|デジタル|digital)$/i.test(m) ? "Digital" : /^(公演|舞台|stage)$/i.test(m) ? "Stage" : /^(アナログ盤|アナログ|レコード|vinyl)$/i.test(m) ? "Vinyl" : m; }
   function drawMedia() {
     var mAll = [];
     WORKS.forEach(function (w) {
@@ -875,7 +872,7 @@ footer { padding-block: clamp(96px, 14vw, 180px) 40px; }
     var note = document.getElementById("dNote"); note.textContent = w.note || ""; note.hidden = !w.note;
     playBtn.hidden = !w.audio; if (w.audio) playBtn.setAttribute("data-src", w.audio); else playBtn.removeAttribute("data-src");
     var link = document.getElementById("dLink"), urlBox = document.getElementById("dUrlBox");
-    link.hidden = urlBox.hidden = !w.link;
+    link.hidden = !w.link; urlBox.hidden = true;
     var tbox = document.getElementById("dTracksBox");
     tbox.hidden = !w.album;
     if (w.album) {
