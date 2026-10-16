@@ -141,6 +141,15 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
             <option value="event">Pococha・IRIAM イベント特典楽曲</option>
           </select>
         </div>
+        <div class="span2" id="catRow">
+          <label for="f-category">ジャンル<span class="hint">サイト上部の All / Songs / Soundtracks / Stage の分類（未選択なら、媒体が Stage の作品は Stage、それ以外は Songs）</span></label>
+          <select id="f-category" style="width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid #cfcfcb;background:#fff;border-radius:0">
+            <option value="">自動（未選択）</option>
+            <option value="Songs">Songs（歌モノ、楽曲提供、編曲など）</option>
+            <option value="Soundtracks">Soundtracks（映画・映像・ゲームなどの劇伴）</option>
+            <option value="Stage">Stage（舞台・ミュージカル・公演作品）</option>
+          </select>
+        </div>
         <div class="span2">
           <label for="f-album">収録アルバム名<span class="hint">同じアルバム名の曲は、サイトで1つのページにまとまります（シングルなら空欄）</span></label>
           <input type="text" id="f-album" list="albumList" autocomplete="off">
@@ -336,7 +345,9 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-media").addEventListener("input", renderMediaChips);
 
   // ---- event page preset ----
+  function syncCatRow() { $("catRow").hidden = $("f-page").value === "event"; }
   $("f-page").addEventListener("change", function () {
+    syncCatRow();
     if (this.value !== "event") return;
     $("f-credit").value = "作曲・作詞・編曲";
     $("f-media").value = "Digital";
@@ -371,7 +382,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-image").addEventListener("input", function () { clearTimeout(updateThumb.t); updateThumb.t = setTimeout(updateThumb, 400); });
 
   // ---- form ----
-  var FIELDS = ["page", "album", "format", "media", "title", "artist", "credit", "date", "image", "imageCredit", "link", "audio", "mv", "note"];
+  var FIELDS = ["page", "category", "album", "format", "media", "title", "artist", "credit", "date", "image", "imageCredit", "link", "audio", "mv", "note"];
   function readForm() {
     var w = {};
     FIELDS.forEach(function (k) { w[k] = $("f-" + k).value.trim(); });
@@ -385,7 +396,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       if (onlyEmpty && $("f-" + k).value.trim()) return;
       $("f-" + k).value = w[k];
     });
-    renderChips(); renderMediaChips(); updateThumb();
+    renderChips(); renderMediaChips(); updateThumb(); syncCatRow();
   }
   function normDate(v) {
     var m = String(v || "").trim().match(/^(\d{4})(?:[.\/\-年](\d{1,2})(?:[.\/\-月](\d{1,2})日?)?月?)?$/);
@@ -397,7 +408,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   function resetForm() {
     FIELDS.forEach(function (k) { $("f-" + k).value = ""; });
     editingIndex = -1; insertAfter = -1; $("formTitle").textContent = "作品を追加"; $("saveBtn").textContent = "リストに追加";
-    renderChips(); renderMediaChips(); updateThumb(); renderList();
+    renderChips(); renderMediaChips(); updateThumb(); syncCatRow(); renderList();
   }
   $("clearBtn").addEventListener("click", function () { resetForm(); $("fetchStatus").textContent = ""; });
   // ---- keep songs on the same album in step ----
@@ -422,6 +433,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       if (newA && a === newA) {
         if (fmtChanged && o.format !== after.format) { o.format = after.format; touched = true; }
         if (String(before.page || "") !== String(after.page || "") && String(o.page || "") !== String(after.page || "")) { o.page = after.page; touched = true; }
+        if (String(before.category || "") !== String(after.category || "") && String(o.category || "") !== String(after.category || "")) { o.category = after.category; touched = true; }
         if (mediaChanged && o.media !== after.media) { o.media = after.media; touched = true; }
         if (dateChanged && o.date !== after.date) { o.date = after.date; touched = true; }
         if (imageChanged && o.image !== after.image) { o.image = after.image; touched = true; }
@@ -445,6 +457,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     if (!mate) return;
     if (!w.format && mate.format) w.format = mate.format;
     if (!w.media && mate.media) w.media = mate.media;
+    if (!w.category && mate.category) w.category = mate.category;
     if (!w.date && (mate.date || mate.year)) w.date = String(mate.date || mate.year);
     if (!w.image && mate.image) w.image = mate.image;
     if (!w.imageCredit && mate.imageCredit) w.imageCredit = mate.imageCredit;
@@ -488,7 +501,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       return '<li data-i="' + i + '" class="' + (i === editingIndex ? "editing" : "") + '">' +
         '<button type="button" class="handle" aria-label="ドラッグして並べ替え（キーボードは↑↓キー）"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12"/></svg></button>' +
         '<div class="tb">' + (w.image ? '<img src="' + esc(resolveImg(String(w.image).split(/\n/)[0])) + '" alt="" onerror="this.remove()">' : "") + "</div>" +
-        '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.page === "event" ? "［イベント特典］" : "", w.album ? "『" + w.album + "』" : "", w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
+        '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.page === "event" ? "［イベント特典］" : (w.category ? "［" + w.category + "］" : ""), w.album ? "『" + w.album + "』" : "", w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
         '<div class="ops">' + del + "</div></li>";
     }).join("");
   }
@@ -698,7 +711,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
 
     job.then(function (res) {
       var keepLinks = $("f-link").value.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean);
-      if (editingIndex < 0) FIELDS.forEach(function (k) { if (["credit", "format", "note", "album", "media", "link"].indexOf(k) < 0) $("f-" + k).value = ""; });
+      if (editingIndex < 0) FIELDS.forEach(function (k) { if (["page", "category", "credit", "format", "note", "album", "media", "link"].indexOf(k) < 0) $("f-" + k).value = ""; });
       if (res.w.link) { if (keepLinks.indexOf(res.w.link) < 0) keepLinks.push(res.w.link); res.w.link = keepLinks.join("\n"); }
       fillForm(res.w);
       if (res.credits) return res;

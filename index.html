@@ -431,6 +431,28 @@ dialog.detail.closing::backdrop { animation: bOut .38s ease-in forwards; }
   background: none; border: 0; border-bottom: 1px solid var(--ink); padding: 0; cursor: pointer;
 }
 
+/* ---------- pager (more than 12 works) ---------- */
+.pager {
+  margin-top: clamp(56px, 8vw, 96px); border-top: 1px solid var(--line); padding-top: 18px;
+  display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 6px 4px;
+  font-family: var(--mono); font-size: 13px; letter-spacing: .06em;
+}
+.pager[hidden] { display: none !important; }
+.pager button {
+  font: inherit; color: var(--sub); background: none; border: 0; cursor: pointer;
+  min-width: 40px; min-height: 40px; padding: 0 8px;
+  border-bottom: 1px solid transparent; transition: color .2s ease;
+}
+.pager button:hover:not(:disabled) { color: var(--ink); }
+.pager button[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ink); cursor: default; }
+.pager button:disabled:not([aria-current]) { opacity: .25; cursor: default; }
+.pager button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.pager .gap { color: var(--sub); padding: 0 4px; }
+.pager .arw { padding: 0 14px; }
+.grid.flip { animation: gridIn .5s ease both; }
+@keyframes gridIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .grid.flip { animation: none; } }
+
 .empty { padding-block: 80px; color: var(--sub); text-align: center; grid-column: 1 / -1; }
 
 /* ---------- footer ---------- */
@@ -512,11 +534,14 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
 
 <main class="wrap">
   <nav class="pages" id="pages" data-rise hidden>
-    <a href="./" id="toMain" data-page="">Works</a>
+    <a href="./" data-page="">All</a>
+    <a href="#songs" data-page="songs">Songs</a>
+    <a href="#soundtracks" data-page="soundtracks">Soundtracks</a>
+    <a href="#stage" data-page="stage">Stage</a>
     <a href="#event" id="toEvent" data-page="event">Pococha・IRIAM イベント特典楽曲</a>
   </nav>
   <div class="bar" data-rise>
-    <span class="label" id="barLabel">Selected Works</span>
+    <span class="label" id="barLabel">Works</span>
     <div class="bar-r">
       <div class="sel ms" id="roleWrap"><span id="roleLbl">Credit</span>
         <button type="button" class="ms-btn" aria-haspopup="true" aria-expanded="false" aria-labelledby="roleLbl roleVal"><span class="ms-val" id="roleVal">All</span></button>
@@ -535,6 +560,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     </div>
   </div>
   <ul class="grid" id="grid"></ul>
+  <nav class="pager" id="pager" aria-label="ページ" hidden></nav>
 </main>
 
 <footer class="wrap">
@@ -571,7 +597,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
         <p class="d-artist" id="dArtist"></p>
         <dl class="d-spec">
           <div><dt>Credit</dt><dd id="dCredit"></dd></div>
-          <div><dt>Date</dt><dd id="dDate"></dd></div>
+          <div><dt id="dDateLabel">Release</dt><dd id="dDate"></dd></div>
         </dl>
         <p class="d-note" id="dNote"></p>
         <div class="d-mv" id="dMv" hidden></div>
@@ -600,13 +626,27 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
 (function () {
   var SITE = window.SITE || {};
   var ALL_WORKS = Array.isArray(window.WORKS) ? window.WORKS : [];
-  var PAGE = /^#event$/i.test(location.hash) ? "event" : "";
+  // pages: All (main list) / Songs / Soundtracks / Stage / the Pococha・IRIAM event songs
+  var PAGES = { songs: "Songs", soundtracks: "Soundtracks", stage: "Stage" };
+  var PAGE = (location.hash || "").replace(/^#/, "").toLowerCase();
+  if (PAGE !== "event" && !PAGES[PAGE]) PAGE = "";
   function pageOf(w) { return String(w.page || "") === "event" ? "event" : ""; }
-  var WORKS = ALL_WORKS.filter(function (w) { return pageOf(w) === PAGE; });
+  // genre: chosen in the editor; if left empty, stage works count as Stage and the rest as Songs
+  function categoryOf(w) {
+    var c = String(w.category || "").trim().toLowerCase();
+    if (PAGES[c]) return c;
+    return /(^|[・、,，\/／])\s*(stage|公演|舞台)\s*($|[・、,，\/／])/i.test(String(w.media || "")) ? "stage" : "songs";
+  }
+  var WORKS = ALL_WORKS.filter(function (w) {
+    if (PAGE === "event") return pageOf(w) === "event";
+    if (pageOf(w) === "event") return false;
+    return !PAGE || categoryOf(w) === PAGE;
+  });
   (function () {
     var hasEvent = ALL_WORKS.some(function (w) { return pageOf(w) === "event"; });
     var nav = document.getElementById("pages");
-    nav.hidden = !hasEvent && PAGE !== "event";
+    nav.hidden = false;
+    document.getElementById("toEvent").hidden = !hasEvent && PAGE !== "event";
     nav.querySelectorAll("a").forEach(function (a) {
       if (a.getAttribute("data-page") === PAGE) a.setAttribute("aria-current", "page");
       a.addEventListener("click", function (e) {
@@ -614,7 +654,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
         e.preventDefault();
         var target = a.getAttribute("data-page");
         if (target === PAGE) return;
-        location.href = location.pathname + (target ? "#event" : "");
+        location.href = location.pathname + (target ? "#" + target : "");
       });
     });
     if (PAGE === "event") document.getElementById("barLabel").textContent = "Pococha・IRIAM Event Songs";
@@ -711,7 +751,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
   document.getElementById("linksBox").hidden = !links.length;
 
   document.getElementById("copyright").textContent = "© " + new Date().getFullYear() + " " + (SITE.name || "");
-  if (SITE.name) document.title = (PAGE === "event" ? "Pococha・IRIAM イベント特典楽曲 — " : "WORKS — ") + SITE.name;
+  if (SITE.name) document.title = (PAGE === "event" ? "Pococha・IRIAM イベント特典楽曲 — " : PAGES[PAGE] ? "WORKS / " + PAGES[PAGE] + " — " : "WORKS — ") + SITE.name;
   if (!email && !links.length) document.querySelector(".contact").hidden = true;
 
   document.getElementById("copyMail").addEventListener("click", function (e) {
@@ -768,8 +808,8 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
   }
 
   var roleSet = [], mediaSet = [];
-  var roleMS = multiSelect("roleWrap", function (p) { roleSet = p; drawGrid(); });
-  var mediaMS = multiSelect("mediaWrap", function (p) { mediaSet = p; drawGrid(); });
+  var roleMS = multiSelect("roleWrap", function (p) { roleSet = p; curPage = 0; drawGrid(); });
+  var mediaMS = multiSelect("mediaWrap", function (p) { mediaSet = p; curPage = 0; drawGrid(); });
   function drawFilters() { roleMS.set(all); }
 
   // media names: older data may say デジタル配信
@@ -783,7 +823,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     mAll.sort(function (a, b) { var ia = MEDIA_ORDER.indexOf(a), ib = MEDIA_ORDER.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
     mediaMS.set(mAll);
   }
-  document.getElementById("sortSel").addEventListener("change", function () { sortDir = this.value; drawGrid(); });
+  document.getElementById("sortSel").addEventListener("change", function () { sortDir = this.value; curPage = 0; drawGrid(); });
 
   function placeholder(w) {
     var t = w.title || "Untitled";
@@ -972,22 +1012,69 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
         (!mediaSet.length || g.media.some(function (m) { return mediaSet.indexOf(m) >= 0; }));
     });
     document.getElementById("count").textContent = "(" + pad(WORKS.length) + ")";
-    if (!list.length) { grid.innerHTML = '<li class="empty">' + (WORKS.length ? "条件に合う作品がありません。" : "作品がまだ登録されていません。") + "</li>"; return; }
-    grid.innerHTML = list.map(function (w, i) {
+    if (!list.length) { grid.innerHTML = '<li class="empty">' + (WORKS.length ? "条件に合う作品がありません。" : "作品がまだ登録されていません。") + "</li>"; drawPager(); return; }
+    var pages = Math.ceil(list.length / PER);
+    if (curPage > pages - 1) curPage = pages - 1;
+    if (curPage < 0) curPage = 0;
+    var start = curPage * PER;
+    grid.innerHTML = list.slice(start, start + PER).map(function (w, j) {
+      var i = start + j;
       return '<li class="work' + (firstDraw ? " pending" : "") + '"><button class="card" type="button" data-i="' + i + '" aria-haspopup="dialog">' +
         '<span class="cover">' + coverHTML(w, true) + "</span>" +
         '<span class="meta">' + '<span class="mrow">' + mediaTags(w.media) +
         (w.tracks.some(function (t) { return ytId(t.mv); }) ? '<span class="md md-mv">MV</span>' : "") + "</span>" +
         '<span class="f">' + esc(w.format || "") + "</span>" + '<span class="t">' + esc(w.title || "Untitled") + "</span>" +
         (w.artist ? '<span class="a">' + esc(w.artist) + "</span>" : "") +
-        '<span class="c"><span class="cr">' + esc(w.credit || "") + (w.album ? " ／ " + w.tracks.length + "曲" : "") + '</span><span class="y">' + esc(dateOf(w) || "—") + "</span></span>" +
+        '<span class="c"><span class="y">' + esc(dateOf(w) || "—") + "</span></span>" +
         "</span></button></li>";
     }).join("");
     guardImages(grid, function (im) { return list[+im.closest(".card").getAttribute("data-i")]; });
+    drawPager();
     if (firstDraw) { firstDraw = false; revealGrid(); }
   }
   grid.addEventListener("click", function (e) {
     var c = e.target.closest(".card"); if (c) openDetail(+c.getAttribute("data-i"));
+  });
+
+  // ---------- pager: 12 works per page ----------
+  var PER = 12, curPage = 0;
+  var pager = document.getElementById("pager");
+  function drawPager() {
+    var pages = Math.ceil(list.length / PER);
+    if (pages < 2) { pager.hidden = true; pager.innerHTML = ""; return; }
+    pager.hidden = false;
+    // show every number when there are few pages; otherwise 1 … around current … last
+    var nums = [];
+    for (var p = 0; p < pages; p++) {
+      if (pages <= 7 || p === 0 || p === pages - 1 || Math.abs(p - curPage) <= 1) nums.push(p);
+      else if (nums[nums.length - 1] !== "gap") nums.push("gap");
+    }
+    pager.innerHTML =
+      '<button type="button" class="arw" data-p="' + (curPage - 1) + '" aria-label="前のページ"' + (curPage === 0 ? " disabled" : "") + ">←</button>" +
+      nums.map(function (p) {
+        if (p === "gap") return '<span class="gap">…</span>';
+        return '<button type="button" data-p="' + p + '"' + (p === curPage ? ' aria-current="page"' : "") + ">" + pad(p + 1) + "</button>";
+      }).join("") +
+      '<button type="button" class="arw" data-p="' + (curPage + 1) + '" aria-label="次のページ"' + (curPage === pages - 1 ? " disabled" : "") + ">→</button>";
+  }
+  function goPage(p, opts) {
+    opts = opts || {};
+    var pages = Math.ceil(list.length / PER);
+    p = Math.max(0, Math.min(pages - 1, p));
+    if (p === curPage) return;
+    curPage = p; drawGrid();
+    grid.querySelectorAll(".work").forEach(function (c) { c.classList.add("in"); });
+    grid.classList.remove("flip"); void grid.offsetWidth; grid.classList.add("flip");
+    if (opts.scroll !== false) {
+      var bar = document.querySelector(".bar");
+      var y = (bar || grid).getBoundingClientRect().top + window.pageYOffset - 16;
+      window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+    }
+  }
+  pager.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-p]"); if (!b || b.disabled) return;
+    goPage(+b.getAttribute("data-p"));
+    var cur = pager.querySelector('[aria-current="page"]'); if (cur) cur.focus({ preventScroll: true });
   });
 
   // ---------- detail ----------
@@ -1058,6 +1145,8 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     var ar = document.getElementById("dArtist"); ar.textContent = w.artist || ""; ar.hidden = !w.artist;
     document.getElementById("dCredit").textContent = w.credit || "—";
     document.getElementById("dDate").textContent = dateOf(w) || "—";
+    // stage works show performance dates (Schedule); CDs and streaming show Release
+    document.getElementById("dDateLabel").textContent = (w.media || []).indexOf("Stage") >= 0 ? "Schedule" : "Release";
     var mt = document.getElementById("dMediaTags"); mt.innerHTML = mediaTags(w.media); mt.hidden = !w.media.length;
     var note = document.getElementById("dNote"); note.textContent = w.note || ""; note.hidden = !w.note;
     var mvEl = document.getElementById("dMv");
@@ -1148,6 +1237,14 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
   dlg.addEventListener("close", function () {
     stopAudio(); document.documentElement.classList.remove("lock");
     dlg.querySelectorAll(".mv-box iframe").forEach(function (f) { f.remove(); }); // stop any playing MV
+    // if the detail view was paged past this page, show the page that holds the last-viewed work
+    var target = Math.floor(pos / PER);
+    if (target !== curPage) {
+      goPage(target, { scroll: false });
+      var card = grid.querySelector('.card[data-i="' + pos + '"]');
+      if (card) { card.scrollIntoView({ block: "center" }); card.focus({ preventScroll: true }); }
+      return;
+    }
     if (lastCard && lastCard.focus) lastCard.focus();
   });
   document.getElementById("dClose").addEventListener("click", closeDetail);
