@@ -1,5 +1,5 @@
 /* =========================================================
-   WORKS データファイル（admin.html から書き出し: 2026/10/17 1:35:24）
+   WORKS データファイル（admin.html から書き出し: 2026/10/17 1:46:37）
    ---------------------------------------------------------
    album: 収録アルバム / format: リリース形態 / media: 媒体 / title: 曲名 / artist: アーティスト名 / credit: 担当内容
    date: リリース日 / image: ジャケット画像 / imageCredit: ジャケットのクレジット / link: リンク / audio: 試聴音源 / mv: MV(YouTube) / note: 解説
@@ -432,8 +432,8 @@ window.WORKS = [
     "media": "Digital",
     "title": "Walking with you",
     "artist": "ちみ",
-    "credit": "作曲・作詞・編曲",
-    "staff": "",
+    "credit": "作詞・作曲・編曲",
+    "staff": "作曲：𠮷川 美矩\n作詞：𠮷川 美矩\n編曲：𠮷川 美矩",
     "date": "2026.08.06",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/f4/49/9e/f4499eaf-59ae-df72-8654-789c3059b21a/4550759037407_cover.jpg/1000x1000bb.jpg",
     "imageCredit": "",
