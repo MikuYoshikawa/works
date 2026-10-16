@@ -414,7 +414,7 @@ dialog.detail.closing::backdrop { animation: bOut .38s ease-in forwards; }
 .trk-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .trk-t { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; min-width: 0; }
 .trk-i { padding-block: 12px; }
-.trk-i:not(.trk-main) .trk-t { font-weight: 500; font-size: 15px; color: #333; }
+.trk-i .trk-t { font-weight: 500; font-size: 15px; color: #333; }
 .trk-c { font-size: 12px; color: var(--sub); }
 .trk-ar { margin: -4px 0 0; font-size: 13px; color: #333; overflow-wrap: anywhere; }
 .trk-n { margin: 0; font-size: 14px; color: #333; white-space: pre-line; }
@@ -699,8 +699,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     });
   }
   function staffHTML(text) {
-    var ls = staffLines(text).map(function (c, i) { return { label: sortLabel(c.label), names: c.names, rank: c.label ? lineRank(c) : 99, i: i }; })
-      .sort(function (a, b) { return a.rank - b.rank || a.i - b.i; });
+    var ls = slotSort(staffLines(text), lineRank).map(function (c) { return { label: sortLabel(c.label), names: c.names }; });
     if (!ls.length) return "";
     return '<ul class="staff">' + ls.map(function (c) {
       var names = c.names.split(/\s*([、,，\/／])\s*/).map(function (x, i) {
@@ -710,20 +709,30 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       return "<li>" + (c.label ? '<span class="sk">' + esc(c.label) + "</span>" : "") + '<span class="sv">' + names + "</span></li>";
     }).join("") + "</ul>";
   }
-  // credits always read 作詞 → 作曲 → 編曲
-  var ROLE_ORDER = ["作詞", "作曲", "編曲", "トラックメイク", "ボーカルディレクション"];
+  // 作詞・作曲・編曲 always read in that order; every other credit stays where it was typed
+  var ROLE_ORDER = ["作詞", "作曲", "編曲"];
   function roleRank(r) { var i = ROLE_ORDER.indexOf(r); return i < 0 ? 99 : i; }
+  // put the items that are 作詞/作曲/編曲 back into their own slots in that order; the rest don't move
+  function slotSort(items, rankOf) {
+    var slots = [], picked = [];
+    items.forEach(function (x, i) { if (rankOf(x) < 99) { slots.push(i); picked.push({ x: x, i: i }); } });
+    picked.sort(function (a, b) { return rankOf(a.x) - rankOf(b.x) || a.i - b.i; });
+    var out = items.slice(); slots.forEach(function (at, k) { out[at] = picked[k].x; }); return out;
+  }
   function sortRoleText(v) {
     var parts = String(v || "").split(/[・、,，\/／]+/).map(function (s) { return s.trim(); }).filter(Boolean);
-    return parts.map(function (p, i) { return { p: p, i: i }; }).sort(function (a, b) { return roleRank(a.p) - roleRank(b.p) || a.i - b.i; })
-      .map(function (x) { return x.p; }).join("・");
+    return slotSort(parts, roleRank).join("・");
   }
-  // "作曲・作詞" → "作詞・作曲" (only when the label is made of plain role words)
+  function labelParts(label) { return String(label || "").split(/\s*[・･\/／&＆,，、]\s*/).filter(Boolean); }
   function sortLabel(label) {
-    var parts = String(label || "").split(/\s*[・･\/／&＆,，、]\s*/);
-    return parts.every(function (p) { return ROLE_ORDER.indexOf(p) >= 0; }) ? sortRoleText(label) : label;
+    var parts = labelParts(label);
+    return parts.length > 1 && parts.every(function (p) { return roleRank(p) < 99; }) ? sortRoleText(label) : label;
   }
-  function lineRank(c) { var r = labelRoles(c.label).map(roleRank); return r.length ? Math.min.apply(null, r) : 99; }
+  function lineRank(c) {
+    var parts = labelParts(c.label);
+    if (!parts.length || !parts.every(function (p) { return roleRank(p) < 99; })) return 99;
+    return Math.min.apply(null, parts.map(roleRank));
+  }
   ALL_WORKS.forEach(function (w) { if (w && w.credit) w.credit = sortRoleText(w.credit); });
   ALL_WORKS.forEach(function (w) {
     if (!w || !w.staff || !MY_NAMES.length) return;
@@ -732,7 +741,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       if (c.label && isMe(c.names)) labelRoles(c.label).forEach(function (r) { if (own.indexOf(r) < 0) own.push(r); });
     });
     if (own.length) {
-      own.sort(function (a, b) { return roleRank(a) - roleRank(b); });
+      own = slotSort(own, roleRank);
       w.credit = own.join("・");
     }
   });
