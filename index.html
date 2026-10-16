@@ -1205,7 +1205,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     var mvEl = document.getElementById("dMv");
     var mvSingle = !w.album && ytId(w.mv) ? mvHTML(w.mv) : "";
     mvEl.innerHTML = mvSingle ? '<p class="mv-k">Music Video</p>' + mvSingle : ""; mvEl.hidden = !mvSingle;
-    playBtn.hidden = !w.audio; if (w.audio) playBtn.setAttribute("data-src", w.audio); else playBtn.removeAttribute("data-src");
+    playBtn.hidden = true; playBtn.removeAttribute("data-src"); // listen buttons are turned off
     var link = document.getElementById("dLink"), urlBox = document.getElementById("dUrlBox");
     link.hidden = !w.link; urlBox.hidden = true;
     curAlbum = w.album ? w : null;
@@ -1220,8 +1220,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
           (t.staff ? '<div class="trk-staff">' + staffHTML(t.staff) + "</div>" : "") +
           (t.note ? '<p class="trk-n">' + esc(t.note) + "</p>" : "") +
           (ytId(t.mv) ? '<div class="trk-mv">' + mvHTML(t.mv) + "</div>" : "") +
-          ((t.audio || trackOnly(t).length) ? '<div class="trk-a">' +
-            (t.audio ? '<button type="button" data-src="' + esc(t.audio) + '">' + ICON + '<span class="lbl">試聴する</span></button>' : "") +
+          (trackOnly(t).length ? '<div class="trk-a">' +
             trackOnly(t).map(function (u) {
               return '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(serviceName(u)) + ' <span aria-hidden="true">↗</span></a>';
             }).join("") +
