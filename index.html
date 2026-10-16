@@ -383,6 +383,15 @@ dialog.detail.closing::backdrop { animation: bOut .38s ease-in forwards; }
 }
 .d-spec dt { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--sub); padding-top: 2px; }
 .d-spec dd { margin: 0; overflow-wrap: anywhere; }
+.staff { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.staff li { display: grid; grid-template-columns: minmax(4.5em, max-content) minmax(0, 1fr); gap: 14px; }
+.staff li:not(:has(.sk)) { grid-template-columns: minmax(0, 1fr); }
+.staff .sk { color: var(--sub); font-size: 13px; padding-top: 1px; }
+.staff .sv { overflow-wrap: anywhere; }
+.staff .me { font-weight: 700; }
+.trk-staff { font-size: 13px; color: #333; }
+.trk-staff .staff { gap: 3px; }
+.trk-staff .sk { font-size: 12px; }
 #dDate { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .d-note { margin: 24px 0 0; color: #333; white-space: pre-line; text-wrap: pretty; }
 .d-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
@@ -538,7 +547,6 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     <a href="#songs" data-page="songs">Songs</a>
     <a href="#soundtracks" data-page="soundtracks">Soundtracks</a>
     <a href="#stage" data-page="stage">Stage</a>
-    <a href="#event" id="toEvent" data-page="event">Pococha・IRIAM イベント特典楽曲</a>
   </nav>
   <div class="bar" data-rise>
     <span class="label" id="barLabel">Works</span>
@@ -626,27 +634,20 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
 (function () {
   var SITE = window.SITE || {};
   var ALL_WORKS = Array.isArray(window.WORKS) ? window.WORKS : [];
-  // pages: All (main list) / Songs / Soundtracks / Stage / the Pococha・IRIAM event songs
+  // pages: All / Songs / Soundtracks / Stage
   var PAGES = { songs: "Songs", soundtracks: "Soundtracks", stage: "Stage" };
   var PAGE = (location.hash || "").replace(/^#/, "").toLowerCase();
-  if (PAGE !== "event" && !PAGES[PAGE]) PAGE = "";
-  function pageOf(w) { return String(w.page || "") === "event" ? "event" : ""; }
+  if (!PAGES[PAGE]) PAGE = "";
   // genre: chosen in the editor; if left empty, stage works count as Stage and the rest as Songs
   function categoryOf(w) {
     var c = String(w.category || "").trim().toLowerCase();
     if (PAGES[c]) return c;
     return /(^|[・、,，\/／])\s*(stage|公演|舞台)\s*($|[・、,，\/／])/i.test(String(w.media || "")) ? "stage" : "songs";
   }
-  var WORKS = ALL_WORKS.filter(function (w) {
-    if (PAGE === "event") return pageOf(w) === "event";
-    if (pageOf(w) === "event") return false;
-    return !PAGE || categoryOf(w) === PAGE;
-  });
+  var WORKS = ALL_WORKS.filter(function (w) { return !PAGE || categoryOf(w) === PAGE; });
   (function () {
-    var hasEvent = ALL_WORKS.some(function (w) { return pageOf(w) === "event"; });
     var nav = document.getElementById("pages");
     nav.hidden = false;
-    document.getElementById("toEvent").hidden = !hasEvent && PAGE !== "event";
     nav.querySelectorAll("a").forEach(function (a) {
       if (a.getAttribute("data-page") === PAGE) a.setAttribute("aria-current", "page");
       a.addEventListener("click", function (e) {
@@ -657,7 +658,6 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
         location.href = location.pathname + (target ? "#" + target : "");
       });
     });
-    if (PAGE === "event") document.getElementById("barLabel").textContent = "Pococha・IRIAM Event Songs";
     window.addEventListener("hashchange", function () { location.reload(); });
   })();
 
@@ -669,6 +669,56 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
   function roles(credit) {
     return String(credit || "").split(/[・、,，\/／]+/).map(function (s) { return s.trim(); }).filter(Boolean);
   }
+  // ---------- credits with other people ----------
+  // a work's "staff" holds lines like "作曲：𠮷川 美矩、〇〇"; the lines with your name decide your roles (used by the Credit filter)
+  function normName(s) { return String(s || "").toLowerCase().replace(/𠮷/g, "吉").replace(/[\s　・･.]/g, ""); }
+  var MY_NAMES = (function () {
+    var out = [];
+    (String(SITE.creditNames || "") + "," + String(SITE.name || "")).replace(/[（(]/g, ",").replace(/[)）]/g, "").split(/[,，、\n]/).forEach(function (s) {
+      var n = normName(s); if (n && n !== "yourname" && out.indexOf(n) < 0) out.push(n);
+      var p = s.trim().split(/\s+/); if (p.length === 2 && /^[a-z]/i.test(p[0])) { var r = normName(p[1] + p[0]); if (out.indexOf(r) < 0) out.push(r); }
+    });
+    return out;
+  })();
+  function isMe(name) { var n = normName(name); return !!n && MY_NAMES.some(function (m) { return n.indexOf(m) >= 0; }); }
+  function labelRoles(label) {
+    var out = [];
+    String(label || "").replace(/作編曲/g, "作曲・編曲").replace(/作詞作曲/g, "作詞・作曲").split(/\s*(?:[・･\/／&＆,，、]|\band\b)\s*/i).forEach(function (p) {
+      p = p.trim(); if (!p) return;
+      var r = /^(作詞|詞|lyrics?|words|written)$/i.test(p) ? "作詞" : /^(作曲|曲|music|composed|composer|composition)$/i.test(p) ? "作曲" : /^(編曲|arranged|arrangement|arranger)$/i.test(p) ? "編曲" : p;
+      if (out.indexOf(r) < 0) out.push(r);
+    });
+    return out;
+  }
+  function staffLines(text) {
+    return String(text || "").split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean).map(function (l) {
+      var m = l.match(/^([^:：]+)[:：]\s*(.*)$/);
+      return m ? { label: m[1].trim(), names: m[2].trim() } : { label: "", names: l };
+    });
+  }
+  function staffHTML(text) {
+    var ls = staffLines(text); if (!ls.length) return "";
+    return '<ul class="staff">' + ls.map(function (c) {
+      var names = c.names.split(/\s*([、,，\/／])\s*/).map(function (x, i) {
+        if (i % 2) return x === "、" ? "、" : x + " ";
+        return isMe(x) ? '<b class="me">' + esc(x) + "</b>" : esc(x);
+      }).join("");
+      return "<li>" + (c.label ? '<span class="sk">' + esc(c.label) + "</span>" : "") + '<span class="sv">' + names + "</span></li>";
+    }).join("") + "</ul>";
+  }
+  ALL_WORKS.forEach(function (w) {
+    if (!w || !w.staff || !MY_NAMES.length) return;
+    var own = [];
+    staffLines(w.staff).forEach(function (c) {
+      if (c.label && isMe(c.names)) labelRoles(c.label).forEach(function (r) { if (own.indexOf(r) < 0) own.push(r); });
+    });
+    if (own.length) {
+      var ord = ["作曲", "作詞", "編曲", "トラックメイク", "ボーカルディレクション"];
+      own.sort(function (a, b) { var ia = ord.indexOf(a), ib = ord.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+      w.credit = own.join("・");
+    }
+  });
+
   function hasJP(s) { return /[぀-ヿ㐀-鿿]/.test(s || ""); }
   function dateOf(w) { return String(w.date || w.year || ""); }
   function pad(n) { return (n < 10 ? "0" : "") + n; }
@@ -751,7 +801,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
   document.getElementById("linksBox").hidden = !links.length;
 
   document.getElementById("copyright").textContent = "© " + new Date().getFullYear() + " " + (SITE.name || "");
-  if (SITE.name) document.title = (PAGE === "event" ? "Pococha・IRIAM イベント特典楽曲 — " : PAGES[PAGE] ? "WORKS / " + PAGES[PAGE] + " — " : "WORKS — ") + SITE.name;
+  if (SITE.name) document.title = (PAGES[PAGE] ? "WORKS / " + PAGES[PAGE] + " — " : "WORKS — ") + SITE.name;
   if (!email && !links.length) document.querySelector(".contact").hidden = true;
 
   document.getElementById("copyMail").addEventListener("click", function (e) {
@@ -1143,7 +1193,10 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     var fm = document.getElementById("dFormat"); fm.textContent = w.format || ""; fm.hidden = !w.format;
     document.getElementById("dTitle").textContent = w.title || "Untitled";
     var ar = document.getElementById("dArtist"); ar.textContent = w.artist || ""; ar.hidden = !w.artist;
-    document.getElementById("dCredit").textContent = w.credit || "—";
+    var cr = document.getElementById("dCredit");
+    var single = !w.album && w.tracks && w.tracks[0];
+    if (single && single.staff && staffHTML(single.staff)) cr.innerHTML = staffHTML(single.staff);
+    else cr.textContent = w.credit || "—";
     document.getElementById("dDate").textContent = dateOf(w) || "—";
     // stage works show performance dates (Schedule); CDs and streaming show Release
     document.getElementById("dDateLabel").textContent = (w.media || []).indexOf("Stage") >= 0 ? "Schedule" : "Release";
@@ -1164,6 +1217,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
         var own = w.mixed ? splitArtists(t.artist).filter(function (x) { return w.common.indexOf(x) < 0; }).join(", ") : "";
         return '<li class="trk"><div class="trk-h"><span class="trk-t">' + esc(t.title || "Untitled") + '</span><span class="trk-c">' + esc(t.credit || "") + "</span></div>" +
           (own ? '<p class="trk-ar">' + esc(own) + "</p>" : "") +
+          (t.staff ? '<div class="trk-staff">' + staffHTML(t.staff) + "</div>" : "") +
           (t.note ? '<p class="trk-n">' + esc(t.note) + "</p>" : "") +
           (ytId(t.mv) ? '<div class="trk-mv">' + mvHTML(t.mv) + "</div>" : "") +
           ((t.audio || trackOnly(t).length) ? '<div class="trk-a">' +

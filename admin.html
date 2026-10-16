@@ -135,11 +135,8 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       </div>
       <div class="grid2">
         <div class="span2">
-          <label for="f-page">載せるページ</label>
-          <select id="f-page" style="width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid #cfcfcb;background:#fff;border-radius:0">
-            <option value="">WORKS（メインの作品一覧）</option>
-            <option value="event">Pococha・IRIAM イベント特典楽曲</option>
-          </select>
+          <label>まとめて入力<span class="hint">押すと担当と媒体が一度に入ります（あとからボタンで変更できます）</span></label>
+          <button type="button" id="presetEvent" style="width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid #cfcfcb;background:#fff;border-radius:0;cursor:pointer;text-align:left">Pococha・IRIAM イベント特典楽曲（作曲・作詞・編曲／Digital）</button>
         </div>
         <div class="span2" id="catRow">
           <label for="f-category">ジャンル<span class="hint">サイト上部の All / Songs / Soundtracks / Stage の分類（未選択なら、媒体が Stage の作品は Stage、それ以外は Songs）</span></label>
@@ -180,6 +177,11 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <label for="f-credit">担当内容<span class="hint">ボタンで選ぶか、直接入力</span></label>
           <div class="chips" id="chips"></div>
           <input type="text" id="f-credit" placeholder="例：作曲・編曲">
+        </div>
+        <div class="span2">
+          <label for="f-staff">クレジット（ほかの人も）<span class="hint">詳細画面の CREDIT に出ます。1行に1つ「担当：名前」。名前が複数なら「、」で区切ります。あなたの名前がある行から、上の担当内容が自動で選ばれます（空欄なら担当内容だけを表示）</span></label>
+          <textarea id="f-staff" rows="4" placeholder="作詞：〇〇&#10;作曲：𠮷川 美矩、△△&#10;編曲：𠮷川 美矩"></textarea>
+          <div class="row" style="margin-top:8px"><button type="button" id="staffFromRoles">担当内容から自分の行を作る</button></div>
         </div>
         <div class="span2">
           <label for="f-image">ジャケット画像<span class="hint">複数枚は1行に1つずつ。画像のURL、または画像が載っているページのURLを入れて「URLから取得」（最後の行が画像に置き換わります）。1行目がメインの画像です</span></label>
@@ -345,10 +347,8 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-media").addEventListener("input", renderMediaChips);
 
   // ---- event page preset ----
-  function syncCatRow() { $("catRow").hidden = $("f-page").value === "event"; }
-  $("f-page").addEventListener("change", function () {
-    syncCatRow();
-    if (this.value !== "event") return;
+  function syncCatRow() {}
+  $("presetEvent").addEventListener("click", function () {
     $("f-credit").value = "作曲・作詞・編曲";
     $("f-media").value = "Digital";
     renderChips(); renderMediaChips();
@@ -382,7 +382,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("f-image").addEventListener("input", function () { clearTimeout(updateThumb.t); updateThumb.t = setTimeout(updateThumb, 400); });
 
   // ---- form ----
-  var FIELDS = ["page", "category", "album", "format", "media", "title", "artist", "credit", "date", "image", "imageCredit", "link", "audio", "mv", "note"];
+  var FIELDS = ["category", "album", "format", "media", "title", "artist", "credit", "staff", "date", "image", "imageCredit", "link", "audio", "mv", "note"];
   function readForm() {
     var w = {};
     FIELDS.forEach(function (k) { w[k] = $("f-" + k).value.trim(); });
@@ -432,7 +432,6 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       if (renamed && a === oldA) { o.album = newA; a = newA; touched = true; }
       if (newA && a === newA) {
         if (fmtChanged && o.format !== after.format) { o.format = after.format; touched = true; }
-        if (String(before.page || "") !== String(after.page || "") && String(o.page || "") !== String(after.page || "")) { o.page = after.page; touched = true; }
         if (String(before.category || "") !== String(after.category || "") && String(o.category || "") !== String(after.category || "")) { o.category = after.category; touched = true; }
         if (mediaChanged && o.media !== after.media) { o.media = after.media; touched = true; }
         if (dateChanged && o.date !== after.date) { o.date = after.date; touched = true; }
@@ -501,7 +500,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       return '<li data-i="' + i + '" class="' + (i === editingIndex ? "editing" : "") + '">' +
         '<button type="button" class="handle" aria-label="ドラッグして並べ替え（キーボードは↑↓キー）"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12"/></svg></button>' +
         '<div class="tb">' + (w.image ? '<img src="' + esc(resolveImg(String(w.image).split(/\n/)[0])) + '" alt="" onerror="this.remove()">' : "") + "</div>" +
-        '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.page === "event" ? "［イベント特典］" : (w.category ? "［" + w.category + "］" : ""), w.album ? "『" + w.album + "』" : "", w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
+        '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.category ? "［" + w.category + "］" : "", w.album ? "『" + w.album + "』" : "", w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
         '<div class="ops">' + del + "</div></li>";
     }).join("");
   }
@@ -925,10 +924,69 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     var seen = {}; return list.filter(function (c) { var k = c.label + "|" + c.names; if (seen[k]) return false; seen[k] = 1; return true; }).slice(0, 20);
   }
   function myNames() {
+    // "𠮷川 美矩（Yoshikawa Miku）" → 𠮷川美矩 / yoshikawamiku / mikuyoshikawa
     var raw = (state.site.creditNames || "") + "," + (state.site.name || "");
-    return raw.split(/[,，、\n]/).map(normName).filter(function (s) { return s && s !== "yourname"; });
+    var out = [];
+    raw.replace(/[（(]/g, ",").replace(/[)）]/g, "").split(/[,，、\n]/).forEach(function (s) {
+      var n = normName(s); if (n && n !== "yourname" && out.indexOf(n) < 0) out.push(n);
+      var p = s.trim().split(/\s+/); if (p.length === 2 && /^[a-z]/i.test(p[0])) { var r = normName(p[1] + p[0]); if (out.indexOf(r) < 0) out.push(r); }
+    });
+    return out;
   }
-  function normName(s) { return String(s || "").toLowerCase().replace(/[\s　・･.]/g, ""); }
+  function normName(s) { return String(s || "").toLowerCase().replace(/𠮷/g, "吉").replace(/[\s　・･.]/g, ""); }
+  // the display name without the reading in brackets, for new credit lines
+  function myDisplayName() { return String(state.site.name || "").replace(/[（(].*?[)）]/g, "").trim(); }
+
+  // ---- credit lines with other people ----
+  function labelRoles(label) {
+    var out = [];
+    String(label || "").replace(/作編曲/g, "作曲・編曲").replace(/作詞作曲/g, "作詞・作曲").split(/\s*(?:[・･\/／&＆,，、]|\band\b)\s*/i).forEach(function (p) {
+      p = p.trim(); if (!p) return;
+      var r = /^(作詞|詞|lyrics?|words|written)$/i.test(p) ? "作詞" : /^(作曲|曲|music|composed|composer|composition)$/i.test(p) ? "作曲" : /^(編曲|arranged|arrangement|arranger)$/i.test(p) ? "編曲" : p;
+      if (out.indexOf(r) < 0) out.push(r);
+    });
+    return out;
+  }
+  function staffLines(text) {
+    return String(text || "").split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean).map(function (l) {
+      var m = l.match(/^([^:：]+)[:：]\s*(.*)$/);
+      return m ? { label: m[1].trim(), names: m[2].trim() } : { label: "", names: l };
+    });
+  }
+  function staffOwnRoles(text) {
+    var mine = myNames(), out = [];
+    if (!mine.length) return out;
+    staffLines(text).forEach(function (c) {
+      if (!c.label || !mine.some(function (n) { return normName(c.names).indexOf(n) >= 0; })) return;
+      labelRoles(c.label).forEach(function (r) { if (out.indexOf(r) < 0) out.push(r); });
+    });
+    out.sort(function (a, b) { var ia = ROLE_CHOICES.indexOf(a), ib = ROLE_CHOICES.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+    return out;
+  }
+  $("f-staff").addEventListener("input", function () {
+    var r = staffOwnRoles(this.value);
+    if (r.length) { $("f-credit").value = r.join("・"); renderChips(); }
+  });
+  $("staffFromRoles").addEventListener("click", function () {
+    var me = myDisplayName();
+    if (!me) { alert("先に「プロフィール」の名前を入れてください。"); return; }
+    var roles = creditParts();
+    if (!roles.length) { alert("先に担当内容を選んでください。"); return; }
+    var raw = $("f-staff").value.replace(/\s+$/, ""), rows = raw ? raw.split("\n") : [];
+    var mine = myNames();
+    roles.forEach(function (r) {
+      var at = -1;
+      rows.forEach(function (l, i) { var c = staffLines(l)[0]; if (at < 0 && c && c.label && labelRoles(c.label).indexOf(r) >= 0) at = i; });
+      if (at >= 0) {
+        var c = staffLines(rows[at])[0];
+        if (mine.some(function (n) { return normName(c.names).indexOf(n) >= 0; })) return;
+        rows[at] = c.label + "：" + (c.names ? c.names + "、" : "") + me; // the role already has a line: add your name to it
+        return;
+      }
+      rows.push(r + "：" + me);
+    });
+    $("f-staff").value = rows.join("\n");
+  });
   function showCredits(credits) {
     var box = $("creditBox");
     if (!credits || !credits.length) {
@@ -942,6 +1000,8 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       return '<li class="' + (hit ? "me" : "") + '">' + esc(c.label) + "：" + esc(c.names) + "</li>";
     }).join("");
     box.hidden = false;
+    // the credits found also fill in the full credit list (when it is still empty)
+    if (!$("f-staff").value.trim()) $("f-staff").value = credits.map(function (c) { return c.label + "：" + c.names; }).join("\n");
     if (!mine.length) {
       $("creditNote").textContent = "「04 プロフィール」の「クレジット上の名前」を入れると、あなたの担当を自動で選べます。";
       return "見つかったクレジットを確認して、担当内容を選んでください。";
