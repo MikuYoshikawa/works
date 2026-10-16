@@ -388,7 +388,6 @@ dialog.detail.closing::backdrop { animation: bOut .38s ease-in forwards; }
 .staff li:not(:has(.sk)) { grid-template-columns: minmax(0, 1fr); }
 .staff .sk { color: var(--sub); font-size: 13px; padding-top: 1px; }
 .staff .sv { overflow-wrap: anywhere; }
-.staff .me { font-weight: 700; }
 .trk-staff { font-size: 13px; color: #333; }
 .trk-staff .staff { gap: 3px; }
 .trk-staff .sk { font-size: 12px; }
@@ -413,6 +412,7 @@ dialog.detail.closing::backdrop { animation: bOut .38s ease-in forwards; }
 .trk { padding-block: 16px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
 .trk-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .trk-t { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; min-width: 0; }
+.trk-inst { font: 400 11px var(--mono); letter-spacing: .04em; color: var(--sub); margin-left: 6px; white-space: nowrap; }
 .trk-c { font-size: 12px; color: var(--sub); }
 .trk-ar { margin: -4px 0 0; font-size: 13px; color: #333; overflow-wrap: anywhere; }
 .trk-n { margin: 0; font-size: 14px; color: #333; white-space: pre-line; }
@@ -701,7 +701,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     return '<ul class="staff">' + ls.map(function (c) {
       var names = c.names.split(/\s*([、,，\/／])\s*/).map(function (x, i) {
         if (i % 2) return x === "、" ? "、" : x + " ";
-        return isMe(x) ? '<b class="me">' + esc(x) + "</b>" : esc(x);
+        return esc(x);
       }).join("");
       return "<li>" + (c.label ? '<span class="sk">' + esc(c.label) + "</span>" : "") + '<span class="sv">' + names + "</span></li>";
     }).join("") + "</ul>";
@@ -891,6 +891,13 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     });
   }
 
+  // "曲名 (Instrumental)" / "曲名 -instrumental-" / "曲名 (off vocal)" → "曲名"; other titles → ""
+  function instBase(title) {
+    var m = String(title || "").match(/^(.*?)[\s　]*[(（［\[\-‐–—~〜／\/]*[\s　]*(?:instrumental|inst\.?|off[\s-]?vocal|オフボーカル|オフ・ボーカル|カラオケ|karaoke)(?:\s*ver(?:sion|\.)?)?[\s　]*[)）］\]\-‐–—~〜]*[\s　]*$/i);
+    return m && m[1].trim() ? m[1].trim() : "";
+  }
+  function normTitle(s) { return String(s || "").toLowerCase().replace(/[\s　"'“”‘’「」『』]/g, ""); }
+
   // ---------- group songs on the same album ----------
   function unionRoles(tracks) {
     var out = [];
@@ -997,9 +1004,20 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       g.sharedKeys = keys.filter(function (k) { return count[k] >= 2 || keys.length === 1; });
       g.sharedLinks = g.sharedKeys.map(function (k) { return albumUrl(firstUrl[k]); });
       g.link = g.sharedLinks[0] || ""; g.links = g.sharedLinks;
+      // "曲名 (Instrumental)" on the same album counts as the same song as "曲名"
+      g.songs = [];
+      g.tracks.forEach(function (t) {
+        var b = instBase(t.title);
+        if (b) {
+          var host = g.tracks.filter(function (o) { return o !== t && !instBase(o.title) && normTitle(o.title) === normTitle(b); })[0];
+          if (host) { (host._insts = host._insts || []).push(t); t._merged = true; return; }
+        }
+      });
+      g.songs = g.tracks.filter(function (t) { return !t._merged; });
     }
     return g;
   });
+  var SONG_COUNT = WORKS.filter(function (w) { return !w._merged; }).length;
 
   // newest release first; songs without a date go last; same date keeps the editor's order
   function dateKey(d) {
@@ -1061,7 +1079,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       return (!roleSet.length || g.tracks.some(function (t) { return roles(t.credit).some(function (r) { return roleSet.indexOf(r) >= 0; }); })) &&
         (!mediaSet.length || g.media.some(function (m) { return mediaSet.indexOf(m) >= 0; }));
     });
-    document.getElementById("count").textContent = "(" + pad(WORKS.length) + ")";
+    document.getElementById("count").textContent = "(" + pad(SONG_COUNT) + ")";
     if (!list.length) { grid.innerHTML = '<li class="empty">' + (WORKS.length ? "条件に合う作品がありません。" : "作品がまだ登録されていません。") + "</li>"; drawPager(); return; }
     var pages = Math.ceil(list.length / PER);
     if (curPage > pages - 1) curPage = pages - 1;
@@ -1194,28 +1212,37 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     document.getElementById("dTitle").textContent = w.title || "Untitled";
     var ar = document.getElementById("dArtist"); ar.textContent = w.artist || ""; ar.hidden = !w.artist;
     var cr = document.getElementById("dCredit");
-    var single = !w.album && w.tracks && w.tracks[0];
+    // an album holding just one song (plus its Instrumental) is shown like a single
+    var oneSong = w.album && w.songs && w.songs.length === 1 ? w.songs[0] : null;
+    var single = oneSong || (!w.album && w.tracks && w.tracks[0]);
     if (single && single.staff && staffHTML(single.staff)) cr.innerHTML = staffHTML(single.staff);
-    else cr.textContent = w.credit || "—";
+    else cr.textContent = (oneSong ? oneSong.credit : w.credit) || "—";
+    var view = w;
+    if (oneSong) {
+      view = Object.assign({}, w, { note: oneSong.note || "", mv: oneSong.mv || "" });
+      if (!w.link) { var ol = linkList(oneSong.link); view.link = ol[0] || ""; view.links = ol; }
+    }
     document.getElementById("dDate").textContent = dateOf(w) || "—";
     // stage works show performance dates (Schedule); CDs and streaming show Release
     document.getElementById("dDateLabel").textContent = (w.media || []).indexOf("Stage") >= 0 ? "Schedule" : "Release";
     var mt = document.getElementById("dMediaTags"); mt.innerHTML = mediaTags(w.media); mt.hidden = !w.media.length;
-    var note = document.getElementById("dNote"); note.textContent = w.note || ""; note.hidden = !w.note;
+    var note = document.getElementById("dNote"); note.textContent = view.note || ""; note.hidden = !view.note;
     var mvEl = document.getElementById("dMv");
-    var mvSingle = !w.album && ytId(w.mv) ? mvHTML(w.mv) : "";
+    var mvSingle = (!w.album || oneSong) && ytId(view.mv) ? mvHTML(view.mv) : "";
     mvEl.innerHTML = mvSingle ? '<p class="mv-k">Music Video</p>' + mvSingle : ""; mvEl.hidden = !mvSingle;
     playBtn.hidden = true; playBtn.removeAttribute("data-src"); // listen buttons are turned off
     var link = document.getElementById("dLink"), urlBox = document.getElementById("dUrlBox");
-    link.hidden = !w.link; urlBox.hidden = true;
-    curAlbum = w.album ? w : null;
+    link.hidden = !view.link; urlBox.hidden = true;
+    curAlbum = w.album && !oneSong ? w : null;
     var tbox = document.getElementById("dTracksBox");
-    tbox.hidden = !w.album;
-    if (w.album) {
-      document.getElementById("dTracksH").textContent = "Works on this album — " + w.tracks.length + "曲";
-      document.getElementById("dTracks").innerHTML = w.tracks.map(function (t) {
+    tbox.hidden = !w.album || !!oneSong;
+    if (w.album && !oneSong) {
+      var songs = w.songs || w.tracks;
+      document.getElementById("dTracksH").textContent = "Works on this album — " + songs.length + "曲";
+      document.getElementById("dTracks").innerHTML = songs.map(function (t) {
         var own = w.mixed ? splitArtists(t.artist).filter(function (x) { return w.common.indexOf(x) < 0; }).join(", ") : "";
-        return '<li class="trk"><div class="trk-h"><span class="trk-t">' + esc(t.title || "Untitled") + '</span><span class="trk-c">' + esc(t.credit || "") + "</span></div>" +
+        return '<li class="trk"><div class="trk-h"><span class="trk-t">' + esc(t.title || "Untitled") +
+          (t._insts ? ' <span class="trk-inst">+ Instrumental</span>' : "") + '</span><span class="trk-c">' + esc(t.credit || "") + "</span></div>" +
           (own ? '<p class="trk-ar">' + esc(own) + "</p>" : "") +
           (t.staff ? '<div class="trk-staff">' + staffHTML(t.staff) + "</div>" : "") +
           (t.note ? '<p class="trk-n">' + esc(t.note) + "</p>" : "") +
@@ -1227,15 +1254,15 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
             "</div>" : "") + "</li>";
       }).join("");
     }
-    if (w.link) {
-      link.href = w.link;
-      link.querySelector(".lbl").textContent = serviceName(w.link);
-      document.getElementById("dUrl").textContent = w.link;
+    if (view.link) {
+      link.href = view.link;
+      link.querySelector(".lbl").textContent = serviceName(view.link);
+      document.getElementById("dUrl").textContent = view.link;
     }
     var acts = document.getElementById("dActions");
     acts.querySelectorAll(".d-more").forEach(function (x) { x.remove(); });
-    if ((w.links || []).length > 1) {
-      w.links.slice(1).forEach(function (u) {
+    if ((view.links || []).length > 1) {
+      view.links.slice(1).forEach(function (u) {
         var a = document.createElement("a");
         a.className = "d-btn d-more"; a.href = u; a.target = "_blank"; a.rel = "noopener";
         a.innerHTML = esc(serviceName(u)) + ' <span aria-hidden="true">↗</span>';
@@ -1243,7 +1270,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       });
       urlBox.hidden = true;
     }
-    document.getElementById("dActions").hidden = !w.audio && !w.link;
+    document.getElementById("dActions").hidden = !view.link;
     document.getElementById("dPrev").disabled = pos === 0;
     document.getElementById("dNext").disabled = pos === list.length - 1;
     dlg.querySelector(".d-body").scrollTop = 0; dlg.scrollTop = 0;
@@ -1313,11 +1340,24 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     if (e.key === "ArrowRight" && pos < list.length - 1) { pos++; fillDetail(); }
   });
   // swipe left/right on phones
-  var sx = null;
-  dlg.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+  // only a clear, quick sideways swipe changes the work — scrolling up/down (even a little slanted) never does
+  var sx = null, sy = 0, st = 0, moved = false;
+  dlg.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1 || e.target.closest(".d-thumbs, .mv-box, iframe")) { sx = null; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now(); moved = false;
+  }, { passive: true });
+  dlg.addEventListener("touchmove", function (e) {
+    if (sx == null) return;
+    if (e.touches.length !== 1) { sx = null; return; }
+    // once the finger goes noticeably up or down, this touch is a scroll
+    if (Math.abs(e.touches[0].clientY - sy) > 24) sx = null;
+  }, { passive: true });
+  dlg.addEventListener("touchcancel", function () { sx = null; }, { passive: true });
   dlg.addEventListener("touchend", function (e) {
-    if (sx == null) return; var dx = e.changedTouches[0].clientX - sx; sx = null;
-    if (Math.abs(dx) < 60) return;
+    if (sx == null) return;
+    var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy, dt = Date.now() - st; sx = null;
+    if (Math.abs(dx) < 80 || Math.abs(dx) < Math.abs(dy) * 2.5 || dt > 700) return;
+    if (window.getSelection && String(window.getSelection())) return; // selecting text, not swiping
     if (dx < 0 && pos < list.length - 1) { pos++; fillDetail(); }
     if (dx > 0 && pos > 0) { pos--; fillDetail(); }
   }, { passive: true });

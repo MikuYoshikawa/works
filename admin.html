@@ -87,6 +87,16 @@ body.sorting { -webkit-user-select: none; user-select: none; }
 .paste { margin-top: 14px; font-size: 14px; }
 .paste summary { cursor: pointer; text-decoration: underline; color: var(--sub); }
 .paste textarea { margin: 10px 0 8px; }
+.trk-card { border: 1px solid var(--line); padding: 14px; margin-bottom: 10px; display: grid; gap: 10px; background: #fff; }
+.trk-card .tc-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.trk-card .tc-n { font: 500 12px var(--mono); color: var(--sub); }
+.trk-card .tc-name { flex: 1 1 auto; min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trk-card .tc-h button { padding: 5px 10px; font-size: 13px; border-color: #cfcfcb; }
+.trk-card .tc-h .del { color: var(--warn); }
+.trk-card label { margin-bottom: 2px; }
+.trk-card .status { margin: 0; min-height: 0; }
+.trk-card details summary { cursor: pointer; font-size: 13px; color: var(--sub); text-decoration: underline; }
+.trk-card details[open] > div { display: grid; gap: 10px; margin-top: 10px; }
 code { font-family: var(--mono); font-size: .9em; background: var(--tile); padding: 1px 5px; }
 </style>
 </head>
@@ -148,7 +158,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           </select>
         </div>
         <div class="span2">
-          <label for="f-album">収録アルバム名<span class="hint">同じアルバム名の曲は、サイトで1つのページにまとまります（シングルなら空欄）</span></label>
+          <label for="f-album">収録アルバム名<span class="hint">入れると、下に「収録曲」の欄が出て、同じアルバムの曲をまとめて編集できます。シングルでもカップリングやInstrumentalを入れるならCD名を入れてください（1曲だけなら空欄）</span></label>
           <input type="text" id="f-album" list="albumList" autocomplete="off">
           <datalist id="albumList"></datalist>
         </div>
@@ -156,12 +166,12 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <label for="f-format">リリース形態<span class="hint">曲名の上に小さく表示（例：3rd Single、1st Album『〇〇』収録）</span></label>
           <input type="text" id="f-format" placeholder="3rd Single">
         </div>
-        <div class="span2">
+        <div class="span2 track-only">
           <label for="f-title">曲名</label>
           <input type="text" id="f-title">
         </div>
         <div>
-          <label for="f-artist">アーティスト名</label>
+          <label for="f-artist">アーティスト名<span class="hint album-only" hidden>アルバム全体</span></label>
           <input type="text" id="f-artist">
         </div>
         <div>
@@ -173,12 +183,12 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <div class="chips" id="mchips"></div>
           <input type="text" id="f-media" placeholder="例：CD・Blu-ray（ミュージカルなどの公演は Stage）">
         </div>
-        <div class="span2">
+        <div class="span2 track-only">
           <label for="f-credit">担当内容<span class="hint">ボタンで選ぶか、直接入力</span></label>
           <div class="chips" id="chips"></div>
           <input type="text" id="f-credit" placeholder="例：作曲・編曲">
         </div>
-        <div class="span2">
+        <div class="span2 track-only">
           <label for="f-staff">クレジット（ほかの人も）<span class="hint">詳細画面の CREDIT に出ます。1行に1つ「担当：名前」。名前が複数なら「、」で区切ります。あなたの名前がある行から、上の担当内容が自動で選ばれます（空欄なら担当内容だけを表示）</span></label>
           <textarea id="f-staff" rows="4" placeholder="作詞：〇〇&#10;作曲：𠮷川 美矩、△△&#10;編曲：𠮷川 美矩"></textarea>
           <div class="row" style="margin-top:8px"><button type="button" id="staffFromRoles">担当内容から自分の行を作る</button></div>
@@ -213,14 +223,20 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
           <label for="f-audio">試聴音源<span class="hint">mp3のURLなど</span></label>
           <input type="text" id="f-audio">
         </div>
-        <div class="span2">
+        <div class="span2 track-only">
           <label for="f-mv">MV（YouTube のURL）<span class="hint">MVがある曲だけ。詳細画面にサムネイルが出て、押すと再生されます</span></label>
           <input type="text" id="f-mv" placeholder="https://www.youtube.com/watch?v=…">
           <img id="mvThumb" alt="" hidden style="margin-top:8px;width:160px;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--line)">
         </div>
-        <div class="span2">
+        <div class="span2 track-only">
           <label for="f-note">作品解説・コメント<span class="hint">詳細画面に表示されます（空でもOK）</span></label>
           <textarea id="f-note" placeholder="例：ドラマ主題歌として書き下ろし。"></textarea>
+        </div>
+        <div class="span2" id="tracksBox" hidden>
+          <label>収録曲<span class="hint">このアルバムの曲をここでまとめて編集できます。曲ごとにURLを入れて「読み込む」と、曲名とクレジットが入ります</span></label>
+          <div id="tracks"></div>
+          <div class="actions" style="margin-top:10px"><button type="button" id="addTrackBtn">＋ 曲を追加する</button></div>
+          <p class="status" id="tracksStatus"></p>
         </div>
         <div class="span2 actions">
           <button class="primary" type="button" id="saveBtn">リストに追加</button>
@@ -353,6 +369,11 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     $("f-media").value = "Digital";
     var me = myDisplayName();
     if (me) $("f-staff").value = ["作詞", "作曲", "編曲"].map(function (r) { return r + "：" + me; }).join("\n");
+    if (albumMode) {
+      var cs = readCards();
+      cs.forEach(function (c) { c.credit = "作曲・作詞・編曲"; if (me) c.staff = $("f-staff").value; });
+      renderCards(cs);
+    }
     renderChips(); renderMediaChips();
   });
 
@@ -399,6 +420,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       $("f-" + k).value = w[k];
     });
     renderChips(); renderMediaChips(); updateThumb(); syncCatRow();
+    if (typeof syncMode === "function" && $("tracks")) syncMode();
   }
   function normDate(v) {
     var m = String(v || "").trim().match(/^(\d{4})(?:[.\/\-年](\d{1,2})(?:[.\/\-月](\d{1,2})日?)?月?)?$/);
@@ -410,6 +432,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   function resetForm() {
     FIELDS.forEach(function (k) { $("f-" + k).value = ""; });
     editingIndex = -1; insertAfter = -1; $("formTitle").textContent = "作品を追加"; $("saveBtn").textContent = "リストに追加";
+    albumMode = false; albumEdit = null; $("tracks").innerHTML = ""; $("tracksStatus").textContent = ""; showMode();
     renderChips(); renderMediaChips(); updateThumb(); syncCatRow(); renderList();
   }
   $("clearBtn").addEventListener("click", function () { resetForm(); $("fetchStatus").textContent = ""; });
@@ -465,7 +488,212 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     if (!w.link && mate.link) w.link = mate.link;
   }
 
+  // ---- album mode: one form for the whole album, one card per song ----
+  var albumMode = false, albumEdit = null; // albumEdit = { name, indices } while editing an album already in the list
+  var TRACK_KEYS = ["title", "artist", "credit", "staff", "mv", "note", "link", "audio"];
+  function lns(v) { return String(v || "").split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function trackFromMain() {
+    var c = {}; ["title", "credit", "staff", "mv", "note", "audio"].forEach(function (k) { c[k] = $("f-" + k).value.trim(); });
+    c.artist = ""; c.link = ""; return c;
+  }
+  function chipsHTML(credit) {
+    var parts = String(credit || "").split(/[・、,，\/／]+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    return ROLE_CHOICES.map(function (r) { return '<button type="button" data-r="' + r + '" aria-pressed="' + (parts.indexOf(r) >= 0) + '">' + r + "</button>"; }).join("");
+  }
+  function renderCards(cards) {
+    $("tracks").innerHTML = cards.map(function (c, k) {
+      var orig = c._orig ? ' data-orig="' + esc(JSON.stringify(c._orig)) + '"' : "";
+      return '<div class="trk-card" data-k="' + k + '"' + orig + '>' +
+        '<div class="tc-h"><span class="tc-n">' + ("0" + (k + 1)).slice(-2) + '</span><span class="tc-name">' + esc(c.title || "（新しい曲）") + "</span>" +
+          '<button type="button" data-t="up" aria-label="上へ"' + (k === 0 ? " disabled" : "") + ">↑</button>" +
+          '<button type="button" data-t="down" aria-label="下へ"' + (k === cards.length - 1 ? " disabled" : "") + ">↓</button>" +
+          '<button type="button" class="del" data-t="del">削除</button></div>' +
+        '<div class="row"><input type="url" class="t-url" placeholder="この曲のURL（配信ページ・クレジットが載ったページ）" autocomplete="off"><button type="button" class="primary" data-t="load">読み込む</button></div>' +
+        '<p class="status t-status"></p>' +
+        '<div><label>曲名</label><input type="text" class="t-title" value="' + esc(c.title || "") + '"></div>' +
+        '<div><label>アーティスト名<span class="hint">この曲だけ上と違う場合（feat. など）</span></label><input type="text" class="t-artist" value="' + esc(c.artist || "") + '"></div>' +
+        '<div><label>担当内容</label><div class="chips t-chips">' + chipsHTML(c.credit) + '</div><input type="text" class="t-credit" placeholder="例：作曲・編曲" value="' + esc(c.credit || "") + '"></div>' +
+        '<div><label>クレジット（ほかの人も）<span class="hint">1行に1つ「担当：名前」</span></label><textarea class="t-staff" rows="3" placeholder="作詞：〇〇&#10;作曲：𠮷川 美矩">' + esc(c.staff || "") + "</textarea></div>" +
+        '<details' + (c.mv || c.note || c.link ? " open" : "") + '><summary>MV・解説・この曲だけのリンク</summary><div>' +
+          '<div><label>MV（YouTube のURL）</label><input type="text" class="t-mv" value="' + esc(c.mv || "") + '"></div>' +
+          '<div><label>作品解説・コメント</label><textarea class="t-note" rows="2">' + esc(c.note || "") + "</textarea></div>" +
+          '<div><label>この曲だけのリンク<span class="hint">1行に1つ。アルバム全体のリンクは上の欄へ</span></label><textarea class="t-link" rows="2">' + esc(c.link || "") + "</textarea></div>" +
+          '<input type="hidden" class="t-audio" value="' + esc(c.audio || "") + '">' +
+        "</div></details></div>";
+    }).join("");
+  }
+  function readCards() {
+    return Array.prototype.map.call($("tracks").querySelectorAll(".trk-card"), function (el) {
+      var c = {}; TRACK_KEYS.forEach(function (k) { var f = el.querySelector(".t-" + k); c[k] = f ? f.value.trim() : ""; });
+      var o = el.getAttribute("data-orig"); if (o) { try { c._orig = JSON.parse(o); } catch (e) {} }
+      return c;
+    });
+  }
+  function showMode() {
+    document.querySelectorAll(".track-only").forEach(function (el) { el.hidden = albumMode; });
+    document.querySelectorAll(".album-only").forEach(function (el) { el.hidden = !albumMode; });
+    $("tracksBox").hidden = !albumMode;
+  }
+  function syncMode() {
+    var a = $("f-album").value.trim();
+    if (a && !albumMode) {
+      albumMode = true;
+      renderCards([trackFromMain()]);
+      ["title", "credit", "staff", "mv", "note"].forEach(function (k) { $("f-" + k).value = ""; });
+      renderChips();
+    } else if (!a && albumMode) {
+      var cs = readCards();
+      if (cs.length <= 1) {
+        albumMode = false;
+        var c = cs[0] || {};
+        ["title", "credit", "staff", "mv", "note"].forEach(function (k) { $("f-" + k).value = c[k] || ""; });
+        if (c.artist) $("f-artist").value = c.artist;
+        renderChips(); renderCards([]);
+      } else setStatus("tracksStatus", "2曲以上あるので、アルバム名を入れてください。", "err");
+    }
+    showMode();
+  }
+  function trackCard(t, mainArtist, albumLinks) {
+    var c = { _orig: t };
+    TRACK_KEYS.forEach(function (k) { c[k] = t[k] == null ? "" : String(t[k]); });
+    if (c.artist === mainArtist) c.artist = "";
+    c.link = lns(t.link).filter(function (u) { return albumLinks.indexOf(u) < 0; }).join("\n");
+    return c;
+  }
+  // open every song of the album holding work i in the form
+  function loadAlbum(i) {
+    var name = albumKey(state.works[i].album), idx = [];
+    state.works.forEach(function (o, k) { if (albumKey(o.album) === name) idx.push(k); });
+    var T = idx.map(function (k) { return state.works[k]; });
+    var pick = function (key) { for (var k = 0; k < T.length; k++) { var v = T[k][key] || (key === "date" ? T[k].year : ""); if (v) return String(v); } return ""; };
+    var imgs = []; T.forEach(function (t) { lns(t.image).forEach(function (u) { if (imgs.indexOf(u) < 0) imgs.push(u); }); });
+    var withL = T.filter(function (t) { return lns(t.link).length; });
+    var albumLinks = withL.length ? lns(withL[0].link).filter(function (u) { return withL.every(function (t) { return lns(t.link).indexOf(u) >= 0; }); }) : [];
+    resetForm();
+    albumMode = true; albumEdit = { name: name, indices: idx };
+    var main = { album: name, category: pick("category"), format: pick("format"), media: pick("media"), date: pick("date"),
+      image: imgs.join("\n"), imageCredit: pick("imageCredit"), artist: T[0].artist || "", link: albumLinks.join("\n") };
+    fillForm(main);
+    renderCards(T.map(function (t) { return trackCard(t, main.artist, albumLinks); }));
+    showMode(); renderList();
+  }
+  // typing the name of an album that is already in the list: bring its songs in
+  $("f-album").addEventListener("input", syncMode);
+  $("f-album").addEventListener("change", function () {
+    var name = albumKey(this.value);
+    if (!name || (albumEdit && albumEdit.name === name)) return;
+    var at = -1; state.works.forEach(function (o, k) { if (at < 0 && albumKey(o.album) === name) at = k; });
+    if (at < 0) return;
+    var mine = readCards().filter(function (c) { return c.title; });
+    var keep = readForm();
+    loadAlbum(at);
+    // fill album fields the album didn't have, then add the songs typed so far
+    ["category", "format", "media", "date", "imageCredit", "artist"].forEach(function (k) { if (!$("f-" + k).value.trim() && keep[k]) $("f-" + k).value = keep[k]; });
+    var cs = readCards().concat(mine.map(function (c) { delete c._orig; return c; }));
+    renderCards(cs); renderChips(); renderMediaChips(); updateThumb();
+    setStatus("tracksStatus", "アルバム『" + name + "』の " + albumEdit.indices.length + " 曲を読み込みました。" + (mine.length ? "入力中の曲は最後に追加しています。" : ""), "ok");
+  });
+  $("addTrackBtn").addEventListener("click", function () {
+    var cs = readCards(); cs.push({ title: "", artist: "", credit: "", staff: "", mv: "", note: "", link: "", audio: "" });
+    renderCards(cs);
+    var last = $("tracks").lastElementChild; if (last) { last.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(function () { last.querySelector(".t-url").focus(); }, 300); }
+  });
+  $("tracks").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    var card = b.closest(".trk-card"), k = +card.getAttribute("data-k");
+    if (b.closest(".t-chips")) {
+      var inp = card.querySelector(".t-credit");
+      var parts = inp.value.split(/[・、,，\/／]+/).map(function (s) { return s.trim(); }).filter(Boolean), r = b.getAttribute("data-r"), at = parts.indexOf(r);
+      if (at >= 0) parts.splice(at, 1); else parts.push(r);
+      parts.sort(function (x, y) { var ix = ROLE_CHOICES.indexOf(x), iy = ROLE_CHOICES.indexOf(y); return (ix < 0 ? 99 : ix) - (iy < 0 ? 99 : iy); });
+      inp.value = parts.join("・"); card.querySelector(".t-chips").innerHTML = chipsHTML(inp.value);
+      return;
+    }
+    var t = b.getAttribute("data-t"), cs = readCards();
+    if (t === "up" && k > 0) { cs.splice(k - 1, 0, cs.splice(k, 1)[0]); renderCards(cs); }
+    if (t === "down" && k < cs.length - 1) { cs.splice(k + 1, 0, cs.splice(k, 1)[0]); renderCards(cs); }
+    if (t === "del") {
+      if (b.getAttribute("data-sure")) { cs.splice(k, 1); renderCards(cs); setStatus("tracksStatus", "曲を外しました。「変更を保存」を押すと確定します。", "ok"); }
+      else { b.setAttribute("data-sure", "1"); b.textContent = "本当に削除"; }
+    }
+    if (t === "load") loadTrackUrl(card);
+  });
+  $("tracks").addEventListener("input", function (e) {
+    var card = e.target.closest(".trk-card"); if (!card) return;
+    if (e.target.classList.contains("t-title")) card.querySelector(".tc-name").textContent = e.target.value || "（新しい曲）";
+    if (e.target.classList.contains("t-credit")) card.querySelector(".t-chips").innerHTML = chipsHTML(e.target.value);
+    if (e.target.classList.contains("t-staff")) {
+      var r = staffOwnRoles(e.target.value);
+      if (r.length) { card.querySelector(".t-credit").value = r.join("・"); card.querySelector(".t-chips").innerHTML = chipsHTML(r.join("・")); }
+    }
+  });
+  $("tracks").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && e.target.classList.contains("t-url")) { e.preventDefault(); loadTrackUrl(e.target.closest(".trk-card")); }
+  });
+  // read one song from its own URL: title, artist and the credits
+  function loadTrackUrl(card) {
+    var raw = card.querySelector(".t-url").value.trim(), u, st = card.querySelector(".t-status");
+    var say = function (m, c) { st.textContent = m; st.className = "status t-status" + (c ? " " + c : ""); };
+    try { u = new URL(raw); } catch (e) { say("https:// から始まるURLを入れてください。", "err"); return; }
+    var btn = card.querySelector('[data-t="load"]'); btn.disabled = true; say("読み込み中…");
+    var host = u.hostname, set = function (cls, v, force) { var f = card.querySelector(cls); if (v && (force || !f.value.trim())) f.value = v; };
+    var mainArtist = $("f-artist").value.trim(), job;
+    var addLink = function (l) { var f = card.querySelector(".t-link"), ls = lns(f.value); if (ls.indexOf(l) < 0 && lns($("f-link").value).indexOf(l) < 0) { ls.push(l); f.value = ls.join("\n"); } };
+    if (/(music|itunes)\.apple\.com$/.test(host)) {
+      job = fromApple(u).then(function (w) {
+        set(".t-title", w.title, true);
+        if (w.artist && w.artist !== mainArtist) set(".t-artist", w.artist, true);
+        if (!mainArtist && w.artist) $("f-artist").value = w.artist;
+        addLink(raw);
+        return scanPage(raw, 0).then(function (p) { return p.text; }).catch(function () { return ""; });
+      });
+    } else if (/(youtube\.com|youtu\.be)$/.test(host)) {
+      job = oembed(raw).then(function (d) { set(".t-title", d.title || ""); set(".t-mv", raw, true); card.querySelector("details").open = true; return ""; });
+    } else if (/(spotify|soundcloud)\.com$/.test(host)) {
+      job = oembed(raw).then(function (d) { set(".t-title", d.title || ""); addLink(raw); return ""; });
+    } else {
+      job = scanPage(raw, 2).then(function (p) { set(".t-title", p.title || ""); return p.text; });
+    }
+    job.then(function (text) {
+      card.querySelector(".tc-name").textContent = card.querySelector(".t-title").value || "（新しい曲）";
+      var credits = text ? extractCredits(text, card.querySelector(".t-title").value.trim()) : [];
+      if (!credits.length) { say("読み込みました。クレジットは見つからなかったので、手で入れてください。", "ok"); return; }
+      card.querySelector(".t-staff").value = credits.map(function (c) { return c.label + "：" + c.names; }).join("\n");
+      var r = staffOwnRoles(card.querySelector(".t-staff").value);
+      if (r.length) { card.querySelector(".t-credit").value = r.join("・"); card.querySelector(".t-chips").innerHTML = chipsHTML(r.join("・")); }
+      say("読み込みました。クレジットが " + credits.length + " 件見つかりました" + (r.length ? "（あなたの担当：" + r.join("・") + "）" : "") + "。表記を確認してください。", "ok");
+    }).catch(function () {
+      say("このURLからは読み込めませんでした。曲名とクレジットを手で入れてください。", "err");
+    }).then(function () { btn.disabled = false; });
+  }
+  function saveAlbum() {
+    var main = readForm(), name = albumKey(main.album);
+    if (!name) { setStatus("tracksStatus", "アルバム名を入れてください。", "err"); $("f-album").focus(); return; }
+    var cs = readCards().filter(function (c) { return c.title; });
+    if (!cs.length) { setStatus("tracksStatus", "曲名が入った曲が1つもありません。", "err"); return; }
+    var works = cs.map(function (c) {
+      var w = Object.assign({}, c._orig || {});
+      ["category", "format", "media", "date", "image", "imageCredit"].forEach(function (k) { w[k] = main[k]; });
+      w.album = name;
+      w.title = c.title; w.artist = c.artist || main.artist;
+      w.credit = c.credit; w.staff = c.staff; w.mv = c.mv; w.note = c.note; w.audio = c.audio;
+      var ls = lns(main.link); lns(c.link).forEach(function (u) { if (ls.indexOf(u) < 0) ls.push(u); });
+      w.link = ls.join("\n");
+      return w;
+    });
+    var at;
+    if (albumEdit) {
+      var idx = albumEdit.indices.slice().sort(function (a, b) { return a - b; });
+      at = idx[0];
+      for (var k = idx.length - 1; k >= 0; k--) state.works.splice(idx[k], 1);
+    } else at = insertAfter >= 0 ? insertAfter + 1 : 0;
+    Array.prototype.splice.apply(state.works, [at, 0].concat(works));
+    setStatus("exportStatus", "アルバム『" + name + "』の " + works.length + " 曲を保存しました。最後に書き出しを忘れずに。", "ok");
+    persist(); resetForm(); $("fetchStatus").textContent = ""; $("srcUrl").value = "";
+  }
+
   $("saveBtn").addEventListener("click", function () {
+    if (albumMode) { saveAlbum(); return; }
     var w = readForm();
     if (!w.title) { setStatus("fetchStatus", "曲名を入力してください。", "err"); $("f-title").focus(); return; }
     var synced = 0;
@@ -499,7 +727,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
         : '<button type="button" data-a="edit" data-i="' + i + '">編集</button>' +
           '<button type="button" data-a="dup" data-i="' + i + '">コピー</button>' +
           '<button type="button" class="del" data-a="del" data-i="' + i + '">削除</button>';
-      return '<li data-i="' + i + '" class="' + (i === editingIndex ? "editing" : "") + '">' +
+      return '<li data-i="' + i + '" class="' + (i === editingIndex || (albumEdit && albumEdit.indices.indexOf(i) >= 0) ? "editing" : "") + '">' +
         '<button type="button" class="handle" aria-label="ドラッグして並べ替え（キーボードは↑↓キー）"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12"/></svg></button>' +
         '<div class="tb">' + (w.image ? '<img src="' + esc(resolveImg(String(w.image).split(/\n/)[0])) + '" alt="" onerror="this.remove()">' : "") + "</div>" +
         '<div class="info"><b>' + esc(w.title || "Untitled") + "</b><span>" + esc([w.category ? "［" + w.category + "］" : "", w.album ? "『" + w.album + "』" : "", w.artist, w.credit, w.date || w.year].filter(Boolean).join(" / ")) + "</span></div>" +
@@ -521,6 +749,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     state.works = order.map(function (i) { return W[i]; });
     if (editingIndex >= 0) editingIndex = order.indexOf(editingIndex);
     if (insertAfter >= 0) insertAfter = order.indexOf(insertAfter);
+    if (albumEdit) albumEdit.indices = albumEdit.indices.map(function (k) { return order.indexOf(k); });
     pendingDelete = -1; persist(); renderList();
   }
   $("list").addEventListener("pointerdown", function (e) {
@@ -571,6 +800,17 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   $("list").addEventListener("click", function (e) {
     var b = e.target.closest("button"); if (!b) return;
     var a = b.getAttribute("data-a"), i = +b.getAttribute("data-i"), W = state.works;
+    if ((a === "edit" || a === "dup") && albumKey(W[i].album)) {
+      loadAlbum(i);
+      $("formTitle").textContent = "アルバムを編集"; $("saveBtn").textContent = "変更を保存";
+      if (a === "dup") {
+        var cs = readCards(), src = cs[albumEdit.indices.indexOf(i)] || {}, cp = Object.assign({}, src); delete cp._orig;
+        cs.push(cp); renderCards(cs);
+        setStatus("tracksStatus", "「" + (W[i].title || "") + "」をコピーして最後に追加しました。曲名などを直して「変更を保存」を押してください。", "ok");
+        var last = $("tracks").lastElementChild; if (last) setTimeout(function () { last.scrollIntoView({ behavior: "smooth", block: "center" }); last.querySelector(".t-title").select(); }, 50);
+      } else $("f-album").scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     if (a === "edit") {
       resetForm(); editingIndex = i;
       if (!W[i].date && W[i].year) W[i].date = String(W[i].year);
@@ -588,7 +828,14 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
     }
     if (a === "del") pendingDelete = i;
     if (a === "del-no") pendingDelete = -1;
-    if (a === "del-yes") { W.splice(i, 1); pendingDelete = -1; if (editingIndex === i) resetForm(); }
+    if (a === "del-yes") {
+      W.splice(i, 1); pendingDelete = -1;
+      if (editingIndex === i || (albumEdit && albumEdit.indices.indexOf(i) >= 0)) resetForm();
+      else {
+        if (editingIndex > i) editingIndex--;
+        if (albumEdit) albumEdit.indices = albumEdit.indices.map(function (k) { return k > i ? k - 1 : k; });
+      }
+    }
     persist(); renderList();
   });
 
@@ -712,7 +959,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
 
     job.then(function (res) {
       var keepLinks = $("f-link").value.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean);
-      if (editingIndex < 0) FIELDS.forEach(function (k) { if (["page", "category", "credit", "format", "note", "album", "media", "link"].indexOf(k) < 0) $("f-" + k).value = ""; });
+      if (editingIndex < 0 && !albumMode) FIELDS.forEach(function (k) { if (["page", "category", "credit", "format", "note", "album", "media", "link"].indexOf(k) < 0) $("f-" + k).value = ""; });
       if (res.w.link) { if (keepLinks.indexOf(res.w.link) < 0) keepLinks.push(res.w.link); res.w.link = keepLinks.join("\n"); }
       fillForm(res.w);
       if (res.credits) return res;
@@ -722,6 +969,18 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       }).catch(function () { res.credits = []; return res; });
     }).then(function (res) {
       var msg = showCredits(res.credits);
+      if (albumMode) {
+        // the song read at the top goes into its card (or a new card)
+        var mt = $("f-title").value.trim() || String((res.w && res.w.title) || "").trim(), cs = readCards();
+        if (mt) {
+          var hit = cs.filter(function (c) { return norm(c.title) === norm(mt); })[0] || cs.filter(function (c) { return !c.title; })[0];
+          if (!hit) { hit = { title: "", artist: "", credit: "", staff: "", mv: "", note: "", link: "", audio: "" }; cs.push(hit); }
+          if (!hit.title) hit.title = mt;
+          ["credit", "staff"].forEach(function (k) { if (!hit[k] && $("f-" + k).value.trim()) hit[k] = $("f-" + k).value.trim(); });
+          renderCards(cs);
+        }
+        ["title", "credit", "staff", "mv", "note"].forEach(function (k) { $("f-" + k).value = ""; });
+      }
       setStatus("fetchStatus", "読み込みました。" + (res.note ? res.note + " " : "") + msg, "ok");
       if (/(music|itunes)\.apple\.com$/.test(host) || /spotify\.com$/.test(host)) addOtherServices(true);
     }).catch(function () {
