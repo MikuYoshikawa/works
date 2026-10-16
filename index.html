@@ -383,13 +383,14 @@ dialog.detail.closing::backdrop { animation: bOut .38s ease-in forwards; }
 }
 .d-spec dt { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--sub); padding-top: 2px; }
 .d-spec dd { margin: 0; overflow-wrap: anywhere; }
-.staff { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.staff li { display: grid; grid-template-columns: minmax(4.5em, max-content) minmax(0, 1fr); gap: 14px; }
-.staff li:not(:has(.sk)) { grid-template-columns: minmax(0, 1fr); }
-.staff .sk { color: var(--sub); font-size: 13px; padding-top: 1px; }
+/* one shared grid, so every name starts at the same left edge */
+.staff { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: fit-content(42%) minmax(0, 1fr); gap: 6px 16px; }
+.staff li { display: contents; }
+.staff li:not(:has(.sk)) .sv { grid-column: 1 / -1; }
+.staff .sk { color: var(--sub); font-size: 13px; padding-top: 1px; overflow-wrap: anywhere; }
 .staff .sv { overflow-wrap: anywhere; }
 .trk-staff { font-size: 13px; color: #333; }
-.trk-staff .staff { gap: 3px; }
+.trk-staff .staff { gap: 3px 14px; }
 .trk-staff .sk { font-size: 12px; }
 #dDate { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .d-note { margin: 24px 0 0; color: #333; white-space: pre-line; text-wrap: pretty; }
@@ -1242,7 +1243,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       document.getElementById("dTracks").innerHTML = songs.map(function (t) {
         var own = w.mixed ? splitArtists(t.artist).filter(function (x) { return w.common.indexOf(x) < 0; }).join(", ") : "";
         return '<li class="trk"><div class="trk-h"><span class="trk-t">' + esc(t.title || "Untitled") +
-          (t._insts ? ' <span class="trk-inst">+ Instrumental</span>' : "") + '</span><span class="trk-c">' + esc(t.credit || "") + "</span></div>" +
+          (t._insts ? ' <span class="trk-inst">+ Instrumental</span>' : "") + '</span>' + (t.staff ? "" : '<span class="trk-c">' + esc(t.credit || "") + "</span>") + "</div>" +
           (own ? '<p class="trk-ar">' + esc(own) + "</p>" : "") +
           (t.staff ? '<div class="trk-staff">' + staffHTML(t.staff) + "</div>" : "") +
           (t.note ? '<p class="trk-n">' + esc(t.note) + "</p>" : "") +
