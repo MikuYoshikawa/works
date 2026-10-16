@@ -327,7 +327,7 @@ dialog.detail.closing::backdrop { animation: bOut .38s ease-in forwards; }
 }
 .d-media { min-width: 0; }
 .d-artcredit { margin: 10px 0 0; font-family: var(--mono); font-size: 11px; letter-spacing: .03em; color: var(--sub); white-space: pre-line; overflow-wrap: anywhere; }
-.d-mrow { margin: 12px 0 0; min-height: 0; }
+.d-mrow { margin: 0; min-height: 0; padding-top: 2px; }
 .d-mrow .md { font-size: 11px; padding: 4px 7px; }
 /* MV: YouTube thumbnail that turns into the player when pressed */
 .d-mv { margin-top: 28px; }
@@ -413,7 +413,8 @@ dialog.detail.closing::backdrop { animation: bOut .38s ease-in forwards; }
 .trk { padding-block: 16px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
 .trk-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .trk-t { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; min-width: 0; }
-.trk-inst { font: 400 11px var(--mono); letter-spacing: .04em; color: var(--sub); margin-left: 6px; white-space: nowrap; }
+.trk-i { padding-block: 12px; }
+.trk-i:not(.trk-main) .trk-t { font-weight: 500; font-size: 15px; color: #333; }
 .trk-c { font-size: 12px; color: var(--sub); }
 .trk-ar { margin: -4px 0 0; font-size: 13px; color: #333; overflow-wrap: anywhere; }
 .trk-n { margin: 0; font-size: 14px; color: #333; white-space: pre-line; }
@@ -596,7 +597,6 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     <div class="d-body">
       <div class="d-media">
         <div class="d-art" id="dArt"></div>
-        <div class="mrow d-mrow" id="dMediaTags"></div>
         <div class="d-thumbs" id="dThumbs" hidden></div>
         <p class="d-artcredit" id="dArtCredit" hidden></p>
       </div>
@@ -607,6 +607,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
         <dl class="d-spec">
           <div><dt>Credit</dt><dd id="dCredit"></dd></div>
           <div><dt id="dDateLabel">Release</dt><dd id="dDate"></dd></div>
+          <div id="dMediaRow"><dt>Media</dt><dd><span class="mrow d-mrow" id="dMediaTags"></span></dd></div>
         </dl>
         <p class="d-note" id="dNote"></p>
         <div class="d-mv" id="dMv" hidden></div>
@@ -698,7 +699,9 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     });
   }
   function staffHTML(text) {
-    var ls = staffLines(text); if (!ls.length) return "";
+    var ls = staffLines(text).map(function (c, i) { return { label: sortLabel(c.label), names: c.names, rank: c.label ? lineRank(c) : 99, i: i }; })
+      .sort(function (a, b) { return a.rank - b.rank || a.i - b.i; });
+    if (!ls.length) return "";
     return '<ul class="staff">' + ls.map(function (c) {
       var names = c.names.split(/\s*([、,，\/／])\s*/).map(function (x, i) {
         if (i % 2) return x === "、" ? "、" : x + " ";
@@ -707,6 +710,21 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       return "<li>" + (c.label ? '<span class="sk">' + esc(c.label) + "</span>" : "") + '<span class="sv">' + names + "</span></li>";
     }).join("") + "</ul>";
   }
+  // credits always read 作詞 → 作曲 → 編曲
+  var ROLE_ORDER = ["作詞", "作曲", "編曲", "トラックメイク", "ボーカルディレクション"];
+  function roleRank(r) { var i = ROLE_ORDER.indexOf(r); return i < 0 ? 99 : i; }
+  function sortRoleText(v) {
+    var parts = String(v || "").split(/[・、,，\/／]+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    return parts.map(function (p, i) { return { p: p, i: i }; }).sort(function (a, b) { return roleRank(a.p) - roleRank(b.p) || a.i - b.i; })
+      .map(function (x) { return x.p; }).join("・");
+  }
+  // "作曲・作詞" → "作詞・作曲" (only when the label is made of plain role words)
+  function sortLabel(label) {
+    var parts = String(label || "").split(/\s*[・･\/／&＆,，、]\s*/);
+    return parts.every(function (p) { return ROLE_ORDER.indexOf(p) >= 0; }) ? sortRoleText(label) : label;
+  }
+  function lineRank(c) { var r = labelRoles(c.label).map(roleRank); return r.length ? Math.min.apply(null, r) : 99; }
+  ALL_WORKS.forEach(function (w) { if (w && w.credit) w.credit = sortRoleText(w.credit); });
   ALL_WORKS.forEach(function (w) {
     if (!w || !w.staff || !MY_NAMES.length) return;
     var own = [];
@@ -714,8 +732,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
       if (c.label && isMe(c.names)) labelRoles(c.label).forEach(function (r) { if (own.indexOf(r) < 0) own.push(r); });
     });
     if (own.length) {
-      var ord = ["作曲", "作詞", "編曲", "トラックメイク", "ボーカルディレクション"];
-      own.sort(function (a, b) { var ia = ord.indexOf(a), ib = ord.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+      own.sort(function (a, b) { return roleRank(a) - roleRank(b); });
       w.credit = own.join("・");
     }
   });
@@ -820,7 +837,7 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
   // filters
   var all = [];
   WORKS.forEach(function (w) { roles(w.credit).forEach(function (r) { if (all.indexOf(r) < 0) all.push(r); }); });
-  var order = ["作曲", "作詞", "編曲"];
+  var order = ["作詞", "作曲", "編曲"];
   all.sort(function (a, b) {
     var ia = order.indexOf(a), ib = order.indexOf(b);
     return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
@@ -1226,7 +1243,8 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     document.getElementById("dDate").textContent = dateOf(w) || "—";
     // stage works show performance dates (Schedule); CDs and streaming show Release
     document.getElementById("dDateLabel").textContent = (w.media || []).indexOf("Stage") >= 0 ? "Schedule" : "Release";
-    var mt = document.getElementById("dMediaTags"); mt.innerHTML = mediaTags(w.media); mt.hidden = !w.media.length;
+    document.getElementById("dMediaTags").innerHTML = mediaTags(w.media);
+    document.getElementById("dMediaRow").hidden = !w.media.length;
     var note = document.getElementById("dNote"); note.textContent = view.note || ""; note.hidden = !view.note;
     var mvEl = document.getElementById("dMv");
     var mvSingle = (!w.album || oneSong) && ytId(view.mv) ? mvHTML(view.mv) : "";
@@ -1236,14 +1254,19 @@ setTimeout(function () { document.querySelectorAll("[data-rise], .work.pending")
     link.hidden = !view.link; urlBox.hidden = true;
     curAlbum = w.album && !oneSong ? w : null;
     var tbox = document.getElementById("dTracksBox");
-    tbox.hidden = !w.album || !!oneSong;
-    if (w.album && !oneSong) {
+    tbox.hidden = !w.album;
+    if (w.album) {
       var songs = w.songs || w.tracks;
-      document.getElementById("dTracksH").textContent = "Works on this album — " + songs.length + "曲";
-      document.getElementById("dTracks").innerHTML = songs.map(function (t) {
+      document.getElementById("dTracksH").textContent = oneSong ? "Tracks" : "Works on this album — " + songs.length + "曲";
+      // each song, followed by its Instrumental (title only, no credit)
+      var rows = [];
+      songs.forEach(function (t) { rows.push(t); (t._insts || []).forEach(function (x) { rows.push({ _inst: x }); }); });
+      document.getElementById("dTracks").innerHTML = rows.map(function (t) {
+        if (t._inst) return '<li class="trk trk-i"><div class="trk-h"><span class="trk-t">' + esc(t._inst.title || "") + "</span></div></li>";
+        if (oneSong) return '<li class="trk trk-i trk-main"><div class="trk-h"><span class="trk-t">' + esc(t.title || "Untitled") + "</span></div></li>";
         var own = w.mixed ? splitArtists(t.artist).filter(function (x) { return w.common.indexOf(x) < 0; }).join(", ") : "";
         return '<li class="trk"><div class="trk-h"><span class="trk-t">' + esc(t.title || "Untitled") +
-          (t._insts ? ' <span class="trk-inst">+ Instrumental</span>' : "") + '</span>' + (t.staff ? "" : '<span class="trk-c">' + esc(t.credit || "") + "</span>") + "</div>" +
+'</span>' + (t.staff ? "" : '<span class="trk-c">' + esc(t.credit || "") + "</span>") + "</div>" +
           (own ? '<p class="trk-ar">' + esc(own) + "</p>" : "") +
           (t.staff ? '<div class="trk-staff">' + staffHTML(t.staff) + "</div>" : "") +
           (t.note ? '<p class="trk-n">' + esc(t.note) + "</p>" : "") +

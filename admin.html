@@ -146,7 +146,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
       <div class="grid2">
         <div class="span2">
           <label>まとめて入力<span class="hint">押すと担当と媒体が一度に入ります（あとからボタンで変更できます）</span></label>
-          <button type="button" id="presetEvent" style="width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid #cfcfcb;background:#fff;border-radius:0;cursor:pointer;text-align:left">Pococha・IRIAM イベント特典楽曲（作曲・作詞・編曲／Digital／クレジット）</button>
+          <button type="button" id="presetEvent" style="width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid #cfcfcb;background:#fff;border-radius:0;cursor:pointer;text-align:left">Pococha・IRIAM イベント特典楽曲（作詞・作曲・編曲／Digital／クレジット）</button>
         </div>
         <div class="span2" id="catRow">
           <label for="f-category">ジャンル<span class="hint">サイト上部の All / Songs / Soundtracks / Stage の分類（未選択なら、媒体が Stage の作品は Stage、それ以外は Songs）</span></label>
@@ -288,7 +288,7 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
 <script>
 (function () {
   var KEY = "works-editor-draft-v1";
-  var ROLE_CHOICES = ["作曲", "作詞", "編曲", "トラックメイク", "ボーカルディレクション"];
+  var ROLE_CHOICES = ["作詞", "作曲", "編曲", "トラックメイク", "ボーカルディレクション"];
   var $ = function (id) { return document.getElementById(id); };
 
   var original = {
@@ -365,13 +365,13 @@ code { font-family: var(--mono); font-size: .9em; background: var(--tile); paddi
   // ---- event page preset ----
   function syncCatRow() {}
   $("presetEvent").addEventListener("click", function () {
-    $("f-credit").value = "作曲・作詞・編曲";
+    $("f-credit").value = "作詞・作曲・編曲";
     $("f-media").value = "Digital";
     var me = myDisplayName();
     if (me) $("f-staff").value = ["作詞", "作曲", "編曲"].map(function (r) { return r + "：" + me; }).join("\n");
     if (albumMode) {
       var cs = readCards();
-      cs.forEach(function (c) { c.credit = "作曲・作詞・編曲"; if (me) c.staff = $("f-staff").value; });
+      cs.forEach(function (c) { c.credit = "作詞・作曲・編曲"; if (me) c.staff = $("f-staff").value; });
       renderCards(cs);
     }
     renderChips(); renderMediaChips();
